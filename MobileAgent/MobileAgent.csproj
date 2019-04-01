@@ -61,6 +61,9 @@
     <Compile Include="AgentManager\Message.cs" />
     <Compile Include="AgentManager\MessageManager.cs" />
     <Compile Include="Exceptions\AgentException.cs" />
+    <Compile Include="Exceptions\AgentNotFoundException.cs" />
+    <Compile Include="Exceptions\InvalidAgentException.cs" />
+    <Compile Include="Exceptions\MessageException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -6,28 +6,27 @@ using System.Threading.Tasks;
 
 namespace MobileAgent.Exceptions
 {
-    public class AgentException : Exception
+    public class MessageException
     {
         #region Fields
-        private bool _original;
-        private String _stackTrace;
+        private String _exception;
         #endregion Fields
 
         #region Constructors
-        public AgentException()
+        public MessageException(String exception)
         {
-
+            _exception = exception;
         }
-        public AgentException(String stackTrace)
+        public MessageException(String exception, String stackTrace) : base(stackTrace)
         {
-            _stackTrace = stackTrace;
+            _exception = exception;
         }
         #endregion Constructors
 
         #region Methods
-        public void PrintStackTrace()
+        public String GetException()
         {
-
+            return _exception;
         }
         #endregion Methods
     }

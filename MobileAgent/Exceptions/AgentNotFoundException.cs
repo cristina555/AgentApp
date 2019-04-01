@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace MobileAgent.Exceptions
 {
-    public class AgentNotFoundException
+    public class AgentNotFoundException : AgentException
     {
+        #region Constructors
+        public AgentNotFoundException()
+        {
+
+        }
+        public AgentNotFoundException(String stackTrace) : base(stackTrace)
+        {
+        }
+        #endregion Constructors
     }
 }
