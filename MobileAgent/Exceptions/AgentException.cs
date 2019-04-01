@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MobileAgent.Exceptions
 {
-    class AgentException
+    class AgentException : Exception
     {
         #region Fields
         private bool _original;
@@ -18,10 +18,17 @@ namespace MobileAgent.Exceptions
         {
 
         }
+        public AgentException(String stackTrace)
+        {
+            _stackTrace = stackTrace;
+        }
         #endregion Constructors
 
         #region Methods
+        public void PrintStackTrace()
+        {
 
+        }
         #endregion Methods
     }
 }
