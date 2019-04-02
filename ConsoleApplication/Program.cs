@@ -20,6 +20,11 @@ namespace ConsoleApplication
                 Console.WriteLine(e.Current);
             }
             Console.WriteLine(v.Count);
+            Uri url = new Uri("http://www.mywebsite.com:80/pages/page1.aspx");
+            Console.WriteLine(url.Scheme);
+            Console.WriteLine(url.Host);
+            Console.WriteLine(url.AbsolutePath);
+            Console.WriteLine(url.Port);
         }
         
     }

@@ -13,7 +13,7 @@ namespace MobileAgent.Exceptions
         {
 
         }
-        public AgentNotFoundException(String stackTrace) : base(stackTrace)
+        public AgentNotFoundException(String m) : base(m)
         {
         }
         #endregion Constructors

@@ -4,17 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MobileAgent;
-using MobileAgent.AgentManager;
 
 namespace MobileAgent.EventAgent
 {
     public class PersistencyEvent : AgentEvent
     {
         #region Fields
-        public const int AGLET_PERSISTENCY_FIRST = 40;
-        public const int AGLET_PERSISTENCY_LAST = 41;
-        public const int DEACTIVATING = AGLET_PERSISTENCY_FIRST;
-        public const int ACTIVATION = AGLET_PERSISTENCY_FIRST+1;
+        public readonly static int AGLET_PERSISTENCY_FIRST = 40;
+        public readonly static int AGLET_PERSISTENCY_LAST = 41;
+        public readonly static int DEACTIVATING = AGLET_PERSISTENCY_FIRST;
+        public readonly static int ACTIVATION = AGLET_PERSISTENCY_FIRST+1;
         private static String[] name = {
             "DEACTIVATING", "ACTIVATION"
         };

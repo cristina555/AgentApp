@@ -40,12 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdditionalClasses\URL.cs" />
     <Compile Include="AgentManager\Agency.cs" />
     <Compile Include="AgentManager\Agent.cs" />
     <Compile Include="AgentManager\AgentContext.cs" />
     <Compile Include="AgentManager\AgentProxy.cs" />
+    <Compile Include="AgentManager\Ticket.cs" />
     <Compile Include="EventAgent\AgentEventListener.cs" />
-    <Compile Include="EventAgent\AgenyEvent.cs" />
+    <Compile Include="EventAgent\AgentEvent.cs" />
     <Compile Include="EventAgent\CloneAdapter.cs" />
     <Compile Include="EventAgent\CloneEvent.cs" />
     <Compile Include="EventAgent\CloneListener.cs" />

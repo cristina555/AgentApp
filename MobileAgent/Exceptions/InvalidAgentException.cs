@@ -12,7 +12,7 @@ namespace MobileAgent.Exceptions
         {
 
         }
-        public InvalidAgentException(String stackTrace) :base(stackTrace)
+        public InvalidAgentException(String m) : base(m)
         {
 
         }

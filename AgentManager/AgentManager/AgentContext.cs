@@ -12,10 +12,10 @@ namespace MobileAgent.AgentManager
         void AddContextListener();
         void ClearCache(Uri codebase);
         AgentProxy CreateAgent(Uri codebase, String code, Object init);
-		AgentProxy Clone(AgentProxy agentCloned);
-        AgentProxy Dispatch(AgentProxy agletProxy, Ticket ticket);// throws IOException, AgletException
-        AgentProxy Dispatch(Uri destination);// 
-		void Dispose(AgentProxy agentProxy); //throws InvalidAgletException
+		AgentProxy Clone(AgentProxy );
+		AgletProxy Dispatch(AgletProxy agletProxy, Ticket ticket);// throws IOException, AgletException
+		AgletProxy Dispatch(Uri destination);// 
+		void Dispose(AgletProxy agletProxy); //throws InvalidAgletException
         List<AgentProxy> GetAgentProxies();
         AgentProxy GetAgentProxy(int id);
         Uri GetHostingURL();
@@ -23,8 +23,8 @@ namespace MobileAgent.AgentManager
         Object GetProperty(String key);
         Object GetProperty(String key, Object defaultValue);
         void RemoveContextListener(ContextListener listener);
-		AgentProxy RetractAglet(Uri url); //throws IOException, AgletException
-        AgentProxy RetractAglet(Uri url, int agentId);//  throws IOException, AgletException
+		AgentProxy retractAglet(java.net.URL url); //throws IOException, AgletException
+		AgletProxy retractAglet(java.net.URL url, int agentId);//  throws IOException, AgletException
 		void setProperty(String key, Object value);
         void ShutDown();
         void Start();

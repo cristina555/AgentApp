@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MobileAgent.Exceptions
 {
-    public class MessageException
+    public class MessageException : AgentException
     {
         #region Fields
         private String _exception;
@@ -17,7 +17,7 @@ namespace MobileAgent.Exceptions
         {
             _exception = exception;
         }
-        public MessageException(String exception, String stackTrace) : base(stackTrace)
+        public MessageException(String exception, String m) : base(m)
         {
             _exception = exception;
         }
@@ -27,6 +27,10 @@ namespace MobileAgent.Exceptions
         public String GetException()
         {
             return _exception;
+        }
+        public override String ToString()
+        {
+            return base.ToString() + " (" + _exception + ")";
         }
         #endregion Methods
     }

@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MobileAgent.AdditionalClasses;
-using MobileAgent.AgentManager;
+using MobileAgent;
 
 namespace MobileAgent.EventAgent
 {
     public class MobilityEvent : AgentEvent
     {
         #region Fields
-        public const int AGLET_MOBILITY_FIRST = 30;
-        public const int AGLET_MOBILITY_LAST = 32;
-        public const int DISPATCHING = AGLET_MOBILITY_FIRST;
-        public const int REVERTING = AGLET_MOBILITY_FIRST + 1;
-        public const int ARRIVAL = AGLET_MOBILITY_FIRST + 2;
+        public static int AGLET_MOBILITY_FIRST = 30;
+        public static int AGLET_MOBILITY_LAST = 32;
+        public static int DISPATCHING = AGLET_MOBILITY_FIRST;
+        public static int REVERTING = AGLET_MOBILITY_FIRST + 1;
+        public static int ARRIVAL = AGLET_MOBILITY_FIRST + 2;
         private static String[] name = {
             "DISPATCHING", "REVERTING", "ARRIVAL",
         };
-        private URL _location;
+        private Uri _location;
         #endregion Fields
 
         #region Constructors
@@ -27,7 +26,7 @@ namespace MobileAgent.EventAgent
         {
 
         }
-        public MobilityEvent(AgentProxy source, int id, URL loc) : base(source, id)
+        public MobilityEvent(AgentProxy source, int id, Uri loc) : base(source, id)
         {
             _location = loc;
         }
@@ -38,7 +37,7 @@ namespace MobileAgent.EventAgent
         {
             return (AgentProxy)_source;
         }
-        public URL getLocation()
+        public Uri getLocation()
         {
             return _location;
         }

@@ -1,5 +1,4 @@
-﻿using MobileAgent.AgentManager;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +9,12 @@ namespace MobileAgent.EventAgent
     public class CloneEvent : AgentEvent
     {
         #region Fields
-        public const int AGLET_CLONE_FIRST = 20;
-        public const int AGLET_CLONE_LAST = 22;
-        public const int CLONING = AGLET_CLONE_FIRST;
-        public const int CLONE = AGLET_CLONE_FIRST + 1;
-        public const int CLONED = AGLET_CLONE_FIRST + 2;
-        public static String[] name = {
+        public readonly static int AGLET_CLONE_FIRST = 20;
+        public readonly static int AGLET_CLONE_LAST = 22;
+        public readonly static int CLONING = AGLET_CLONE_FIRST;
+        public readonly static int CLONE = AGLET_CLONE_FIRST + 1;
+        public readonly static int CLONED = AGLET_CLONE_FIRST + 2;
+        public readonly static String[] name = {
             "CLONING", "CLONE", "CLONED"
         };
         #endregion Fields
