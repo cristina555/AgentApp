@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MobileAgent.EventAgent;
+using MobileAgent.AdditionalClasses;
 
 namespace MobileAgent.AgentManager
 {
@@ -74,11 +75,11 @@ namespace MobileAgent.AgentManager
 		{
             //Not implemented
         }
-		public void ClearCache(Uri codebase)
+		public void ClearCache(URL codebase)
 		{
             //Not implemented
         }
-        public  AgentProxy CreateAgent(Uri codebase, String code, Object init)
+        public  AgentProxy CreateAgent(URL codebase, String code, Object init)
         {
             //Not implemented
             AgentProxy a =null;

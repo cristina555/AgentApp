@@ -19,17 +19,17 @@ namespace MobileAgent.EventAgent
         private static String[] name = {
             "DISPATCHING", "REVERTING", "ARRIVAL",
         };
-        private URL _location;
+        private Ticket _ticket;
         #endregion Fields
 
         #region Constructors
-        public MobilityEvent(AgentProxy source, int id ) : base(source, id)
+        public MobilityEvent(AgentProxy target, int id , Ticket ticket) : base(target, id)
         {
-
+            _ticket = ticket;
         }
-        public MobilityEvent(AgentProxy source, int id, URL loc) : base(source, id)
+        public MobilityEvent(AgentProxy target, int id, URL loc) : base(target, id)
         {
-            _location = loc;
+            _ticket = new Ticket(loc);
         }
         #endregion Constructors
 
@@ -38,9 +38,13 @@ namespace MobileAgent.EventAgent
         {
             return (AgentProxy)_source;
         }
-        public URL getLocation()
+        public URL GetLocation()
         {
-            return _location;
+            return _ticket.GetDestination();
+        }
+        public Ticket GetTicket()
+        {
+            return _ticket;
         }
         public override String ToString()
         {
