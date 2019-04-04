@@ -25,8 +25,8 @@ namespace MobileAgent.AgentManager
         Object GetProperty(String key);
         Object GetProperty(String key, Object defaultValue);
         void RemoveContextListener(ContextListener listener);
-		AgentProxy RetractAglet(Uri url); //throws IOException, AgletException
-        AgentProxy RetractAglet(Uri url, int agentId);//  throws IOException, AgletException
+		AgentProxy RetractAglet(URL url); //throws IOException, AgletException
+        AgentProxy RetractAglet(URL url, int agentId);//  throws IOException, AgletException
 		void setProperty(String key, Object value);
         void ShutDown();
         void Start();

@@ -16,7 +16,6 @@ namespace MobileAgent.Exceptions
         public AgentNotFoundException(String m) : base(m)
         {
         }
-
         #endregion Constructors
     }
 }

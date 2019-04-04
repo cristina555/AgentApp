@@ -97,7 +97,7 @@ namespace MobileAgent.AgentManager
             AgentProxy agentDispatched = null;
             return agentDispatched;
 		}
-		public AgentProxy Dispatch(Uri destination)
+		public AgentProxy Dispatch(URL destination)
 		{
             //Not implemented
             AgentProxy agentDispatched = null;
@@ -155,7 +155,7 @@ namespace MobileAgent.AgentManager
             //Not implemented
             return null;
 		}
-        public Uri GetHostingURL()
+        public URL GetHostingURL()
         {
             //Not implemented
             return null;
@@ -260,13 +260,13 @@ namespace MobileAgent.AgentManager
 		{
             //Not implemented
         }
-        public AgentProxy RetractAglet(Uri url) //throws IOException, AgletException
+        public AgentProxy RetractAglet(URL url) //throws IOException, AgletException
 		{
             //Not implemented
             AgentProxy a = null;
             return a;
         }
-		public AgentProxy RetractAglet(Uri url, int agentId)//  throws IOException, AgletException
+		public AgentProxy RetractAglet(URL url, int agentId)//  throws IOException, AgletException
 		{
             //Not implemented
             AgentProxy a = null;

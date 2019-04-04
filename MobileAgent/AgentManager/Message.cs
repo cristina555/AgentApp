@@ -42,28 +42,28 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Methods
-        //public void Destroy()
-        //{
+        /*public void Destroy()
+        {
 
-        //}
-        //public void ExitMonitor()
-        //{
+        }
+        public void ExitMonitor()
+        {
 
-        //}
-        //public void NotifyAllMessages()
-        //{
+        }
+        public void NotifyAllMessages()
+        {
 
-        //}
-        //public void NotifyMessage()
-        //{
+        }
+        public void NotifyMessage()
+        {
 
-        //}
-        //public void SetPriority(String kind, int priority)
-        //{
+        }
+        public void SetPriority(String kind, int priority)
+        {
 
-        //}
+        }
 
-        /*public override bool Equals(Object obj)
+        public override bool Equals(Object obj)
         {
             if ( ((Message)obj).SameKind(_kind))
             {
