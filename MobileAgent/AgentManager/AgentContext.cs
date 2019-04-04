@@ -15,7 +15,7 @@ namespace MobileAgent.AgentManager
         AgentProxy CreateAgent(URL codebase, String code, Object init);
 		AgentProxy Clone(AgentProxy agentCloned);
         AgentProxy Dispatch(AgentProxy agletProxy, Ticket ticket);// throws IOException, AgletException
-        AgentProxy Dispatch(Uri destination);// 
+        AgentProxy Dispatch(URL destination);// 
 		void Dispose(AgentProxy agentProxy); //throws InvalidAgletException
         List<AgentProxy> GetAgentProxies();
         AgentProxy GetAgentProxy(int id);
@@ -27,7 +27,7 @@ namespace MobileAgent.AgentManager
         void RemoveContextListener(ContextListener listener);
 		AgentProxy RetractAglet(URL url); //throws IOException, AgletException
         AgentProxy RetractAglet(URL url, int agentId);//  throws IOException, AgletException
-		void setProperty(String key, Object value);
+		void SetProperty(String key, Object value);
         void ShutDown();
         void Start();
         void Activate();

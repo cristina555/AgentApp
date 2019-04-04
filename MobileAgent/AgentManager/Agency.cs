@@ -103,7 +103,7 @@ namespace MobileAgent.AgentManager
             AgentProxy agentDispatched = null;
             return agentDispatched;
         }
-        public void dispatchEvent(AgentEvent ev)
+        public void DispatchEvent(AgentEvent ev)
         {
             switch (ev.GetId())
             {
@@ -135,6 +135,12 @@ namespace MobileAgent.AgentManager
 
         }
         public AgentProxy GetAgentProxy(int id)
+        {
+            //Not implemented
+            AgentProxy a = null;
+            return a;
+        }
+        public AgentProxy GetAgentProxy(URL contextAddress, int id)
         {
             //Not implemented
             AgentProxy a = null;
@@ -272,7 +278,7 @@ namespace MobileAgent.AgentManager
             AgentProxy a = null;
             return a;
         }
-		public void setProperty(String key, Object value)
+		public void SetProperty(String key, Object value)
 		{
             //Not implemented
         }
