@@ -9,10 +9,18 @@ namespace MobileAgent.AgentManager
     public class Agency : AgentContext
     {
         #region Fields
-        private CloneListener cloneListener;
-        private MobilityListener mobilityListener;
-        private PersistencyListener persistencyListener;
+        private CloneListener cloneListener = null;
+        private MobilityListener mobilityListener = null;
+        private PersistencyListener persistencyListener =  null;
+        private List<AgentProxy> _agentList = new List<AgentProxy>();
         #endregion Fields
+
+        #region Constructors
+        public Agency()
+        {
+            
+        }
+        #endregion Constructors
 
         #region Methods
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -217,14 +225,14 @@ namespace MobileAgent.AgentManager
                 }
             }
         }
-        [[MethodImpl(MethodImplOptions.Synchronized)]
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void RemoveCloneListener(CloneListener l)
         {
             if (cloneListener == l)
             {
                 cloneListener = null;
             }
-            else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener)) {
+            else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener))) {
                 ((AgentEventListener)cloneListener).RemoveCloneListener(l);
                 if (((AgentEventListener)cloneListener).Size() == 0)
                 {
@@ -239,7 +247,7 @@ namespace MobileAgent.AgentManager
             {
                 mobilityListener = null;
             }
-            else if (mobilityListener.GetType().IsInstanceOfType(typeof(AgentEventListener)) {
+            else if (mobilityListener.GetType().IsInstanceOfType(typeof(AgentEventListener))) {
                 ((AgentEventListener)mobilityListener).RemoveMobilityListener(l);
                 if (((AgentEventListener)mobilityListener).Size() == 0)
                 {
@@ -254,7 +262,7 @@ namespace MobileAgent.AgentManager
             {
                 persistencyListener = null;
             }
-            else if (persistencyListener.GetType().IsInstanceOfType(typeof(AgentEventListener)) {
+            else if (persistencyListener.GetType().IsInstanceOfType(typeof(AgentEventListener))){
                 ((AgentEventListener)persistencyListener).AddPersistencyListener(l);
                 if (((AgentEventListener)persistencyListener).Size() == 0)
                 {

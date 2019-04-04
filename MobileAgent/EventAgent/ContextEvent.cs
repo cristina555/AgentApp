@@ -75,7 +75,7 @@ namespace MobileAgent.EventAgent
             }
             return "No message: Implement exception";
         }
-        public String ToString()
+        public override String ToString()
         {
             return "ContextEvent[" + name[_id - CONTEXT_FIRST] + "]";
         }

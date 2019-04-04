@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-s
+
 namespace MobileAgent.EventAgent
 {
     public class ContextAdapter : ContextListener

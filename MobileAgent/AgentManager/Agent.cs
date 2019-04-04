@@ -22,7 +22,6 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Methods
-
         public void DelegateMessage(Message msg)//throws InvalidAgletException
         {
             //Not implemented
