@@ -158,10 +158,12 @@ namespace MobileAgent.AgentManager
             {
                 url = new URL(protocol, address, portNo, "");
             }
-            catch (Exception excpt)
+            catch (Exception e)
             {
                 url = null;
-                throw excpt;
+                Console.WriteLine("Exception caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
             }
             SetDestination(url);
         }

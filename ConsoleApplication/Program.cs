@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using MobileAgent.AgentManager;
+using System.Net;
+using System.Net.Sockets;
 
 namespace ConsoleApplication
 {
@@ -11,20 +14,16 @@ namespace ConsoleApplication
     {
         static void Main(string[] args)
         {
-            ArrayList v = new ArrayList();
-            v.Add(1);
-            v.Add(3);
-            IEnumerator e = v.GetEnumerator();
-            while (e.MoveNext())
-            {
-                Console.WriteLine(e.Current);
-            }
-            Console.WriteLine(v.Count);
-            Uri url = new Uri("http://www.mywebsite.com:80/pages/page1.aspx");
-            Console.WriteLine(url.Scheme);
-            Console.WriteLine(url.Host);
-            Console.WriteLine(url.AbsolutePath);
-            Console.WriteLine(url.Port);
+            IPAddress ipAddress = Dns.GetHostEntry("localhost").AddressList[0];
+            IPAddress ipAddress2 = Dns.GetHostEntry("localhost").AddressList[1];
+            IPEndPoint ip = new IPEndPoint(ipAddress, 9989);
+
+            Agency agency = new Agency(ipAddress, 2222);
+            agency.Activate();
+            agency.Start();
+            Agency agency2 = new Agency(ipAddress2, 3333);
+            agency2.Activate();
+            agency2.Start();
         }
         
     }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MobileAgent.EventAgent;
 using MobileAgent.AdditionalClasses;
+using System.Net.Sockets;
+using System.Net;
 
 namespace MobileAgent.AgentManager
 {
@@ -12,13 +14,35 @@ namespace MobileAgent.AgentManager
         private CloneListener cloneListener = null;
         private MobilityListener mobilityListener = null;
         private PersistencyListener persistencyListener =  null;
-        private List<AgentProxy> _agentList = new List<AgentProxy>();
+        private List<AgentProxy> _agentList = null;
+        Socket _agencySocket = null;
+        IPEndPoint _ipEndPoint = null;
+
         #endregion Fields
 
         #region Constructors
-        public Agency()
+        public Agency(IPAddress ipAddress, int port)
         {
-            
+            try
+            {
+                
+                _agentList = new List<AgentProxy>();
+                _agencySocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                _ipEndPoint = new IPEndPoint(ipAddress, port);
+                Console.WriteLine("Agentia creata la portul " + port + ".");
+            }
+            catch(SocketException e)
+            {
+                Console.WriteLine("SocketException caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
         }
         #endregion Constructors
 
@@ -292,24 +316,40 @@ namespace MobileAgent.AgentManager
         }
         public void ShutDown()
         {
-            //Not implemented
+            _agencySocket.Close();
         }
         public void Start()
         {
-            //Not implemented
+            try
+            {
+                _agencySocket.Listen(100);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
         }
         public void Activate()
         {
-            //Not implemented
+            try
+            {
+                _agencySocket.Bind(_ipEndPoint);
+                _agencySocket.Listen(100);
+            }
+            catch(SocketException e)
+            {
+                Console.WriteLine("SocketException caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
         }
         public void Deactivate(long duration) // throws IOException
         {
             //Not implemented
         }
-        public void ExitMonitor()
-		{
-			//Not implemented
-		}
+
 		#endregion Methods
     }
 }
