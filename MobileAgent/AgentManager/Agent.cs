@@ -15,9 +15,10 @@ namespace MobileAgent.AgentManager
 		#endregion Fields
 		
 		#region Constructors
-        protected Agent()
+        public Agent( int id)
         {
-
+            _id = id;
+            Console.WriteLine("Agent instantiat");
         }
         #endregion Constructors
 

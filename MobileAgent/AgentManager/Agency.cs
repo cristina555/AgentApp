@@ -107,10 +107,6 @@ namespace MobileAgent.AgentManager
 		{
             //Not implemented
         }
-		public void ClearCache(URL codebase)
-		{
-            //Not implemented
-        }
         public  AgentProxy CreateAgent(URL codebase, String code, Object init)
         {
             //Not implemented

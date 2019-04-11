@@ -11,7 +11,6 @@ namespace MobileAgent.AgentManager
     public interface AgentContext
     {
         void AddContextListener();
-        void ClearCache(URL codebase);
         AgentProxy CreateAgent(URL codebase, String code, Object init);
 		AgentProxy Clone(AgentProxy agentCloned);
         AgentProxy Dispatch(AgentProxy agletProxy, Ticket ticket);// throws IOException, AgletException
