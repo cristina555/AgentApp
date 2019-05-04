@@ -1,24 +1,32 @@
 ﻿using System;
 using MobileAgent.EventAgent;
+using System.Net.Sockets;
 
 namespace MobileAgent.AgentManager
 {
-    public class Agent : AgentProxy
+    abstract public class Agent : AgentProxy
     {
-		#region Fields
-		public readonly static short MAJOR_VERSION = 1;
-		public readonly static short MINOR_VERSION = 0;
-		public readonly static int ACTIVE = 1;
-		public readonly static int INACTIVE = 0;
+        #region Fields
+        public readonly static int ACTIVE = 1;
+        public readonly static int INACTIVE = 0;
+        public readonly static int REMOTE = 2;
+        public int _state;
         private int _id;
         private string _codebase;
-		#endregion Fields
-		
-		#region Constructors
-        public Agent( int id)
+        private string _creationTime;
+        private int _agencyHostID;
+        #endregion Fields
+
+        #region Constructors
+        public Agent()
+        {
+
+        }
+        public Agent(int id)
         {
             _id = id;
-            Console.WriteLine("Agent instantiat");
+            SetCreationTime();
+            _state = ACTIVE;
         }
         #endregion Constructors
 
@@ -85,21 +93,13 @@ namespace MobileAgent.AgentManager
 		{
             //Not implemented
         }
-		public void Run()
-        {
-            //Not implemented
-        }
+        abstract public void Run();
         public bool IsActive()
         {
             //Not implemented
-            return false;
+            return _state == ACTIVE;
         }
         public bool IsRemote()
-        {
-            //Not implemented
-            return false;
-        }
-		public bool IsState(int type)
         {
             //Not implemented
             return false;
@@ -113,7 +113,15 @@ namespace MobileAgent.AgentManager
 		{
 			_id = id;
 		}
-		public void SetAgentCodebase(String codebase)
+        public void SetAgencyHost(int agencyHostID)
+        {
+            _agencyHostID = agencyHostID;
+        }
+        public void SetCreationTime()
+        {
+            _creationTime = DateTime.Now.ToString();
+        }
+        public void SetAgentCodebase(String codebase)
 		{
 			_codebase = codebase;
 		}

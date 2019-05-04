@@ -14,7 +14,6 @@ namespace MobileAgent.AgentManager
         String GetAgentInfo();
         bool IsActive();
         bool IsRemote();
-	    bool IsState(int type);
 		bool IsValid();
         Object SendMessage(Message msg);
         void Suspend();

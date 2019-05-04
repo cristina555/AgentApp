@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using MobileAgent.AgentManager;
 
-namespace ConsoleApplication
+namespace AgentApp
 {
-    public class AgentPi //: Agent
+    public class AgentPI : Agent
     {
-        public AgentPi(int id) //: base(id)
+        public AgentPI(int id) : base(id)
         {
 
         }
-        public  string CalculPi( int dec)
+        public string CalculPi(int dec)
         {
             dec++;
 
@@ -61,10 +60,14 @@ namespace ConsoleApplication
                 pi[i] += c;
                 c = pi[i] / 10;
 
-                result = (pi[i] % 10).ToString() +result;
+                result = (pi[i] % 10).ToString() + result;
             }
 
             return result;
+        }
+        public override void Run()
+        {
+
         }
     }
 }
