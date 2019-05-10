@@ -38,10 +38,11 @@
             this.dispatchButton = new System.Windows.Forms.Button();
             this.disposeButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.port = new System.Windows.Forms.Label();
+            this.textBoxPort = new System.Windows.Forms.TextBox();
             this.listAgents = new System.Windows.Forms.ComboBox();
             this.cloneButton = new System.Windows.Forms.Button();
-            this.textBoxPort = new System.Windows.Forms.TextBox();
-            this.port = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -143,6 +144,22 @@
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             // 
+            // port
+            // 
+            this.port.AutoSize = true;
+            this.port.Location = new System.Drawing.Point(172, 116);
+            this.port.Name = "port";
+            this.port.Size = new System.Drawing.Size(34, 17);
+            this.port.TabIndex = 11;
+            this.port.Text = "Port";
+            // 
+            // textBoxPort
+            // 
+            this.textBoxPort.Location = new System.Drawing.Point(212, 116);
+            this.textBoxPort.Name = "textBoxPort";
+            this.textBoxPort.Size = new System.Drawing.Size(97, 22);
+            this.textBoxPort.TabIndex = 10;
+            // 
             // listAgents
             // 
             this.listAgents.FormattingEnabled = true;
@@ -160,27 +177,22 @@
             this.cloneButton.Text = "Clone Agent";
             this.cloneButton.UseVisualStyleBackColor = true;
             // 
-            // textBoxPort
+            // button1
             // 
-            this.textBoxPort.Location = new System.Drawing.Point(212, 116);
-            this.textBoxPort.Name = "textBoxPort";
-            this.textBoxPort.Size = new System.Drawing.Size(97, 22);
-            this.textBoxPort.TabIndex = 10;
-            // 
-            // port
-            // 
-            this.port.AutoSize = true;
-            this.port.Location = new System.Drawing.Point(172, 116);
-            this.port.Name = "port";
-            this.port.Size = new System.Drawing.Size(34, 17);
-            this.port.TabIndex = 11;
-            this.port.Text = "Port";
+            this.button1.Location = new System.Drawing.Point(423, 211);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 33);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "Agenti";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(872, 435);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.labelAgents);
             this.Controls.Add(this.agentsList);
@@ -214,6 +226,7 @@
         private System.Windows.Forms.ComboBox listAgents;
         private System.Windows.Forms.Label port;
         private System.Windows.Forms.TextBox textBoxPort;
+        private System.Windows.Forms.Button button1;
     }
 }
 

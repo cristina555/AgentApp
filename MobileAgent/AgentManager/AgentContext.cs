@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MobileAgent.EventAgent;
 using MobileAgent.AdditionalClasses;
+using System.Net;
 
 namespace MobileAgent.AgentManager
 {
@@ -15,7 +16,8 @@ namespace MobileAgent.AgentManager
         AgentProxy Clone(AgentProxy agentCloned);
         void Dispatch(AgentProxy agletProxy, Ticket ticket);// throws IOException, AgletException
         AgentProxy Dispatch(URL destination);// 
-		void Dispose(AgentProxy agentProxy); //throws InvalidAgletException
+        void Dispatch(AgentProxy agentProxy, IPEndPoint destination);
+        void Dispose(AgentProxy agentProxy); //throws InvalidAgletException
         List<AgentProxy> GetAgentProxies();
         AgentProxy GetAgentProxy(int id);
         AgentProxy GetAgentProxy(URL contextAddress, int id);

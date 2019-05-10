@@ -22,9 +22,12 @@ namespace AgentApp
         private void showAgentsList()
         {
             List<AgentProxy> _agentsList = _agency.GetAgentProxies();
-            foreach(AgentProxy agentProxy in _agentsList)
+            agentsList.Clear();
+            listAgents.Items.Clear();
+            foreach (AgentProxy agentProxy in _agentsList)
             {
-                agentsList.Text = agentProxy.GetAgentCodebase() + System.Environment.NewLine;
+                agentsList.Text = agentProxy.GetAgentCodebase() + " " +agentProxy.GetAgentId() + System.Environment.NewLine;
+
                 listAgents.Items.Add(agentProxy.GetAgentCodebase());
             }
            // agentsList.Text = "Agentia are " + _agentsList.Count + "!";
@@ -38,7 +41,6 @@ namespace AgentApp
             info.Text = "Agentia a fost creata la portul " + port;
             _agency.Activate();
             _agency.Start();
-
             showAgentsList();
 
         }
@@ -57,16 +59,29 @@ namespace AgentApp
 
         private void dispatchButton_Click(object sender, EventArgs e)
         {
-            string selected = this.listAgents.GetItemText(this.listAgents.SelectedItem);
-            AgentProxy agentDispatched = _agency.GetAgentProxy(selected);
-            int portNumber =Int32.Parse(textBoxPort.Text);
-            _agency.Dispatch(agentDispatched, portNumber);
+            try
+            {
+                string selected = this.listAgents.GetItemText(this.listAgents.SelectedItem);
+                AgentProxy agentDispatched = _agency.GetAgentProxy(selected);
+                int portNumber = Int32.Parse(textBoxPort.Text);
+                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), portNumber);
+                _agency.Dispatch(agentDispatched, ipEndPoint);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+                        
         }
 
         private void disposeButton_Click(object sender, EventArgs e)
         {
 
         }
-            
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            showAgentsList();
+        }
     }
 }

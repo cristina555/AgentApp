@@ -95,26 +95,32 @@ namespace MobileAgent.AgentManager
         public void SendReply()
         {
             //Not implemeted
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void SendReply(char c)
         {
             //Not implemeted
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void SendReply(double c)
         {
             //Not implemeted
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void SendReply(Object arg)
         {
             //Not implemeted
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void SetArg(String name, char value)
         {
             //Not implemeted
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void SetArg(String name, Object a)
         {
             //Not implemeted
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public override String ToString()
         {

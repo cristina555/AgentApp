@@ -4,6 +4,7 @@ using System.Net.Sockets;
 
 namespace MobileAgent.AgentManager
 {
+    [Serializable]
     abstract public class Agent : AgentProxy
     {
         #region Fields
@@ -33,13 +34,14 @@ namespace MobileAgent.AgentManager
         #region Methods
         public void DelegateMessage(Message msg)//throws InvalidAgletException
         {
-            //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public AgentContext GetAgletContext()
 		{
             //Not implemented
             AgentContext a = null;
             return a;
+            throw new Exception("Aceasta metoda trebuie completata");
         }
 		public int GetAgentId()
 		{
@@ -54,44 +56,52 @@ namespace MobileAgent.AgentManager
             //Not implemented
             MessageManager m = null;
             return m;
+            throw new Exception("Aceasta metoda trebuie completata");
         }
 		public AgentProxy GetProxy()
 		{
             //Not implemented
             AgentProxy a = null;
             return a;
-
+            throw new Exception("Aceasta metoda trebuie completata");
         }
 		public String GetText()
 		{
             //Not implemented
             return "";
-		}
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
         public String GetAgentInfo()
         {
             //Not implemented
             return "";
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public bool HandleMessage(Message message)
 		{
             //Not implemented
             return false;
-		}
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
 		public void NotifyAllMessages()
 		{
             //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void NotifyMessage()
 		{
             //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void OnCreation(Object init)
 		{
             //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void OnDisposing()
 		{
             //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         abstract public void Run();
         public bool IsActive()
@@ -103,11 +113,13 @@ namespace MobileAgent.AgentManager
         {
             //Not implemented
             return false;
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public bool IsValid()
         {
             //Not implemented
             return false;
+            throw new Exception("Aceasta metoda trebuie completata");
         }
 		public void SetAgentId(int id)
 		{
@@ -128,15 +140,18 @@ namespace MobileAgent.AgentManager
 		public void SetText(String text)
 		{
             //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public Object SendMessage(Message msg)
         {
             //Not implemented
             return null;
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void Suspend()
         {
             //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         #endregion Methods
 

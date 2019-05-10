@@ -7,13 +7,14 @@ using MobileAgent.AgentManager;
 
 namespace AgentApp
 {
+    [Serializable]
     public class AgentPI : Agent
     {
         public AgentPI(int id) : base(id)
         {
 
         }
-        public string CalculPi(int dec)
+        private string CalculPi(int dec)
         {
             dec++;
 
@@ -67,7 +68,7 @@ namespace AgentApp
         }
         public override void Run()
         {
-
+            computepi
         }
     }
 }

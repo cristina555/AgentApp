@@ -12,8 +12,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 namespace MobileAgent.AgentManager
-{
-   
+{   
     public class Agency : AgentContext
     {
         #region Fields
@@ -24,7 +23,7 @@ namespace MobileAgent.AgentManager
         Socket _agencySocket = null;
         IPEndPoint _ipEndPoint = null;
         private int _agencyID;
-        private FileStream _fileStream;
+        Dictionary<IPEndPoint, Socket> _connectionMap = new Dictionary<IPEndPoint, Socket>();
         #endregion Fields
 
         #region Constructors
@@ -55,6 +54,260 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Methods
+        public void Activate()
+        {
+            try
+            {
+                _agencySocket.Bind(_ipEndPoint);
+
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
+        }
+        public void Start()
+        {
+            try
+            {
+                _agencySocket.Listen(100);
+                Console.WriteLine("Agentia a inceput sa asculte!");
+
+                Thread mainThread = new Thread(new ThreadStart(startListening));
+                mainThread.IsBackground = true;
+                mainThread.Start();
+
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
+        }
+        private void startListening()
+        {
+
+            while (true)
+            {
+                Socket mySocket = _agencySocket.Accept();
+                Thread newThread = new Thread(new ParameterizedThreadStart(startAccept));
+                newThread.IsBackground = true;
+                newThread.Start(mySocket);
+            }
+        }
+        private void startAccept(object obj)
+        {
+            try
+            {
+                Socket s = (Socket)obj;
+                NetworkStream networkStream = new NetworkStream(s);
+                IFormatter formatter = new BinaryFormatter();
+                AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
+                _agentList.Add(agentProxy);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
+        }
+        public void CreateAgent(AgentProxy agentProxy)
+        {
+            try
+            {
+                _agentList.Add(agentProxy);
+            }
+            //catch (AgencyNotFoundException anfe)
+            //{
+            //    Console.WriteLine("AgencyNotFoundException caught!!!");
+            //    Console.WriteLine("Source : " + anfe.Source);
+            //    Console.WriteLine("Message : " + anfe.Message);
+            //}
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
+        }
+        public AgentProxy Clone(AgentProxy agent) // throws CloneNotSupportedException
+        {
+            
+            AgentProxy agentCloned= null;
+            agentCloned.SetAgentCodebase(agentCloned.GetAgentCodebase() + " cloned");
+            //agentCloned = agent;
+            return agentCloned;
+            //throw new Exception("Aceasta metoda trebuie completata");
+
+        }
+        public void Dispatch(AgentProxy agentProxy, Ticket destination)// throws IOException, AgletException
+		{            
+            throw new Exception("Aceasta metoda trebuie completata!");
+        }
+		public AgentProxy Dispatch(URL destination)
+		{
+            //Not implemented
+            //AgentProxy agentDispatched = null;
+            //return agentDispatched;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+        public void Dispatch(AgentProxy agentProxy, IPEndPoint destination)
+        {
+            try
+            {
+                if (_connectionMap.ContainsKey(destination))
+                {
+                    NetworkStream networkStream = new NetworkStream(_connectionMap[destination]);
+                    IFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(networkStream, agentProxy);
+                    _agentList.Remove(agentProxy);
+                }
+                else
+                {
+                    Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    connectSocket.Connect(destination);
+                    _connectionMap.Add(destination, connectSocket);
+                    NetworkStream networkStream = new NetworkStream(connectSocket);
+                    IFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(networkStream, agentProxy);
+                    _agentList.Remove(agentProxy);
+                }
+            }
+            catch (AgentNotFoundException anfe)
+            {
+                Console.WriteLine("AgentNotFoundException caught!!!");
+                Console.WriteLine("Source : " + anfe.Source);
+                Console.WriteLine("Message : " + anfe.Message);
+            }
+            catch (IOException io)
+            {
+                Console.WriteLine("IOException caught!!!");
+                Console.WriteLine("Source : " + io.Source);
+                Console.WriteLine("Message : " + io.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception caught!!!");
+                Console.WriteLine("Source : " + e.Source);
+                Console.WriteLine("Message : " + e.Message);
+            }
+        }
+        public void DispatchEvent(AgentEvent ev)
+        {
+            switch (ev.GetId())
+            {
+                case CloneEvent.CLONING:
+                case CloneEvent.CLONE:
+                case CloneEvent.CLONED:
+                    ProcessCloneEvent((CloneEvent)ev);
+                    break;
+                case MobilityEvent.DISPATCHING:
+                case MobilityEvent.REVERTING:
+                case MobilityEvent.ARRIVAL:
+                    ProcessMobilityEvent((MobilityEvent)ev);
+                    break;
+                case PersistencyEvent.DEACTIVATING:
+                case PersistencyEvent.ACTIVATION:
+                    ProcessPersistencyEvent((PersistencyEvent)ev);
+                    break;
+            }
+        }
+        public void Dispose(AgentProxy agentProxy) //throws InvalidAgletException
+		{
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+        public List<AgentProxy> GetAgentProxies()
+        {
+            return _agentList;
+        }
+        public AgentProxy GetAgentProxy(int id)
+        {
+            //Not implemented
+            AgentProxy a = null;
+            return a;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+        public AgentProxy GetAgentProxy(string codebase)
+        {
+            AgentProxy agentProxy = null;
+            foreach (AgentProxy aP in _agentList)
+            {
+                if (aP.GetAgentCodebase().Equals(codebase)) 
+                {
+                    agentProxy = aP;
+                    break;
+                }
+            }
+            return agentProxy;
+        }
+        public int GetAgencyID()
+        {
+            return _agencyID ;
+        }
+        public AgentProxy GetAgentProxy(URL contextAddress, int id)
+        {
+            //Not implemented
+            AgentProxy a = null;
+            return a;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+        public String GetName()
+        {
+            String Name = "";
+            return Name;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+		public Object GetProperty(String key)
+		{
+            //Not implemented
+            return null;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+        public Object GetProperty(String key, Object defaultValue)
+		{
+            //Not implemented
+            return null;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+        public URL GetHostingURL()
+        {
+            //Not implemented
+            return null;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+        
+        public AgentProxy RetractAglet(URL url) //throws IOException, AgletException
+		{
+            //Not implemented
+            AgentProxy a = null;
+            return a;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+		public AgentProxy RetractAglet(URL url, int agentId)//  throws IOException, AgletException
+		{
+            //Not implemented
+            AgentProxy a = null;
+            return a;
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+		public void SetProperty(String key, Object value)
+		{
+            //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
+        public void ShutDown()
+        {
+            _agencySocket.Close();
+        }
+        
+        public void Deactivate(long duration) // throws IOException
+        {
+            throw new Exception("Aceasta metoda trebuie completata");
+        }
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void AddCloneListener(CloneListener listener)
         {
@@ -66,9 +319,12 @@ namespace MobileAgent.AgentManager
             {
                 return;
             }
-            else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener))) {
+            else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+            {
                 ((AgentEventListener)cloneListener).AddCloneListener(listener);
-            } else if (cloneListener.GetType().IsInstanceOfType(typeof(CloneListener)) ){
+            }
+            else if (cloneListener.GetType().IsInstanceOfType(typeof(CloneListener)))
+            {
                 cloneListener = new AgentEventListener(cloneListener, listener);
             }
         }
@@ -112,192 +368,8 @@ namespace MobileAgent.AgentManager
             }
         }
         public void AddContextListener()
-		{
-            //Not implemented
-        }
-        public void CreateAgent(AgentProxy agentProxy)
-        {
-            try
-            {
-                _agentList.Add(agentProxy);
-            }
-            catch (AgencyNotFoundException anfe)
-            {
-                Console.WriteLine("AgencyNotFoundException caught!!!");
-                Console.WriteLine("Source : " + anfe.Source);
-                Console.WriteLine("Message : " + anfe.Message);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
-            }
-        }
-        public AgentProxy Clone(AgentProxy agent) // throws CloneNotSupportedException
-        {
-            
-            //AgentProxy agentCloned= null;
-            //agentCloned = agent;
-            //return agentCloned;
-            throw new Exception("Aceasta metoda trebuie completata");
-
-        }
-        public void Dispatch(AgentProxy agentProxy, Ticket destination)// throws IOException, AgletException
-		{            
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-		public AgentProxy Dispatch(URL destination)
-		{
-            //Not implemented
-            //AgentProxy agentDispatched = null;
-            //return agentDispatched;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public void Dispatch(AgentProxy agentProxy, int destination)
-        {
-            try
-            {
-                IFormatter formatter = new BinaryFormatter();
-                _fileStream = File.Create("agent.data");
-                formatter.Serialize(_fileStream, agentProxy);
-
-                byte[] dataArray = readBytes(_fileStream);
-
-                IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                listener.Connect(ipAddress, destination);
-
-                if(listener.Connected == true)
-                {
-                    _agencySocket.Send(dataArray);
-                    listener.Receive(dataArray); 
-                }
-
-            }
-            catch(AgentNotFoundException anfe)
-            {
-                Console.WriteLine("AgentNotFoundException caught!!!");
-                Console.WriteLine("Source : " + anfe.Source);
-                Console.WriteLine("Message : " + anfe.Message);
-            }
-            catch (IOException io)
-            {
-                Console.WriteLine("IOException caught!!!");
-                Console.WriteLine("Source : " + io.Source);
-                Console.WriteLine("Message : " + io.Message);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
-            }
-            //throw new Exception("Aceasta metoda trebuie completata");
-        }
-        private byte[] readBytes(FileStream stream)
-        {
-            byte[] dataArray = new byte[16];
-            try
-            {
-                for (int i = 0; i < stream.Length; i++)
-                {
-                    stream.Read(dataArray, 0, dataArray.Length);
-                }
-            }
-            catch (IOException io)
-            {
-                Console.WriteLine("IOException caught!!!");
-                Console.WriteLine("Source : " + io.Source);
-                Console.WriteLine("Message : " + io.Message);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
-            }
-            return dataArray;
-        }
-        public void DispatchEvent(AgentEvent ev)
-        {
-            switch (ev.GetId())
-            {
-                case CloneEvent.CLONING:
-                case CloneEvent.CLONE:
-                case CloneEvent.CLONED:
-                    ProcessCloneEvent((CloneEvent)ev);
-                    break;
-                case MobilityEvent.DISPATCHING:
-                case MobilityEvent.REVERTING:
-                case MobilityEvent.ARRIVAL:
-                    ProcessMobilityEvent((MobilityEvent)ev);
-                    break;
-                case PersistencyEvent.DEACTIVATING:
-                case PersistencyEvent.ACTIVATION:
-                    ProcessPersistencyEvent((PersistencyEvent)ev);
-                    break;
-            }
-        }
-        public void Dispose(AgentProxy agentProxy) //throws InvalidAgletException
-		{
-            //Not implemented
-        }
-        public List<AgentProxy> GetAgentProxies()
-        {
-            return _agentList;
-
-        }
-        public AgentProxy GetAgentProxy(int id)
         {
             //Not implemented
-            AgentProxy a = null;
-            return a;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public AgentProxy GetAgentProxy(string codebase)
-        {
-            AgentProxy agentProxy = null;
-            foreach (AgentProxy aP in _agentList)
-            {
-                if (aP.GetAgentCodebase().Equals(codebase)) 
-                {
-                    agentProxy = aP;
-                    break;
-                }
-            }
-            return agentProxy;
-        }
-        public int GetAgencyID()
-        {
-            //Not implemented
-            return _agencyID ;
-        }
-        public AgentProxy GetAgentProxy(URL contextAddress, int id)
-        {
-            //Not implemented
-            AgentProxy a = null;
-            return a;
-        }
-        public String GetName()
-        {
-            String Name = "";
-            return Name;
-        }
-		public Object GetProperty(String key)
-		{
-            //Not implemented
-            return null;
-		}
-        public Object GetProperty(String key, Object defaultValue)
-		{
-            //Not implemented
-            return null;
-		}
-        public URL GetHostingURL()
-        {
-            //Not implemented
-            return null;
         }
         protected void ProcessCloneEvent(CloneEvent ev)
         {
@@ -357,7 +429,8 @@ namespace MobileAgent.AgentManager
             {
                 cloneListener = null;
             }
-            else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener))) {
+            else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+            {
                 ((AgentEventListener)cloneListener).RemoveCloneListener(l);
                 if (((AgentEventListener)cloneListener).Size() == 0)
                 {
@@ -372,7 +445,8 @@ namespace MobileAgent.AgentManager
             {
                 mobilityListener = null;
             }
-            else if (mobilityListener.GetType().IsInstanceOfType(typeof(AgentEventListener))) {
+            else if (mobilityListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+            {
                 ((AgentEventListener)mobilityListener).RemoveMobilityListener(l);
                 if (((AgentEventListener)mobilityListener).Size() == 0)
                 {
@@ -387,7 +461,8 @@ namespace MobileAgent.AgentManager
             {
                 persistencyListener = null;
             }
-            else if (persistencyListener.GetType().IsInstanceOfType(typeof(AgentEventListener))){
+            else if (persistencyListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+            {
                 ((AgentEventListener)persistencyListener).AddPersistencyListener(l);
                 if (((AgentEventListener)persistencyListener).Size() == 0)
                 {
@@ -396,83 +471,10 @@ namespace MobileAgent.AgentManager
             }
         }
         public void RemoveContextListener(ContextListener listener)
-		{
-            //Not implemented
-        }
-        public AgentProxy RetractAglet(URL url) //throws IOException, AgletException
-		{
-            //Not implemented
-            AgentProxy a = null;
-            return a;
-        }
-		public AgentProxy RetractAglet(URL url, int agentId)//  throws IOException, AgletException
-		{
-            //Not implemented
-            AgentProxy a = null;
-            return a;
-        }
-		public void SetProperty(String key, Object value)
-		{
-            //Not implemented
-        }
-        public void ShutDown()
-        {
-            _agencySocket.Close();
-        }
-        public void Activate()
-        {
-            try
-            {
-                _agencySocket.Bind(_ipEndPoint);
-                
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
-            }
-        }
-        public void Start()
-        {
-            try
-            {
-                _agencySocket.Listen(100);
-                Thread t1 = new Thread(new ParameterizedThreadStart(startListening));
-                t1.IsBackground = true;
-                t1.Start();
-
-           }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
-            }
-        }
-        private void startListening(object obj)
-        {
-            
-            Socket s = (Socket)obj;
-
-            while (true)
-            {
-                if (File.Exists("agent.data"))
-                {
-                    _fileStream = File.OpenRead("agent.data");
-                    IFormatter formatter = new BinaryFormatter();
-                    AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(_fileStream);
-                }
-            }
-            //s.Receive()
-            //Socket agentSocket = _agencySocket.Accept();                
-           
-        }
-        public void Deactivate(long duration) // throws IOException
         {
             //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
-
-		#endregion Methods
+        #endregion Methods
     }
 }
