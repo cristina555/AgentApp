@@ -4,17 +4,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MobileAgent.AgentManager;
+using System.Threading;
 
 namespace AgentApp
 {
     [Serializable]
     public class AgentPI : Agent
     {
+        #region Fields
+        private int dec;
+        #endregion Fields
+
+        #region Constructor
         public AgentPI(int id) : base(id)
         {
 
         }
-        private string CalculPi(int dec)
+        #endregion Constructor
+
+        #region Methods
+        public int SetDec
+        {
+            set
+            {
+                dec = value;
+            }
+        }
+        public int GetDec
+        {
+            get
+            {
+                return dec;
+            }
+        }
+        private void CalculPi()
         {
             dec++;
 
@@ -63,12 +86,15 @@ namespace AgentApp
 
                 result = (pi[i] % 10).ToString() + result;
             }
-
-            return result;
+            Console.WriteLine("Rezultatul este: "+ result);
         }
         public override void Run()
         {
-            computepi
+            Thread agentThread = new Thread(new ThreadStart(CalculPi));
+            agentThread.IsBackground = true;
+            agentThread.Start();
         }
+        #endregion Methods
     }
+
 }

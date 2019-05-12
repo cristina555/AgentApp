@@ -31,7 +31,6 @@
             this.groupBox = new System.Windows.Forms.GroupBox();
             this.console = new System.Windows.Forms.TextBox();
             this.info = new System.Windows.Forms.TextBox();
-            this.startButton = new System.Windows.Forms.Button();
             this.createButton = new System.Windows.Forms.Button();
             this.agentsList = new System.Windows.Forms.TextBox();
             this.labelAgents = new System.Windows.Forms.Label();
@@ -66,21 +65,11 @@
             // 
             // info
             // 
-            this.info.Location = new System.Drawing.Point(147, 22);
+            this.info.Location = new System.Drawing.Point(18, 22);
             this.info.Multiline = true;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(245, 37);
+            this.info.Size = new System.Drawing.Size(374, 37);
             this.info.TabIndex = 1;
-            // 
-            // startButton
-            // 
-            this.startButton.Location = new System.Drawing.Point(12, 22);
-            this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(129, 37);
-            this.startButton.TabIndex = 1;
-            this.startButton.Text = "Start agency";
-            this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
             // createButton
             // 
@@ -197,7 +186,6 @@
             this.Controls.Add(this.labelAgents);
             this.Controls.Add(this.agentsList);
             this.Controls.Add(this.info);
-            this.Controls.Add(this.startButton);
             this.Controls.Add(this.groupBox);
             this.Name = "MainForm";
             this.Text = "Interfata agentie";
@@ -213,7 +201,6 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox;
-        private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.TextBox console;
         private System.Windows.Forms.TextBox info;
         private System.Windows.Forms.Button createButton;

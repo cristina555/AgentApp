@@ -18,6 +18,7 @@ namespace MobileAgent.AgentManager
 		bool IsValid();
         Object SendMessage(Message msg);
         void Suspend();
+        void Run();
 
     }
 }

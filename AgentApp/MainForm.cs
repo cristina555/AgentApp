@@ -17,32 +17,31 @@ namespace AgentApp
         Agency _agency;
         public MainForm()
         {
+            
             InitializeComponent();
-        }
-        private void showAgentsList()
-        {
-            List<AgentProxy> _agentsList = _agency.GetAgentProxies();
-            agentsList.Clear();
-            listAgents.Items.Clear();
-            foreach (AgentProxy agentProxy in _agentsList)
-            {
-                agentsList.Text = agentProxy.GetAgentCodebase() + " " +agentProxy.GetAgentId() + System.Environment.NewLine;
 
-                listAgents.Items.Add(agentProxy.GetAgentCodebase());
-            }
-           // agentsList.Text = "Agentia are " + _agentsList.Count + "!";
-        }
-        private void startButton_Click(object sender, EventArgs e)
-        {
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1"); 
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
             Random random = new Random();
             int port = random.Next(1000, 2000);
             _agency = new Agency(ipAddress, port);
             info.Text = "Agentia a fost creata la portul " + port;
             _agency.Activate();
             _agency.Start();
-            showAgentsList();
-
+            UpdateAgentsList();
+        }
+        private void UpdateAgentsList()
+        {
+            List<AgentProxy> _agentsList = _agency.GetAgentProxies();
+            agentsList.Clear();
+            listAgents.Items.Clear();
+            if (_agentsList != null)
+            {
+                foreach (AgentProxy agentProxy in _agentsList)
+                {
+                    agentsList.Text = agentProxy.GetAgentCodebase() + " " + agentProxy.GetAgentId() + System.Environment.NewLine;
+                    listAgents.Items.Add(agentProxy.GetAgentCodebase());
+                }
+            }
         }
 
         private void createButton_Click(object sender, EventArgs e)
@@ -53,8 +52,9 @@ namespace AgentApp
             int idHost = _agency.GetAgencyID();
             agent.SetAgencyHost(idHost);
             agent.SetAgentCodebase("Calculate PI");
+            agent.SetDec = 4;
             _agency.CreateAgent(agent);
-            showAgentsList();
+            UpdateAgentsList();
         }
 
         private void dispatchButton_Click(object sender, EventArgs e)
@@ -66,6 +66,7 @@ namespace AgentApp
                 int portNumber = Int32.Parse(textBoxPort.Text);
                 IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), portNumber);
                 _agency.Dispatch(agentDispatched, ipEndPoint);
+                UpdateAgentsList();
             }
             catch(Exception ex)
             {
@@ -81,7 +82,7 @@ namespace AgentApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            showAgentsList();
+            UpdateAgentsList();
         }
     }
 }

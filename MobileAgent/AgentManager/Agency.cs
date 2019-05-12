@@ -107,6 +107,8 @@ namespace MobileAgent.AgentManager
                 IFormatter formatter = new BinaryFormatter();
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
                 _agentList.Add(agentProxy);
+                AddMobilityListener(mobilityListener);
+                agentProxy.Run();
             }
             catch (SocketException e)
             {
