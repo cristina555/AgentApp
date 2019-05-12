@@ -1,6 +1,7 @@
 ﻿using System;
 using MobileAgent.EventAgent;
 using System.Net.Sockets;
+using System.Net;
 
 namespace MobileAgent.AgentManager
 {
@@ -17,6 +18,7 @@ namespace MobileAgent.AgentManager
         private string _creationTime;
         private int _agencyHostID;
         private string _agentInfo;
+        private IPEndPoint _currentContext;
         #endregion Fields
 
         #region Constructors
@@ -33,12 +35,9 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Methods
-        public AgentContext GetAgletContext()
-		{
-            //Not implemented
-            AgentContext a = null;
-            return a;
-            throw new Exception("Aceasta metoda trebuie completata");
+        public IPEndPoint GetAgentContext()
+        {
+            return _currentContext;
         }
 		public int GetAgentId()
 		{
@@ -106,6 +105,10 @@ namespace MobileAgent.AgentManager
 		public void SetAgentInfo(String info)
 		{
             _agentInfo = info;
+        }
+        public void SetAgentContext(IPEndPoint context)
+        {
+            _currentContext = context;
         }
         public void Suspend()
         {

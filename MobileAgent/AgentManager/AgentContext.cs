@@ -17,7 +17,7 @@ namespace MobileAgent.AgentManager
         List<AgentProxy> GetAgentProxies();
         AgentProxy GetAgentProxy(int id);
         int GetAgencyID();
-        String GetName();
+        IPEndPoint GetAgencyContext();
 		AgentProxy RetractAglet(IPEndPoint location);
         void ShutDown();
         void Start();

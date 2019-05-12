@@ -106,6 +106,7 @@ namespace MobileAgent.AgentManager
                 IFormatter formatter = new BinaryFormatter();
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
                 _agentList.Add(agentProxy);
+                agentProxy.SetAgentContext(_ipEndPoint);
                 AddMobilityListener(mobilityListener);
                 agentProxy.Run();
             }
@@ -230,6 +231,10 @@ namespace MobileAgent.AgentManager
         public int GetAgencyID()
         {
             return _agencyID ;
+        }
+        public IPEndPoint GetAgencyContext()
+        {
+            return _ipEndPoint;
         }
         public AgentProxy RetractAglet(IPEndPoint location) //throws IOException, AgletException
 		{

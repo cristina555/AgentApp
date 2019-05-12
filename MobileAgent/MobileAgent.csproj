@@ -43,12 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdditionalClasses\URL.cs" />
     <Compile Include="AgentManager\Agency.cs" />
     <Compile Include="AgentManager\Agent.cs" />
     <Compile Include="AgentManager\AgentContext.cs" />
     <Compile Include="AgentManager\AgentProxy.cs" />
-    <Compile Include="AgentManager\Ticket.cs" />
     <Compile Include="EventAgent\AgentEventListener.cs" />
     <Compile Include="EventAgent\AgentEvent.cs" />
     <Compile Include="EventAgent\CloneAdapter.cs" />
@@ -63,17 +61,16 @@
     <Compile Include="EventAgent\PersistencyAdapter.cs" />
     <Compile Include="EventAgent\PersistencyEvent.cs" />
     <Compile Include="EventAgent\PersistencyListener.cs" />
-    <Compile Include="AgentManager\Message.cs" />
-    <Compile Include="AgentManager\MessageManager.cs" />
     <Compile Include="Exceptions\AgencyNotFoundException.cs" />
     <Compile Include="Exceptions\AgentException.cs" />
     <Compile Include="Exceptions\AgentNotFoundException.cs" />
     <Compile Include="Exceptions\CloneNotSupportedException.cs" />
     <Compile Include="Exceptions\InvalidAgentException.cs" />
-    <Compile Include="Exceptions\MessageException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="AdditionalClasses\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

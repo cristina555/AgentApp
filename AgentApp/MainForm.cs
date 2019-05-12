@@ -1,4 +1,5 @@
-﻿using MobileAgent.AgentManager;
+﻿using AgentApp.Agents;
+using MobileAgent.AgentManager;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,11 +49,11 @@ namespace AgentApp
         {
             Random random = new Random();
             int agenctID = random.Next(1000, 9999);
-            AgentPI agent = new AgentPI(agenctID);
+            AgentInfo agent = new AgentInfo(agenctID);
             int idHost = _agency.GetAgencyID();
             agent.SetAgencyHost(idHost);
-            agent.SetAgentCodebase("Calculate PI");
-            agent.SetDec = 4;
+            agent.SetAgentCodebase("Get Info");
+            agent.SetAgentContext(_agency.GetAgencyContext());
             _agency.CreateAgent(agent);
             UpdateAgentsList();
         }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MobileAgent.AdditionalClasses;
 using MobileAgent.AgentManager;
+using System.Net;
 
 namespace MobileAgent.EventAgent
 {
@@ -19,18 +19,15 @@ namespace MobileAgent.EventAgent
         private static String[] name = {
             "DISPATCHING", "REVERTING", "ARRIVAL",
         };
-        private Ticket _ticket;
+        IPEndPoint _ip;
         #endregion Fields
 
         #region Constructors
-        public MobilityEvent(AgentProxy target, int id , Ticket ticket) : base(target, id)
+        public MobilityEvent(AgentProxy target, int id , IPEndPoint ticket) : base(target, id)
         {
-            _ticket = ticket;
+            _ip = ticket;
         }
-        public MobilityEvent(AgentProxy target, int id, URL loc) : base(target, id)
-        {
-            _ticket = new Ticket(loc);
-        }
+
         #endregion Constructors
 
         #region Methods
@@ -38,14 +35,7 @@ namespace MobileAgent.EventAgent
         {
             return (AgentProxy)_source;
         }
-        public URL GetLocation()
-        {
-            return _ticket.GetDestination();
-        }
-        public Ticket GetTicket()
-        {
-            return _ticket;
-        }
+    
         public override String ToString()
         {
             return "MobilityEvent[" + name[_id - AGLET_MOBILITY_FIRST] + "]";
