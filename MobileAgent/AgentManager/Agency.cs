@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MobileAgent.EventAgent;
-using MobileAgent.AdditionalClasses;
 using MobileAgent.Exceptions;
 using System.Net.Sockets;
 using System.Net;
@@ -123,12 +122,6 @@ namespace MobileAgent.AgentManager
             {
                 _agentList.Add(agentProxy);
             }
-            //catch (AgencyNotFoundException anfe)
-            //{
-            //    Console.WriteLine("AgencyNotFoundException caught!!!");
-            //    Console.WriteLine("Source : " + anfe.Source);
-            //    Console.WriteLine("Message : " + anfe.Message);
-            //}
             catch (Exception e)
             {
                 Console.WriteLine("Exception caught!!!");
@@ -145,17 +138,6 @@ namespace MobileAgent.AgentManager
             return agentCloned;
             //throw new Exception("Aceasta metoda trebuie completata");
 
-        }
-        public void Dispatch(AgentProxy agentProxy, Ticket destination)// throws IOException, AgletException
-		{            
-            throw new Exception("Aceasta metoda trebuie completata!");
-        }
-		public AgentProxy Dispatch(URL destination)
-		{
-            //Not implemented
-            //AgentProxy agentDispatched = null;
-            //return agentDispatched;
-            throw new Exception("Aceasta metoda trebuie completata");
         }
         public void Dispatch(AgentProxy agentProxy, IPEndPoint destination)
         {
@@ -228,7 +210,6 @@ namespace MobileAgent.AgentManager
         }
         public AgentProxy GetAgentProxy(int id)
         {
-            //Not implemented
             AgentProxy a = null;
             return a;
             throw new Exception("Aceasta metoda trebuie completata");
@@ -250,55 +231,11 @@ namespace MobileAgent.AgentManager
         {
             return _agencyID ;
         }
-        public AgentProxy GetAgentProxy(URL contextAddress, int id)
-        {
-            //Not implemented
-            AgentProxy a = null;
-            return a;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public String GetName()
-        {
-            String Name = "";
-            return Name;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-		public Object GetProperty(String key)
-		{
-            //Not implemented
-            return null;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public Object GetProperty(String key, Object defaultValue)
-		{
-            //Not implemented
-            return null;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public URL GetHostingURL()
-        {
-            //Not implemented
-            return null;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        
-        public AgentProxy RetractAglet(URL url) //throws IOException, AgletException
+        public AgentProxy RetractAglet(IPEndPoint location) //throws IOException, AgletException
 		{
             //Not implemented
             AgentProxy a = null;
             return a;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-		public AgentProxy RetractAglet(URL url, int agentId)//  throws IOException, AgletException
-		{
-            //Not implemented
-            AgentProxy a = null;
-            return a;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-		public void SetProperty(String key, Object value)
-		{
-            //Not implemented
             throw new Exception("Aceasta metoda trebuie completata");
         }
         public void ShutDown()
@@ -369,9 +306,9 @@ namespace MobileAgent.AgentManager
                 persistencyListener = new AgentEventListener(persistencyListener, listener);
             }
         }
-        public void AddContextListener()
+        public void AddContextListener(ContextListener listener)
         {
-            //Not implemented
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         protected void ProcessCloneEvent(CloneEvent ev)
         {
@@ -423,6 +360,10 @@ namespace MobileAgent.AgentManager
                         break;
                 }
             }
+        }
+        protected void ProcessContextEvent(ContextEvent ev)
+        {
+            throw new Exception("Aceasta metoda trebuie completata");
         }
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void RemoveCloneListener(CloneListener l)

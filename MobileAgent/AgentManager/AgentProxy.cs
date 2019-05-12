@@ -8,15 +8,19 @@ namespace MobileAgent.AgentManager
 {
     public interface AgentProxy
     {
-       	void DelegateMessage(Message msg);//throws InvalidAgletException
-		int GetAgentId();// throws InvalidAgletException
+		int GetAgentId();
+        AgentContext GetAgletContext();
         String GetAgentCodebase();
         String GetAgentInfo();
+        AgentProxy GetProxy();
+        void SetAgentId(int id);
+        void SetAgencyHost(int agencyHostID);
+        void SetCreationTime();
         void SetAgentCodebase(String codebase);
+        void SetAgentInfo(String info);
         bool IsActive();
         bool IsRemote();
 		bool IsValid();
-        Object SendMessage(Message msg);
         void Suspend();
         void Run();
 

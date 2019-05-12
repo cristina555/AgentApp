@@ -16,6 +16,7 @@ namespace MobileAgent.AgentManager
         private string _codebase;
         private string _creationTime;
         private int _agencyHostID;
+        private string _agentInfo;
         #endregion Fields
 
         #region Constructors
@@ -32,10 +33,6 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Methods
-        public void DelegateMessage(Message msg)//throws InvalidAgletException
-        {
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
         public AgentContext GetAgletContext()
 		{
             //Not implemented
@@ -51,49 +48,18 @@ namespace MobileAgent.AgentManager
 		{
 			return _codebase;
 		}
-		public MessageManager GetMessageManager()
-		{
-            //Not implemented
-            MessageManager m = null;
-            return m;
-            throw new Exception("Aceasta metoda trebuie completata");
+        public String GetAgentInfo()
+        {
+            return _agentInfo;
         }
-		public AgentProxy GetProxy()
+        public AgentProxy GetProxy()
 		{
             //Not implemented
             AgentProxy a = null;
             return a;
             throw new Exception("Aceasta metoda trebuie completata");
         }
-		public String GetText()
-		{
-            //Not implemented
-            return "";
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public String GetAgentInfo()
-        {
-            //Not implemented
-            return "";
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public bool HandleMessage(Message message)
-		{
-            //Not implemented
-            return false;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-		public void NotifyAllMessages()
-		{
-            //Not implemented
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public void NotifyMessage()
-		{
-            //Not implemented
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public void OnCreation(Object init)
+		public void OnCreation(Object init)
 		{
             //Not implemented
             throw new Exception("Aceasta metoda trebuie completata");
@@ -137,16 +103,9 @@ namespace MobileAgent.AgentManager
 		{
 			_codebase = codebase;
 		}
-		public void SetText(String text)
+		public void SetAgentInfo(String info)
 		{
-            //Not implemented
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        public Object SendMessage(Message msg)
-        {
-            //Not implemented
-            return null;
-            throw new Exception("Aceasta metoda trebuie completata");
+            _agentInfo = info;
         }
         public void Suspend()
         {
