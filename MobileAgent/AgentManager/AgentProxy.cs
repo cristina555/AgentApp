@@ -13,7 +13,6 @@ namespace MobileAgent.AgentManager
         IPEndPoint GetAgentContext();
         String GetAgentCodebase();
         String GetAgentInfo();
-        AgentProxy GetProxy();
         void SetAgentId(int id);
         void SetAgencyHost(int agencyHostID);
         void SetCreationTime();

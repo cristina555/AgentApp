@@ -11,11 +11,11 @@ namespace MobileAgent.EventAgent
     public class MobilityEvent : AgentEvent
     {
         #region Fields
-        public const int AGLET_MOBILITY_FIRST = 30;
-        public const int AGLET_MOBILITY_LAST = 32;
-        public const int DISPATCHING = AGLET_MOBILITY_FIRST;
-        public const int REVERTING = AGLET_MOBILITY_FIRST + 1;
-        public const int ARRIVAL = AGLET_MOBILITY_FIRST + 2;
+        public const int AGENT_MOBILITY_FIRST = 30;
+        public const int AGENT_MOBILITY_LAST = 32;
+        public const int DISPATCHING = AGENT_MOBILITY_FIRST;
+        public const int REVERTING = AGENT_MOBILITY_FIRST + 1;
+        public const int ARRIVAL = AGENT_MOBILITY_FIRST + 2;
         private static String[] name = {
             "DISPATCHING", "REVERTING", "ARRIVAL",
         };

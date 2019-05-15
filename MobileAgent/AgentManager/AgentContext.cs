@@ -14,10 +14,7 @@ namespace MobileAgent.AgentManager
         AgentProxy Clone(AgentProxy agentCloned);
         void Dispatch(AgentProxy agentProxy, IPEndPoint destination);
         void Dispose(AgentProxy agentProxy); 
-        List<AgentProxy> GetAgentProxies();
-        AgentProxy GetAgentProxy(int id);
-        int GetAgencyID();
-        IPEndPoint GetAgencyContext();
+        AgentProxy GetAgentProxy(string codebase);
 		AgentProxy RetractAglet(IPEndPoint location);
         void ShutDown();
         void Start();

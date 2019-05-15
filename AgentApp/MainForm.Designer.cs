@@ -37,11 +37,13 @@
             this.dispatchButton = new System.Windows.Forms.Button();
             this.disposeButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.deactivateButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.port = new System.Windows.Forms.Label();
-            this.textBoxPort = new System.Windows.Forms.TextBox();
             this.listAgents = new System.Windows.Forms.ComboBox();
             this.cloneButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.connectedAgencies = new System.Windows.Forms.ComboBox();
+            this.textBoxPort = new System.Windows.Forms.TextBox();
             this.groupBox.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -120,6 +122,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.connectedAgencies);
+            this.groupBox2.Controls.Add(this.deactivateButton);
+            this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.port);
             this.groupBox2.Controls.Add(this.textBoxPort);
             this.groupBox2.Controls.Add(this.listAgents);
@@ -129,25 +134,39 @@
             this.groupBox2.Controls.Add(this.createButton);
             this.groupBox2.Location = new System.Drawing.Point(423, 24);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(332, 160);
+            this.groupBox2.Size = new System.Drawing.Size(416, 390);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
+            // 
+            // deactivateButton
+            // 
+            this.deactivateButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.deactivateButton.Location = new System.Drawing.Point(22, 225);
+            this.deactivateButton.Name = "deactivateButton";
+            this.deactivateButton.Size = new System.Drawing.Size(134, 28);
+            this.deactivateButton.TabIndex = 12;
+            this.deactivateButton.Text = "Exit";
+            this.deactivateButton.UseVisualStyleBackColor = true;
+            this.deactivateButton.Click += new System.EventHandler(this.deactivateButton_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(22, 166);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 33);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "Agenti";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // port
             // 
             this.port.AutoSize = true;
-            this.port.Location = new System.Drawing.Point(172, 116);
+            this.port.Location = new System.Drawing.Point(172, 166);
             this.port.Name = "port";
             this.port.Size = new System.Drawing.Size(34, 17);
             this.port.TabIndex = 11;
             this.port.Text = "Port";
-            // 
-            // textBoxPort
-            // 
-            this.textBoxPort.Location = new System.Drawing.Point(212, 116);
-            this.textBoxPort.Name = "textBoxPort";
-            this.textBoxPort.Size = new System.Drawing.Size(97, 22);
-            this.textBoxPort.TabIndex = 10;
             // 
             // listAgents
             // 
@@ -166,22 +185,26 @@
             this.cloneButton.Text = "Clone Agent";
             this.cloneButton.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // connectedAgencies
             // 
-            this.button1.Location = new System.Drawing.Point(423, 211);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 33);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Agenti";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.connectedAgencies.FormattingEnabled = true;
+            this.connectedAgencies.Location = new System.Drawing.Point(175, 118);
+            this.connectedAgencies.Name = "connectedAgencies";
+            this.connectedAgencies.Size = new System.Drawing.Size(134, 24);
+            this.connectedAgencies.TabIndex = 14;
+            // 
+            // textBoxPort
+            // 
+            this.textBoxPort.Location = new System.Drawing.Point(212, 166);
+            this.textBoxPort.Name = "textBoxPort";
+            this.textBoxPort.Size = new System.Drawing.Size(97, 22);
+            this.textBoxPort.TabIndex = 10;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(872, 435);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.labelAgents);
             this.Controls.Add(this.agentsList);
@@ -212,8 +235,10 @@
         private System.Windows.Forms.Button cloneButton;
         private System.Windows.Forms.ComboBox listAgents;
         private System.Windows.Forms.Label port;
-        private System.Windows.Forms.TextBox textBoxPort;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button deactivateButton;
+        private System.Windows.Forms.ComboBox connectedAgencies;
+        private System.Windows.Forms.TextBox textBoxPort;
     }
 }
 

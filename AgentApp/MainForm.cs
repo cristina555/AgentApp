@@ -1,4 +1,5 @@
-﻿using AgentApp.Agents;
+﻿using AgentApp.AditionalClasses;
+using AgentApp.Agents;
 using MobileAgent.AgentManager;
 using System;
 using System.Collections.Generic;
@@ -16,19 +17,35 @@ namespace AgentApp
     public partial class MainForm : Form
     {
         Agency _agency;
+        ConfigParser _configParser;
+        
+        Random r;
+        
         public MainForm()
         {
             
             InitializeComponent();
+            _configParser = new ConfigParser();
+            r = new Random();
+            StartAgency();
+        }
+        private void StartAgency()
+        {
+            Dictionary<IPAddress, bool> _hosts = _configParser.GetHosts();
+            int hostIndex = r.Next(_hosts.Count);
 
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-            Random random = new Random();
-            int port = random.Next(1000, 2000);
+
+            IPAddress ipAddress = _hosts.ElementAt(hostIndex).Key;
+            int port = r.Next(1000, 2000);
+
+            _configParser.UpdateHosts(ipAddress, "true");
+
             _agency = new Agency(ipAddress, port);
-            info.Text = "Agentia a fost creata la portul " + port;
+            info.Text = "Agentia se afla la " + ipAddress + ", portul " + port;
             _agency.Activate();
             _agency.Start();
             UpdateAgentsList();
+
         }
         private void UpdateAgentsList()
         {
@@ -44,7 +61,17 @@ namespace AgentApp
                 }
             }
         }
-
+        private void UpdateFreeAgencies()
+        {
+            Dictionary<IPAddress, bool> _hosts = _configParser.GetHosts();
+            foreach(IPAddress ipAddress in _hosts.Keys)
+            {
+                if(_hosts[ipAddress] == true)
+                {
+                    connectedAgencies.Items.Add(ipAddress);
+                }
+            }
+        }
         private void createButton_Click(object sender, EventArgs e)
         {
             Random random = new Random();
@@ -64,8 +91,9 @@ namespace AgentApp
             {
                 string selected = this.listAgents.GetItemText(this.listAgents.SelectedItem);
                 AgentProxy agentDispatched = _agency.GetAgentProxy(selected);
+                string ipAddress = this.connectedAgencies.GetItemText(this.connectedAgencies.SelectedItem);
                 int portNumber = Int32.Parse(textBoxPort.Text);
-                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), portNumber);
+                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), portNumber);
                 _agency.Dispatch(agentDispatched, ipEndPoint);
                 UpdateAgentsList();
             }
@@ -85,5 +113,13 @@ namespace AgentApp
         {
             UpdateAgentsList();
         }
+
+        private void deactivateButton_Click(object sender, EventArgs e)
+        {
+            _configParser.Reset(_agency.GetAgencyContext().Address);
+            _agency.ShutDown();
+            this.Close();
+        }
+
     }
 }

@@ -42,9 +42,7 @@ namespace AgentApp.Agents
         }
         public override void Run()
         {
-            Thread agentThread = new Thread(new ThreadStart(ShowAgencies));
-            agentThread.IsBackground = true;
-            agentThread.Start();
+            ShowAgencies();
         }
         #endregion Methods
 

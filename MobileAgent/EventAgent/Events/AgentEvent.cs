@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MobileAgent.AgentManager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +10,12 @@ namespace MobileAgent.EventAgent
     public class AgentEvent
     {
         #region Fields
-        protected Object _source;
+        protected AgentProxy _source;
         public int _id;
         #endregion Fields
 
         #region Constructors
-        public AgentEvent(Object source, int id)
+        public AgentEvent(AgentProxy source, int id)
         {
             _source = source;
             _id = id;
@@ -26,13 +27,9 @@ namespace MobileAgent.EventAgent
         {
             return _id;
         }
-        public Object GetSource()
+        public AgentProxy GetSource()
         {
             return _source;
-        }
-        public override String ToString()
-        {
-            return _source.ToString();
         }
         #endregion Methods
     }

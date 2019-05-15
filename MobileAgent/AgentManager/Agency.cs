@@ -52,6 +52,21 @@ namespace MobileAgent.AgentManager
         }
         #endregion Constructors
 
+        #region Properties
+        public List<AgentProxy> GetAgentProxies()
+        {
+             return _agentList;            
+        }
+        public int GetAgencyID()
+        {
+             return _agencyID;            
+        }
+        public IPEndPoint GetAgencyContext()
+        {
+             return _ipEndPoint;
+        }
+        #endregion Properties
+
         #region Methods
         public void Activate()
         {
@@ -106,9 +121,12 @@ namespace MobileAgent.AgentManager
                 IFormatter formatter = new BinaryFormatter();
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
                 _agentList.Add(agentProxy);
-                agentProxy.SetAgentContext(_ipEndPoint);
-                AddMobilityListener(mobilityListener);
-                agentProxy.Run();
+                agentProxy.SetAgentContext(_ipEndPoint);  
+                              
+                Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
+                agentThread.IsBackground = true;
+                agentThread.Start();
+
             }
             catch (SocketException e)
             {
@@ -130,15 +148,11 @@ namespace MobileAgent.AgentManager
                 Console.WriteLine("Message : " + e.Message);
             }
         }
-        public AgentProxy Clone(AgentProxy agent) // throws CloneNotSupportedException
-        {
-            
+        public AgentProxy Clone(AgentProxy agent) 
+        {            
             AgentProxy agentCloned= null;
             agentCloned.SetAgentCodebase(agentCloned.GetAgentCodebase() + " cloned");
-            //agentCloned = agent;
             return agentCloned;
-            //throw new Exception("Aceasta metoda trebuie completata");
-
         }
         public void Dispatch(AgentProxy agentProxy, IPEndPoint destination)
         {
@@ -205,16 +219,8 @@ namespace MobileAgent.AgentManager
 		{
             throw new Exception("Aceasta metoda trebuie completata");
         }
-        public List<AgentProxy> GetAgentProxies()
-        {
-            return _agentList;
-        }
-        public AgentProxy GetAgentProxy(int id)
-        {
-            AgentProxy a = null;
-            return a;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
+
+       
         public AgentProxy GetAgentProxy(string codebase)
         {
             AgentProxy agentProxy = null;
@@ -228,14 +234,7 @@ namespace MobileAgent.AgentManager
             }
             return agentProxy;
         }
-        public int GetAgencyID()
-        {
-            return _agencyID ;
-        }
-        public IPEndPoint GetAgencyContext()
-        {
-            return _ipEndPoint;
-        }
+       
         public AgentProxy RetractAglet(IPEndPoint location) //throws IOException, AgletException
 		{
             //Not implemented
@@ -245,7 +244,7 @@ namespace MobileAgent.AgentManager
         }
         public void ShutDown()
         {
-            _agencySocket.Close();
+           
         }
         
         public void Deactivate(long duration) // throws IOException

@@ -34,31 +34,51 @@ namespace MobileAgent.AgentManager
         }
         #endregion Constructors
 
-        #region Methods
+        #region Properties
         public IPEndPoint GetAgentContext()
         {
-            return _currentContext;
+             return _currentContext;
         }
 		public int GetAgentId()
 		{
-			return _id;
-		}
+             return _id;
+  		}
 		public String GetAgentCodebase()
-		{
-			return _codebase;
-		}
+		{  
+             return _codebase;
+        }
         public String GetAgentInfo()
         {
             return _agentInfo;
         }
-        public AgentProxy GetProxy()
-		{
-            //Not implemented
-            AgentProxy a = null;
-            return a;
-            throw new Exception("Aceasta metoda trebuie completata");
+        public void SetAgentId(int id)
+        {
+            _id = id;
         }
-		public void OnCreation(Object init)
+        public void SetAgencyHost(int id)
+        {
+            _agencyHostID = id;
+        }
+        public void SetCreationTime()
+        {
+            _creationTime = DateTime.Now.ToString();
+        }
+        public void SetAgentCodebase(string codebase)
+        {
+            _codebase = codebase;
+        }
+        public void SetAgentInfo(string info)
+        {
+            _agentInfo = info;
+        }
+        public void SetAgentContext(IPEndPoint currentContext)
+        {
+            _currentContext = currentContext;
+        }
+        #endregion Properties
+
+        #region Methods
+      	public void OnCreation(Object init)
 		{
             //Not implemented
             throw new Exception("Aceasta metoda trebuie completata");
@@ -67,8 +87,7 @@ namespace MobileAgent.AgentManager
 		{
             //Not implemented
             throw new Exception("Aceasta metoda trebuie completata");
-        }
-        abstract public void Run();
+        }        
         public bool IsActive()
         {
             //Not implemented
@@ -86,35 +105,13 @@ namespace MobileAgent.AgentManager
             return false;
             throw new Exception("Aceasta metoda trebuie completata");
         }
-		public void SetAgentId(int id)
-		{
-			_id = id;
-		}
-        public void SetAgencyHost(int agencyHostID)
-        {
-            _agencyHostID = agencyHostID;
-        }
-        public void SetCreationTime()
-        {
-            _creationTime = DateTime.Now.ToString();
-        }
-        public void SetAgentCodebase(String codebase)
-		{
-			_codebase = codebase;
-		}
-		public void SetAgentInfo(String info)
-		{
-            _agentInfo = info;
-        }
-        public void SetAgentContext(IPEndPoint context)
-        {
-            _currentContext = context;
-        }
+
         public void Suspend()
         {
             //Not implemented
             throw new Exception("Aceasta metoda trebuie completata");
         }
+        abstract public void Run();
         #endregion Methods
 
     }

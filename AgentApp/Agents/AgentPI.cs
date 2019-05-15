@@ -90,9 +90,7 @@ namespace AgentApp
         }
         public override void Run()
         {
-            Thread agentThread = new Thread(new ThreadStart(CalculPi));
-            agentThread.IsBackground = true;
-            agentThread.Start();
+            CalculPi();
         }
         #endregion Methods
     }
