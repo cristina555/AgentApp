@@ -16,6 +16,10 @@ namespace AgentApp
         #endregion Fields
 
         #region Constructor
+        public AgentPI()
+        {
+            this.SetAgentInfo("Calculate the value of PI");
+        }
         public AgentPI(int id) : base(id)
         {
 
@@ -39,6 +43,8 @@ namespace AgentApp
         }
         private void CalculPi()
         {
+            string codebase="";
+
             dec++;
 
             uint[] x = new uint[dec * 10 / 3 + 2];
@@ -87,6 +93,8 @@ namespace AgentApp
                 result = (pi[i] % 10).ToString() + result;
             }
             Console.WriteLine("Rezultatul este: "+ result);
+            codebase += "Rezultatul este: " + result + "\n";
+            this.SetAgentCodebase(codebase);
         }
         public override void Run()
         {

@@ -12,26 +12,28 @@ namespace AgentApp.AditionalClasses
     public class ConfigParser
     {
         #region Field
-        Dictionary<IPAddress, bool> _hostsList;
+        List<IPEndPoint> _hostsList;
         #endregion Field
+
         #region Constructor
         public ConfigParser()
         {
-            _hostsList = new Dictionary<IPAddress, bool>();
+            _hostsList = new List<IPEndPoint>();
         }
         #endregion Constructor
 
         #region Methods
         private void CreateHostsList()
         {
-            NameValueCollection ipAdresses;
-            ipAdresses = ConfigurationManager.AppSettings;
-            foreach (string ipAdress in ipAdresses.AllKeys)
+            NameValueCollection ipAddresses;
+            ipAddresses = ConfigurationManager.AppSettings;
+            foreach (string ipAddress in ipAddresses.AllKeys)
             {
-                _hostsList.Add(IPAddress.Parse(ipAdress), Convert.ToBoolean(ipAdresses.Get(ipAdress)));
+                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), Convert.ToInt16(ipAddresses.Get(ipAddress)));
+                _hostsList.Add(ipEndPoint);
             }
         }
-        private void SetSettings(IPAddress key, string value)
+        /*private void SetSettings(IPAddress key, string value)
         {
             Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             configuration.AppSettings.Settings[key.ToString()].Value = value;
@@ -44,20 +46,27 @@ namespace AgentApp.AditionalClasses
             configuration.AppSettings.Settings[key.ToString()].Value = "false";
             configuration.Save(ConfigurationSaveMode.Full, true);
             ConfigurationManager.RefreshSection("appSettings");
-        }
-        public Dictionary<IPAddress, bool> GetHosts()
+        }*/
+        public List<IPEndPoint> GetHosts()
         {
             CreateHostsList();
             return _hostsList;
         }
-        public void UpdateHosts(IPAddress key, string value)
+        public void DeleteHost(IPEndPoint host)
+        {
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration.AppSettings.Settings.Remove(host.Address.ToString());
+            configuration.Save(ConfigurationSaveMode.Full, true);
+            ConfigurationManager.RefreshSection("appSettings");
+        }
+        /*public void UpdateHosts(IPAddress key, string value)
         {
             SetSettings(key, value);
         }
         public void Reset(IPAddress key)
         {
             ResetSettings(key);
-        }
+        }*/
         #endregion Methods
     }
 }

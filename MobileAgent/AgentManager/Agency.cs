@@ -18,11 +18,15 @@ namespace MobileAgent.AgentManager
         private CloneListener cloneListener = null;
         private MobilityListener mobilityListener = null;
         private PersistencyListener persistencyListener =  null;
+
         private List<AgentProxy> _agentList = null;
+        private AgentProxy _stationaryAgent;
         Socket _agencySocket = null;
         IPEndPoint _ipEndPoint = null;
         private int _agencyID;
         Dictionary<IPEndPoint, Socket> _connectionMap = new Dictionary<IPEndPoint, Socket>();
+        public delegate void dgEventRaiser();
+        public event dgEventRaiser OnArrival;
         #endregion Fields
 
         #region Constructors
@@ -64,6 +68,14 @@ namespace MobileAgent.AgentManager
         public IPEndPoint GetAgencyContext()
         {
              return _ipEndPoint;
+        }
+        public AgentProxy GetStationaryAgent()
+        {
+            return _stationaryAgent;
+        }
+        public void SetStationaryAgent(AgentProxy stationaryAgent)
+        {
+            _stationaryAgent = stationaryAgent;
         }
         #endregion Properties
 
@@ -121,8 +133,9 @@ namespace MobileAgent.AgentManager
                 IFormatter formatter = new BinaryFormatter();
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
                 _agentList.Add(agentProxy);
-                agentProxy.SetAgentContext(_ipEndPoint);  
-                              
+                agentProxy.SetAgentContext(_ipEndPoint);
+                OnArrival();
+
                 Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
                 agentThread.IsBackground = true;
                 agentThread.Start();
@@ -151,7 +164,7 @@ namespace MobileAgent.AgentManager
         public AgentProxy Clone(AgentProxy agent) 
         {            
             AgentProxy agentCloned= null;
-            agentCloned.SetAgentCodebase(agentCloned.GetAgentCodebase() + " cloned");
+            agentCloned.SetAgentCodebase(agentCloned.GetAgentInfo() + " cloned");
             return agentCloned;
         }
         public void Dispatch(AgentProxy agentProxy, IPEndPoint destination)
@@ -215,7 +228,7 @@ namespace MobileAgent.AgentManager
                     break;
             }
         }
-        public void Dispose(AgentProxy agentProxy) //throws InvalidAgletException
+        public void Dispose(AgentProxy agentProxy) 
 		{
             throw new Exception("Aceasta metoda trebuie completata");
         }
@@ -226,7 +239,7 @@ namespace MobileAgent.AgentManager
             AgentProxy agentProxy = null;
             foreach (AgentProxy aP in _agentList)
             {
-                if (aP.GetAgentCodebase().Equals(codebase)) 
+                if (aP.GetAgentInfo().Equals(codebase)) 
                 {
                     agentProxy = aP;
                     break;
@@ -235,7 +248,7 @@ namespace MobileAgent.AgentManager
             return agentProxy;
         }
        
-        public AgentProxy RetractAglet(IPEndPoint location) //throws IOException, AgletException
+        public AgentProxy RetractAglet(IPEndPoint location) 
 		{
             //Not implemented
             AgentProxy a = null;
@@ -247,7 +260,7 @@ namespace MobileAgent.AgentManager
            
         }
         
-        public void Deactivate(long duration) // throws IOException
+        public void Deactivate(long duration)
         {
             throw new Exception("Aceasta metoda trebuie completata");
         }

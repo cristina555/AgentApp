@@ -17,16 +17,22 @@ namespace AgentApp.Agents
         #endregion Fields
 
         #region Constructor
-        public AgentInfo(int id) : base(id)
+        public AgentInfo()
         {
             _agenciesVisited = new List<IPEndPoint>();
+            this.SetAgentInfo("Get the list of visited agencies");
+        }
+        public AgentInfo(int id) : base(id)
+        {
+             _agenciesVisited = new List<IPEndPoint>();
         }
         #endregion Constructor
 
         #region Methods
         private void AddAgency()
         {
-            if (!_agenciesVisited.Contains(this.GetAgentContext()))
+            IPEndPoint ip = this.GetAgentContext(); 
+            if (!_agenciesVisited.Contains(ip))
             {
                 _agenciesVisited.Add(this.GetAgentContext());
             }
@@ -34,11 +40,16 @@ namespace AgentApp.Agents
         private void ShowAgencies()
         {
             AddAgency();
+            String codebase="";
             Console.WriteLine("Agentul a vizitat");
-            foreach(IPEndPoint context in _agenciesVisited)
+            codebase += "Agentul a vizitat\n";
+            foreach (IPEndPoint context in _agenciesVisited)
             {
                 Console.WriteLine(context);
+                codebase += context;
+                codebase += "\n";
             }
+            this.SetAgentCodebase(codebase);
         }
         public override void Run()
         {

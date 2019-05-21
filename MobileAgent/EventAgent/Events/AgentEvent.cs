@@ -10,12 +10,12 @@ namespace MobileAgent.EventAgent
     public class AgentEvent
     {
         #region Fields
-        protected AgentProxy _source;
+        protected Object _source;
         public int _id;
         #endregion Fields
 
         #region Constructors
-        public AgentEvent(AgentProxy source, int id)
+        public AgentEvent(Object source, int id)
         {
             _source = source;
             _id = id;
@@ -27,7 +27,7 @@ namespace MobileAgent.EventAgent
         {
             return _id;
         }
-        public AgentProxy GetSource()
+        public Object GetSource()
         {
             return _source;
         }

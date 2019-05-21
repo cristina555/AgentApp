@@ -38,7 +38,7 @@ namespace MobileAgent.EventAgent
     
         public override String ToString()
         {
-            return "MobilityEvent[" + name[_id - AGLET_MOBILITY_FIRST] + "]";
+            return "MobilityEvent[" + name[_id - AGENT_MOBILITY_FIRST] + "]";
         }
         #endregion Methods
 
