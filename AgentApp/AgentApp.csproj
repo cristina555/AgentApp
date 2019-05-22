@@ -51,7 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AditionalClasses\ConfigParser.cs" />
+    <Compile Include="AditionalClasses\CustomConfig.cs" />
     <Compile Include="AditionalClasses\GeneralSettings.cs" />
+    <Compile Include="AditionalClasses\HostElement.cs" />
+    <Compile Include="AditionalClasses\NetworkCollection.cs" />
     <Compile Include="Agents\AgentInfo.cs" />
     <Compile Include="Agents\AgentPI.cs" />
     <Compile Include="Agents\AgentSystemInfo.cs" />

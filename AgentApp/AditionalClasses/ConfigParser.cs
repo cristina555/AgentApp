@@ -67,6 +67,21 @@ namespace AgentApp.AditionalClasses
         {
             ResetSettings(key);
         }*/
-        #endregion Methods
-    }
+        public List<Tuple<String, IPEndPoint, string[]>> GetNetworkHosts()
+        {
+            List<Tuple<string, IPEndPoint, string[]>> hosts = null;
+
+            var _config = (CustomConfig)ConfigurationManager.GetSection("networkConfig");
+
+            foreach (HostElement instance in _config.Instances)
+            {
+                
+                IPEndPoint ip = new IPEndPoint(IPAddress.Parse(instance.Ip), Convert.ToInt16(instance.Port));
+                string[] n = instance.Neighbours.Split(' ');
+                hosts.Add(Tuple.Create(instance.Name, ip, n));
+            }
+            return hosts;
+        }
+    #endregion Methods
+}
 }

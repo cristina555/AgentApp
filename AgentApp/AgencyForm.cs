@@ -4,6 +4,7 @@ using MobileAgent.AgentManager;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -31,7 +32,8 @@ namespace AgentApp
             StartAgency();
             CreateStationaryAgent();
             FillAgentsList();
-            
+           
+
         }
         private void StartAgency()
         {
@@ -42,7 +44,7 @@ namespace AgentApp
             IPAddress ipAddress = _hosts[hostIndex].Address;
             int port = _hosts[hostIndex].Port;
 
-            _configParser.DeleteHost(_hosts[hostIndex]);
+            //_configParser.DeleteHost(_hosts[hostIndex]);
             _hosts.Remove(_hosts[hostIndex]);
             UpdateFreeAgencies(_hosts);
 
