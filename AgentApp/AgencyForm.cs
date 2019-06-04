@@ -109,13 +109,13 @@ namespace AgentApp
                 }
             }
         }
-        private void UpdateFreeAgencies(List<IPEndPoint> iPEnds)
-        {
-            foreach(IPEndPoint ipAddress in iPEnds)
-            {
-               connectedAgencies.Items.Add(ipAddress.Address);
-            }
-        }
+        //private void UpdateFreeAgencies(Dictionary<IPAddress, Tuple<string, int, string[]>> iPEnds)
+        //{
+        //    foreach(IPEndPoint ipAddress in iPEnds)
+        //    {
+        //       connectedAgencies.Items.Add(ipAddress.Address);
+        //    }
+        //}
         private void createButton_Click(object sender, EventArgs e)
         {
             try
@@ -144,7 +144,7 @@ namespace AgentApp
             {
                 string selected = this.listAgents.GetItemText(this.listAgents.SelectedItem);
                 AgentProxy agentDispatched = _agency.GetAgentProxy(selected);
-                string ipAddress = this.connectedAgencies.GetItemText(this.connectedAgencies.SelectedItem);
+                string ipAddress = textBoxIpAddress.Text;
                 int portNumber = Int32.Parse(textBoxPort.Text);
                 IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), portNumber);
                 _agency.Dispatch(agentDispatched, ipEndPoint);

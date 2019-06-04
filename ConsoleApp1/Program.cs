@@ -30,6 +30,7 @@ namespace ConsoleApp1
             {
                 if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
                 {
+                    Console.WriteLine(ni.Name);
                     if (ni.Name == "Wi-Fi")
                     {
                         foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)

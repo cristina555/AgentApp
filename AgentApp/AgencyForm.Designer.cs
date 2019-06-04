@@ -37,17 +37,17 @@
             this.dispatchButton = new System.Windows.Forms.Button();
             this.disposeButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBoxIpAddress = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.labelAddress = new System.Windows.Forms.Label();
+            this.labelChoose = new System.Windows.Forms.Label();
             this.comboBoxAgents = new System.Windows.Forms.ComboBox();
-            this.connectedAgencies = new System.Windows.Forms.ComboBox();
             this.deactivateButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.port = new System.Windows.Forms.Label();
             this.textBoxPort = new System.Windows.Forms.TextBox();
             this.listAgents = new System.Windows.Forms.ComboBox();
             this.cloneButton = new System.Windows.Forms.Button();
-            this.labelChoose = new System.Windows.Forms.Label();
-            this.labelAddress = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
             this.textBoxStationaryAgent = new System.Windows.Forms.TextBox();
             this.groupBox.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -137,11 +137,11 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.textBoxIpAddress);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.labelAddress);
             this.groupBox2.Controls.Add(this.labelChoose);
             this.groupBox2.Controls.Add(this.comboBoxAgents);
-            this.groupBox2.Controls.Add(this.connectedAgencies);
             this.groupBox2.Controls.Add(this.deactivateButton);
             this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.port);
@@ -159,23 +159,50 @@
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             // 
+            // textBoxIpAddress
+            // 
+            this.textBoxIpAddress.Location = new System.Drawing.Point(175, 177);
+            this.textBoxIpAddress.Multiline = true;
+            this.textBoxIpAddress.Name = "textBoxIpAddress";
+            this.textBoxIpAddress.Size = new System.Drawing.Size(135, 24);
+            this.textBoxIpAddress.TabIndex = 19;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(21, 177);
+            this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(133, 34);
+            this.button2.TabIndex = 18;
+            this.button2.Text = "Dispatch";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // labelAddress
+            // 
+            this.labelAddress.AutoSize = true;
+            this.labelAddress.Location = new System.Drawing.Point(172, 158);
+            this.labelAddress.Name = "labelAddress";
+            this.labelAddress.Size = new System.Drawing.Size(60, 17);
+            this.labelAddress.TabIndex = 17;
+            this.labelAddress.Text = "Address";
+            // 
+            // labelChoose
+            // 
+            this.labelChoose.AutoSize = true;
+            this.labelChoose.Location = new System.Drawing.Point(172, 113);
+            this.labelChoose.Name = "labelChoose";
+            this.labelChoose.Size = new System.Drawing.Size(97, 17);
+            this.labelChoose.TabIndex = 16;
+            this.labelChoose.Text = "Choose Agent";
+            // 
             // comboBoxAgents
             // 
             this.comboBoxAgents.FormattingEnabled = true;
             this.comboBoxAgents.Location = new System.Drawing.Point(21, 78);
-            this.comboBoxAgents.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBoxAgents.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxAgents.Name = "comboBoxAgents";
             this.comboBoxAgents.Size = new System.Drawing.Size(285, 24);
             this.comboBoxAgents.TabIndex = 15;
-            // 
-            // connectedAgencies
-            // 
-            this.connectedAgencies.FormattingEnabled = true;
-            this.connectedAgencies.Location = new System.Drawing.Point(175, 177);
-            this.connectedAgencies.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.connectedAgencies.Name = "connectedAgencies";
-            this.connectedAgencies.Size = new System.Drawing.Size(135, 24);
-            this.connectedAgencies.TabIndex = 14;
             // 
             // deactivateButton
             // 
@@ -236,34 +263,6 @@
             this.cloneButton.Text = "Clone Agent";
             this.cloneButton.UseVisualStyleBackColor = true;
             // 
-            // labelChoose
-            // 
-            this.labelChoose.AutoSize = true;
-            this.labelChoose.Location = new System.Drawing.Point(172, 113);
-            this.labelChoose.Name = "labelChoose";
-            this.labelChoose.Size = new System.Drawing.Size(97, 17);
-            this.labelChoose.TabIndex = 16;
-            this.labelChoose.Text = "Choose Agent";
-            // 
-            // labelAddress
-            // 
-            this.labelAddress.AutoSize = true;
-            this.labelAddress.Location = new System.Drawing.Point(172, 158);
-            this.labelAddress.Name = "labelAddress";
-            this.labelAddress.Size = new System.Drawing.Size(60, 17);
-            this.labelAddress.TabIndex = 17;
-            this.labelAddress.Text = "Address";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(21, 177);
-            this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(133, 34);
-            this.button2.TabIndex = 18;
-            this.button2.Text = "Dispatch";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
             // textBoxStationaryAgent
             // 
             this.textBoxStationaryAgent.Location = new System.Drawing.Point(19, 78);
@@ -312,13 +311,13 @@
         private System.Windows.Forms.Label port;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button deactivateButton;
-        private System.Windows.Forms.ComboBox connectedAgencies;
         private System.Windows.Forms.TextBox textBoxPort;
         private System.Windows.Forms.ComboBox comboBoxAgents;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label labelAddress;
         private System.Windows.Forms.Label labelChoose;
         private System.Windows.Forms.TextBox textBoxStationaryAgent;
+        private System.Windows.Forms.TextBox textBoxIpAddress;
     }
 }
 
