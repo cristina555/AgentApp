@@ -18,7 +18,8 @@ namespace MobileAgent.AgentManager
         private CloneListener cloneListener = null;
         private MobilityListener mobilityListener = null;
         private PersistencyListener persistencyListener =  null;
-
+        private string _name;
+        private string[] _neighboursHosts;
         private List<AgentProxy> _agentList = null;
         private AgentProxy _stationaryAgent;
         Socket _agencySocket = null;
@@ -30,6 +31,10 @@ namespace MobileAgent.AgentManager
         #endregion Fields
 
         #region Constructors
+        public Agency()
+        {
+
+        }
         public Agency(IPAddress ipAddress, int port)
         {
             try
@@ -57,6 +62,20 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Properties
+        public string GetName
+        {
+            get
+            {
+                return _name;
+            }
+        }
+        public string[] GetNeighboursHosts
+        {
+            get
+            {
+                return _neighboursHosts;
+            }
+        }
         public List<AgentProxy> GetAgentProxies()
         {
              return _agentList;            
@@ -72,6 +91,20 @@ namespace MobileAgent.AgentManager
         public AgentProxy GetStationaryAgent()
         {
             return _stationaryAgent;
+        }
+        public string SetName
+        {
+            set
+            {
+                _name = value;
+            }
+        }
+        public string[] SetNeighboursHosts
+        {
+            set
+            {
+                _neighboursHosts = value;
+            }
         }
         public void SetStationaryAgent(AgentProxy stationaryAgent)
         {
@@ -101,7 +134,7 @@ namespace MobileAgent.AgentManager
                 _agencySocket.Listen(100);
                 Console.WriteLine("Agentia a inceput sa asculte!");
 
-                Thread mainThread = new Thread(new ThreadStart(startListening));
+                Thread mainThread = new Thread(new ThreadStart(StartListening));
                 mainThread.IsBackground = true;
                 mainThread.Start();
 
@@ -113,18 +146,18 @@ namespace MobileAgent.AgentManager
                 Console.WriteLine("Message : " + e.Message);
             }
         }
-        private void startListening()
+        private void StartListening()
         {
 
             while (true)
             {
                 Socket mySocket = _agencySocket.Accept();
-                Thread newThread = new Thread(new ParameterizedThreadStart(startAccept));
+                Thread newThread = new Thread(new ParameterizedThreadStart(StartAccept));
                 newThread.IsBackground = true;
                 newThread.Start(mySocket);
             }
         }
-        private void startAccept(object obj)
+        private void StartAccept(object obj)
         {
             try
             {
@@ -134,11 +167,14 @@ namespace MobileAgent.AgentManager
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
                 _agentList.Add(agentProxy);
                 agentProxy.SetAgentContext(_ipEndPoint);
-                OnArrival();
+                
 
                 Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
                 agentThread.IsBackground = true;
                 agentThread.Start();
+
+                OnArrival();
+
 
             }
             catch (SocketException e)
@@ -152,6 +188,7 @@ namespace MobileAgent.AgentManager
         {
             try
             {
+               // agentProxy.GetUI();
                 _agentList.Add(agentProxy);
             }
             catch (Exception e)
@@ -167,6 +204,7 @@ namespace MobileAgent.AgentManager
             agentCloned.SetAgentCodebase(agentCloned.GetAgentInfo() + " cloned");
             return agentCloned;
         }
+        
         public void Dispatch(AgentProxy agentProxy, IPEndPoint destination)
         {
             try

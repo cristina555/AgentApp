@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MobileAgent.AgentManager;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace AgentApp
 {
@@ -13,6 +14,11 @@ namespace AgentApp
     {
         #region Fields
         private int dec;
+        Form f = new Form();
+        Button send = new Button();
+        Label labelNrDec = new Label();
+        TextBox textBoxNrDec = new TextBox();
+
         #endregion Fields
 
         #region Constructor
@@ -100,6 +106,76 @@ namespace AgentApp
         {
             CalculPi();
         }
+        public override void GetUI()
+        {
+            //var thread = new Thread(() =>
+            //{
+
+            //    f.SuspendLayout();
+
+
+            //    //
+            //    //textBoxNrDec
+            //    //
+            //    textBoxNrDec.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            //    textBoxNrDec.Location = new System.Drawing.Point(37, 71);
+            //    textBoxNrDec.Multiline = true;
+            //    textBoxNrDec.Name = "texBoxNrDec";
+            //    textBoxNrDec.Size = new System.Drawing.Size(106, 38);
+            //    textBoxNrDec.TabIndex = 3;
+
+            //    //
+            //    //labelNrDec
+            //    //
+            //    labelNrDec.AutoSize = true;
+            //    labelNrDec.Location = new System.Drawing.Point(37, 36);
+            //    labelNrDec.Name = "labelNrDec";
+            //    labelNrDec.Size = new System.Drawing.Size(140, 17);
+            //    labelNrDec.TabIndex = 5;
+            //    labelNrDec.Text = "Numarul de zecimale";
+
+            //    //
+            //    //send
+            //    //
+            //    send.Location = new System.Drawing.Point(206, 71);
+            //    send.Name = "button1";
+            //    send.Size = new System.Drawing.Size(107, 38);
+            //    send.TabIndex = 4;
+            //    send.Text = "Trimite";
+            //    send.UseVisualStyleBackColor = true;
+            //    send.Click += new EventHandler(this.OnSending);
+
+            //    //
+            //    //interfata
+            //    //
+            //    f.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            //    f.AutoScaleMode = AutoScaleMode.Font;
+            //    f.ClientSize = new System.Drawing.Size(350, 145);
+            //    f.Controls.Add(labelNrDec);
+            //    f.Controls.Add(send);
+            //    f.Controls.Add(textBoxNrDec);
+            //    f.Name = "Form1";
+            //    f.Text = "Interfata AgentPI ";
+            //    f.ResumeLayout(false);
+            //    f.PerformLayout();
+
+            //    Application.Run(f);
+            //});
+            //thread.Start();
+            throw new NotImplementedException();
+        }
+        private void OnSending(object sender, EventArgs e)
+        {
+            try {
+                int dec = Int32.Parse(textBoxNrDec.Text);
+                SetDec = dec;
+            }
+            catch(FormatException)
+            {
+                MessageBox.Show("Parametrul nu a putut fi setat!");
+            }
+        }
+
         #endregion Methods
     }
 

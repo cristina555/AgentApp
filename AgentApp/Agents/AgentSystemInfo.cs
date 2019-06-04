@@ -70,6 +70,10 @@ namespace AgentApp.Agents
             getOperatingSystemInfo();
             getProcessorInfo();
         }
+        public override void GetUI()
+        {
+            throw new NotImplementedException();
+        }
         #endregion Methods
     }
 }

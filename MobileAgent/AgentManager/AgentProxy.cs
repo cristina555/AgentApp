@@ -24,6 +24,7 @@ namespace MobileAgent.AgentManager
 		bool IsValid();
         void Suspend();
         void Run();
+        void GetUI();
 
     }
 }

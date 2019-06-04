@@ -13,6 +13,11 @@ namespace AgentApp.AditionalClasses
     {
         #region Field
         List<IPEndPoint> _hostsList;
+        //public struct Information
+        //{
+        //    public IPEndPoint iPEndPoint;
+        //    public string[] neighbours;
+        //}
         #endregion Field
 
         #region Constructor
@@ -67,18 +72,18 @@ namespace AgentApp.AditionalClasses
         {
             ResetSettings(key);
         }*/
-        public List<Tuple<String, IPEndPoint, string[]>> GetNetworkHosts()
+        public Dictionary<IPAddress, Tuple<string, int, string[]>> GetNetworkHosts()
         {
-            List<Tuple<string, IPEndPoint, string[]>> hosts = null;
+            Dictionary<IPAddress, Tuple<string, int, string[]>> hosts = new Dictionary<IPAddress, Tuple<string, int, string[]>>();
 
             var _config = (CustomConfig)ConfigurationManager.GetSection("networkConfig");
 
             foreach (HostElement instance in _config.Instances)
             {
-                
-                IPEndPoint ip = new IPEndPoint(IPAddress.Parse(instance.Ip), Convert.ToInt16(instance.Port));
+                IPAddress ip = IPAddress.Parse(instance.Ip);
                 string[] n = instance.Neighbours.Split(' ');
-                hosts.Add(Tuple.Create(instance.Name, ip, n));
+                int port = Convert.ToInt16(instance.Port);
+                hosts.Add(ip, Tuple.Create(instance.Name, port, n));
             }
             return hosts;
         }

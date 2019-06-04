@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MobileAgent.AgentManager;
 using System.Net;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace AgentApp.Agents
 {
@@ -54,6 +55,16 @@ namespace AgentApp.Agents
         public override void Run()
         {
             ShowAgencies();
+        }
+        public override void GetUI()
+        {
+            //var thread = new Thread(() =>
+            //{
+            //    Form f = new Form();
+            //    Application.Run(f);
+            //});
+            //thread.Start();
+            throw new NotImplementedException();
         }
         #endregion Methods
 
