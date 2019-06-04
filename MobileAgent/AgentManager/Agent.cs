@@ -12,11 +12,11 @@ namespace MobileAgent.AgentManager
         public readonly static int ACTIVE = 1;
         public readonly static int INACTIVE = 0;
         public readonly static int REMOTE = 2;
-        public int _state;
+        public int _state = INACTIVE;
         private int _id;
         private string _codebase;
         private string _creationTime;
-        private int _agencyHostID;
+        private IPEndPoint _agencyCreationContext;
         private string _agentInfo;
         private IPEndPoint _currentContext;
         #endregion Fields
@@ -35,9 +35,13 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Properties
-        public IPEndPoint GetAgentContext()
+        public IPEndPoint GetAgencyCreationContext()
         {
-             return _currentContext;
+            return _agencyCreationContext;
+        }
+        public IPEndPoint GetAgentCurentContext()
+        {
+            return _currentContext;
         }
 		public int GetAgentId()
 		{
@@ -55,9 +59,9 @@ namespace MobileAgent.AgentManager
         {
             _id = id;
         }
-        public void SetAgencyHost(int id)
+        public void SetAgencyCreationContext(IPEndPoint context)
         {
-            _agencyHostID = id;
+            _agencyCreationContext = context;
         }
         public void SetCreationTime()
         {
@@ -95,17 +99,9 @@ namespace MobileAgent.AgentManager
         }
         public bool IsRemote()
         {
-            //Not implemented
-            return false;
-            throw new Exception("Aceasta metoda trebuie completata");
+            return _state == REMOTE;
         }
-        public bool IsValid()
-        {
-            //Not implemented
-            return false;
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-
+        
         public void Suspend()
         {
             //Not implemented

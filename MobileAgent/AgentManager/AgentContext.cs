@@ -15,7 +15,7 @@ namespace MobileAgent.AgentManager
         void Dispatch(AgentProxy agentProxy, IPEndPoint destination);
         void Dispose(AgentProxy agentProxy); 
         AgentProxy GetAgentProxy(string codebase);
-		AgentProxy RetractAglet(IPEndPoint location);
+        void RetractAgent(AgentProxy agentProxy, IPEndPoint location);
         void ShutDown();
         void Start();
         void Activate();

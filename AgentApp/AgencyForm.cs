@@ -3,11 +3,13 @@ using AgentApp.Agents;
 using MobileAgent.AgentManager;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using MobileAgent.Exceptions;
 
 namespace AgentApp
 {
@@ -34,30 +36,36 @@ namespace AgentApp
         private void StartAgency()
         {
 
-            //Simulare
-            //List<IPEndPoint> _hosts = _configParser.GetHosts();
-            //int hostIndex = r.Next(_hosts.Count);
-
-
-            //IPAddress ipAddress = _hosts[hostIndex].Address;
-            //int port = _hosts[hostIndex].Port;
-
-            ////_configParser.DeleteHost(_hosts[hostIndex]);
-            //_hosts.Remove(_hosts[hostIndex]);
-            //UpdateFreeAgencies(_hosts);
-
-            //_agency = new MobileAgent.AgentManager.Agency(ipAddress, port);
-            //info.Text = "Agentia se afla la " + ipAddress + ", portul " + port;
-            //_agency.Activate();
-            //_agency.Start();
-
             //Real
+            //Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = _configParser.GetNetworkHosts();
+            //try
+            //{
+            //    IPAddress ipAddress = IPAddress.Parse(GetLocalIPAddress());
+            //    Tuple<string, int, string[]> t = _hosts[ipAddress];
+            //    int port = t.Item2;
+            //    string name = t.Item1;
+            //    string[] neighbours = t.Item3;
 
-            Dictionary<IPAddress, Tuple <string, int, string[]>> _hosts = _configParser.GetNetworkHosts();
+            //    _agency = new Agency(ipAddress, port);
+            //    _agency.SetName = name;
+            //    _agency.SetNeighboursHosts = neighbours;
+            //    info.Text = "Agentia: " + name + " se afla la " + ipAddress + ", portul " + port;
+            //    _agency.Activate();
+            //    _agency.Start();
+            //    _agency.OnArrival += new Agency.dgEventRaiser(agent_OnArrival);
+            //}
+            //catch (FormatException e)
+            //{
+            //    MessageBox.Show("Adresa IP invalida!");
+            //}
 
+            // simulare
+            Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = _configParser.GetNetworkHosts();
             try
             {
-                IPAddress ipAddress = IPAddress.Parse(GetLocalIPAddress());
+
+                int hostIndex = r.Next(_hosts.Count);
+                IPAddress ipAddress = _hosts.ElementAt(hostIndex).Key;
                 Tuple<string, int, string[]> t = _hosts[ipAddress];
                 int port = t.Item2;
                 string name = t.Item1;
@@ -71,25 +79,26 @@ namespace AgentApp
                 _agency.Start();
                 _agency.OnArrival += new Agency.dgEventRaiser(agent_OnArrival);
             }
-            catch(FormatException e)
+            catch (FormatException e)
             {
                 MessageBox.Show("Adresa IP invalida!");
             }
-            
+
         }
         public void agent_OnArrival()
         {
             AgentProxy agent = _agency.GetAgentProxies().Last();
             console.Text += "Agentul ruleaza...";
             console.Text += agent.GetAgentCodebase();
+            UpdateAgentsList();
+
         }
         private void CreateStationaryAgent()
         {
             Random random = new Random();
-            int agenctID = random.Next(1000, 9999);
-            AgentSystemInfo agentSystemInfo = new AgentSystemInfo(agenctID);
+            int agentID = random.Next(1000, 9999);
+            AgentSystemInfo agentSystemInfo = new AgentSystemInfo(agentID);
             int idHost = _agency.GetAgencyID();
-            agentSystemInfo.SetAgencyHost(idHost);
             agentSystemInfo.SetAgentInfo("Get Agency System Info");
             agentSystemInfo.SetAgentContext(_agency.GetAgencyContext());
             _agency.SetStationaryAgent(agentSystemInfo);
@@ -99,6 +108,7 @@ namespace AgentApp
         private void UpdateAgentsList()
         {
             List<AgentProxy> _agentsList = _agency.GetAgentProxies();
+            agentsList.Clear();
             listAgents.Items.Clear();
             if (_agentsList != null)
             {
@@ -109,13 +119,6 @@ namespace AgentApp
                 }
             }
         }
-        //private void UpdateFreeAgencies(Dictionary<IPAddress, Tuple<string, int, string[]>> iPEnds)
-        //{
-        //    foreach(IPEndPoint ipAddress in iPEnds)
-        //    {
-        //       connectedAgencies.Items.Add(ipAddress.Address);
-        //    }
-        //}
         private void createButton_Click(object sender, EventArgs e)
         {
             try
@@ -126,7 +129,7 @@ namespace AgentApp
                 AgentProxy agentToCreate= gs.GetAgentProxy(selected);
                 agentToCreate.SetAgentId(agentID);
                 int idHost = _agency.GetAgencyID();
-                agentToCreate.SetAgencyHost(idHost);
+                agentToCreate.SetAgencyCreationContext(_agency.GetAgencyContext());
                 agentToCreate.SetAgentContext(_agency.GetAgencyContext());
                 _agency.CreateAgent(agentToCreate);
                 UpdateAgentsList();
@@ -137,7 +140,6 @@ namespace AgentApp
             }
 
         }
-
         private void dispatchButton_Click(object sender, EventArgs e)
         {
             try
@@ -148,20 +150,32 @@ namespace AgentApp
                 int portNumber = Int32.Parse(textBoxPort.Text);
                 IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), portNumber);
                 _agency.Dispatch(agentDispatched, ipEndPoint);
-                UpdateAgentsList();
+                _agency.OnDispatching += new Agency.dgEventRaiser(UpdateAgentsList);
             }
-            catch(Exception ex)
+            catch (AgentNotFoundException anfe)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("AgentNotFoundException caught!!!");
+                MessageBox.Show("Source : " + anfe.Source);
+                MessageBox.Show("Message : " + anfe.Message);
             }
-                        
-        }
+            catch (IOException io)
+            {
+                MessageBox.Show("IOException caught!!!");
+                MessageBox.Show("Source : " + io.Source);
+                MessageBox.Show("Message : " + io.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception caught!!!");
+                MessageBox.Show("Source : " + ex.Source);
+                MessageBox.Show("Message : " + ex.Message);
 
+            }
+        }
         private void disposeButton_Click(object sender, EventArgs e)
         {
 
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             UpdateAgentsList();

@@ -28,6 +28,8 @@ namespace MobileAgent.AgentManager
         Dictionary<IPEndPoint, Socket> _connectionMap = new Dictionary<IPEndPoint, Socket>();
         public delegate void dgEventRaiser();
         public event dgEventRaiser OnArrival;
+        public event dgEventRaiser OnDispatching;
+        public event dgEventRaiser OnReverting;
         #endregion Fields
 
         #region Constructors
@@ -174,7 +176,7 @@ namespace MobileAgent.AgentManager
                 agentThread.Start();
 
                 OnArrival();
-
+                RetractAgent(agentProxy, agentProxy.GetAgencyCreationContext());
 
             }
             catch (SocketException e)
@@ -209,23 +211,22 @@ namespace MobileAgent.AgentManager
         {
             try
             {
+                NetworkStream networkStream;
                 if (_connectionMap.ContainsKey(destination))
                 {
-                    NetworkStream networkStream = new NetworkStream(_connectionMap[destination]);
-                    IFormatter formatter = new BinaryFormatter();
-                    formatter.Serialize(networkStream, agentProxy);
-                    _agentList.Remove(agentProxy);
+                    networkStream = new NetworkStream(_connectionMap[destination]);
                 }
                 else
                 {
                     Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     connectSocket.Connect(destination);
                     _connectionMap.Add(destination, connectSocket);
-                    NetworkStream networkStream = new NetworkStream(connectSocket);
-                    IFormatter formatter = new BinaryFormatter();
-                    formatter.Serialize(networkStream, agentProxy);
-                    _agentList.Remove(agentProxy);
+                    networkStream = new NetworkStream(connectSocket);
                 }
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(networkStream, agentProxy);
+                _agentList.Remove(agentProxy);
+                OnDispatching();
             }
             catch (AgentNotFoundException anfe)
             {
@@ -286,12 +287,24 @@ namespace MobileAgent.AgentManager
             return agentProxy;
         }
        
-        public AgentProxy RetractAglet(IPEndPoint location) 
+        public void RetractAgent(AgentProxy agentProxy, IPEndPoint location) 
 		{
-            //Not implemented
-            AgentProxy a = null;
-            return a;
-            throw new Exception("Aceasta metoda trebuie completata");
+            NetworkStream networkStream;
+            if (_connectionMap.ContainsKey(location))
+            {
+                networkStream = new NetworkStream(_connectionMap[location]);
+                            }
+            else
+            {
+                Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                connectSocket.Connect(location);
+                _connectionMap.Add(location, connectSocket);
+                networkStream = new NetworkStream(connectSocket);                
+            }
+            IFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(networkStream, agentProxy);
+            _agentList.Remove(agentProxy);
+            //OnReverting();
         }
         public void ShutDown()
         {

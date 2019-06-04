@@ -32,10 +32,10 @@ namespace AgentApp.Agents
         #region Methods
         private void AddAgency()
         {
-            IPEndPoint ip = this.GetAgentContext(); 
+            IPEndPoint ip = this.GetAgentCurentContext(); 
             if (!_agenciesVisited.Contains(ip))
             {
-                _agenciesVisited.Add(this.GetAgentContext());
+                _agenciesVisited.Add(this.GetAgentCurentContext());
             }
         }
         private void ShowAgencies()
@@ -43,12 +43,12 @@ namespace AgentApp.Agents
             AddAgency();
             String codebase="";
             Console.WriteLine("Agentul a vizitat");
-            codebase += "Agentul a vizitat\n";
+            codebase += "Agentul a vizitat"+Environment.NewLine;
             foreach (IPEndPoint context in _agenciesVisited)
             {
                 Console.WriteLine(context);
                 codebase += context;
-                codebase += "\n";
+                codebase += Environment.NewLine;
             }
             this.SetAgentCodebase(codebase);
         }
