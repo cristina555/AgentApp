@@ -18,11 +18,12 @@ namespace AgentApp.Agents
         #region Constructors
         public AgentSystemInfo()
         {
-
+            
         }
         public AgentSystemInfo(int id) : base(id)
         {
-
+            this.SetName("AgentSystemInfo");
+            this.SetAgentInfo("Get Agency System Info");
         }
         #endregion Constructors
 

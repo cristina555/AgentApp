@@ -12,7 +12,12 @@ namespace MobileAgent.AgentManager
         public readonly static int ACTIVE = 1;
         public readonly static int INACTIVE = 0;
         public readonly static int REMOTE = 2;
-        public int _state = INACTIVE;
+        public readonly static int LOCAL = 3;
+        public readonly static int OK = 0;
+        public readonly static int NOK = 1;
+        private string _name;
+        private int _status = NOK;
+        private int _state = INACTIVE;
         private int _id;
         private string _codebase;
         private string _creationTime;
@@ -35,11 +40,19 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Properties
+        public string GetName()
+        {
+            return _name;
+        }
+        public int GetStatus()
+        {
+            return _status;
+        }
         public IPEndPoint GetAgencyCreationContext()
         {
             return _agencyCreationContext;
         }
-        public IPEndPoint GetAgentCurentContext()
+        public IPEndPoint GetAgentCurrentContext()
         {
             return _currentContext;
         }
@@ -75,14 +88,22 @@ namespace MobileAgent.AgentManager
         {
             _agentInfo = info;
         }
-        public void SetAgentContext(IPEndPoint currentContext)
+        public void SetAgentCurrentContext(IPEndPoint currentContext)
         {
             _currentContext = currentContext;
+        }
+        public void SetName(string name)
+        {
+            _name = name;
+        }
+        public void SetStatus(int status)
+        {
+            _status = status;
         }
         #endregion Properties
 
         #region Methods
-      	public void OnCreation(Object init)
+        public void OnCreation(Object init)
 		{
             //Not implemented
             throw new Exception("Aceasta metoda trebuie completata");

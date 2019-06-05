@@ -168,12 +168,15 @@ namespace MobileAgent.AgentManager
                 IFormatter formatter = new BinaryFormatter();
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
                 _agentList.Add(agentProxy);
-                agentProxy.SetAgentContext(_ipEndPoint);
-                
+                agentProxy.SetAgentCurrentContext(_ipEndPoint);
 
-                Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
-                agentThread.IsBackground = true;
-                agentThread.Start();
+                if (agentProxy.GetAgencyCreationContext() == _ipEndPoint)
+                {
+                    Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
+                    agentThread.IsBackground = true;
+                    agentThread.Start();
+                }
+                Thread.Sleep(5000);
 
                 OnArrival();
                 RetractAgent(agentProxy, agentProxy.GetAgencyCreationContext());
@@ -190,7 +193,6 @@ namespace MobileAgent.AgentManager
         {
             try
             {
-               // agentProxy.GetUI();
                 _agentList.Add(agentProxy);
             }
             catch (Exception e)
@@ -273,12 +275,12 @@ namespace MobileAgent.AgentManager
         }
 
        
-        public AgentProxy GetAgentProxy(string codebase)
+        public AgentProxy GetAgentProxy(string name)
         {
             AgentProxy agentProxy = null;
             foreach (AgentProxy aP in _agentList)
             {
-                if (aP.GetAgentInfo().Equals(codebase)) 
+                if (aP.GetName().Equals(name)) 
                 {
                     agentProxy = aP;
                     break;

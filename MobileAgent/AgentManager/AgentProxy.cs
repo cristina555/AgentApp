@@ -11,15 +11,19 @@ namespace MobileAgent.AgentManager
     {
 		int GetAgentId();
         IPEndPoint GetAgencyCreationContext();
-        IPEndPoint GetAgentCurentContext();
+        IPEndPoint GetAgentCurrentContext();
         String GetAgentCodebase();
         String GetAgentInfo();
+        string GetName();
+        int GetStatus();
         void SetAgentId(int id);
-        void SetAgentContext(IPEndPoint currentContext);
+        void SetAgentCurrentContext(IPEndPoint currentContext);
         void SetCreationTime();
         void SetAgentCodebase(String codebase);
         void SetAgentInfo(String info);
         void SetAgencyCreationContext(IPEndPoint context);
+        void SetName(string name);
+        void SetStatus(int status);
         bool IsActive();
         bool IsRemote();
         void Suspend();

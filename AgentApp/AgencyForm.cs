@@ -83,31 +83,26 @@ namespace AgentApp
                 _agency.Start();
                 _agency.OnArrival += new Agency.dgEventRaiser(agent_OnArrival);
             }
-            catch (FormatException e)
+            catch (FormatException fe)
             {
-                MessageBox.Show("Adresa IP invalida!");
+                MessageBox.Show(fe.Message + " --> Adresa IP invalida!");
             }
 
         }
         public void agent_OnArrival()
         {
             AgentProxy agent = _agency.GetAgentProxies().Last();
-            console.Text += "Agentul ruleaza...";
+            console.Text += "Agentul ruleaza..."+Environment.NewLine;
             console.Text += agent.GetAgentCodebase();
-            UpdateAgentsList();
-
         }
         private void CreateStationaryAgent()
         {
             Random random = new Random();
             int agentID = random.Next(1000, 9999);
             AgentSystemInfo agentSystemInfo = new AgentSystemInfo(agentID);
-            int idHost = _agency.GetAgencyID();
-            agentSystemInfo.SetAgentInfo("Get Agency System Info");
-            agentSystemInfo.SetAgentContext(_agency.GetAgencyContext());
+            agentSystemInfo.SetAgentCurrentContext(_agency.GetAgencyContext());
             _agency.SetStationaryAgent(agentSystemInfo);
-            UpdateAgentsList();
-            textBoxStationaryAgent.Text = agentSystemInfo.GetAgentInfo();
+            textBoxStationaryAgent.Text = agentSystemInfo.GetName() + "-> " + agentSystemInfo.GetAgentInfo() + System.Environment.NewLine;
         }
         private void UpdateAgentsList()
         {
@@ -118,8 +113,8 @@ namespace AgentApp
             {
                 foreach (AgentProxy agentProxy in _agentsList)
                 {
-                    agentsList.Text = agentProxy.GetAgentInfo() + " " + agentProxy.GetAgentId() + System.Environment.NewLine;
-                    listAgents.Items.Add(agentProxy.GetAgentInfo());
+                    agentsList.Text = agentProxy.GetName() + "-> " + agentProxy.GetAgentInfo() + System.Environment.NewLine;
+                    listAgents.Items.Add(agentProxy.GetName());
                 }
             }
         }
@@ -134,22 +129,22 @@ namespace AgentApp
                 AgentProxy agentToCreate= gs.GetAgentProxy(selected);
                 Form ui = gs.GetUI(agentToCreate);
                 agentToCreate.SetAgentId(agentID);
-                int idHost = _agency.GetAgencyID();
                 agentToCreate.SetAgencyCreationContext(_agency.GetAgencyContext());
-                agentToCreate.SetAgentContext(_agency.GetAgencyContext());
-
-                var thread = new Thread(() =>
+                agentToCreate.SetAgentCurrentContext(_agency.GetAgencyContext());
+                if (ui.Controls.Count != 0)
                 {
-                   Application.Run(ui);
-                });
-                thread.Start();
-
+                    var thread = new Thread(() =>
+                    {
+                        Application.Run(ui);
+                    });
+                    thread.Start();
+                }
                 _agency.CreateAgent(agentToCreate);
                 UpdateAgentsList();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Exception caught! Mesaj: " + ex.Message);
             }
 
         }
@@ -167,22 +162,15 @@ namespace AgentApp
             }
             catch (AgentNotFoundException anfe)
             {
-                MessageBox.Show("AgentNotFoundException caught!!!");
-                MessageBox.Show("Source : " + anfe.Source);
-                MessageBox.Show("Message : " + anfe.Message);
+                MessageBox.Show("AgentNotFoundException caught! Mesaj: " + anfe.Message);
             }
             catch (IOException io)
             {
-                MessageBox.Show("IOException caught!!!");
-                MessageBox.Show("Source : " + io.Source);
-                MessageBox.Show("Message : " + io.Message);
+                MessageBox.Show("IOException caught! Mesaj: " + io.Message);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception caught!!!");
-                MessageBox.Show("Source : " + ex.Source);
-                MessageBox.Show("Message : " + ex.Message);
-
+                MessageBox.Show("Exception caught! Mesaj: " + ex.Message);
             }
         }
         private void disposeButton_Click(object sender, EventArgs e)
@@ -196,7 +184,6 @@ namespace AgentApp
 
         private void deactivateButton_Click(object sender, EventArgs e)
         {
-           // _configParser.Reset(_agency.GetAgencyContext().Address);
             _agency.ShutDown();
             this.Close();
         }
@@ -205,7 +192,7 @@ namespace AgentApp
             Dictionary<AgentProxy, Form> ags = gs.GetStaticListofAgents();
             foreach(AgentProxy aproxy in ags.Keys)
             {
-                comboBoxAgents.Items.Add(aproxy.GetAgentInfo());
+                comboBoxAgents.Items.Add(aproxy.GetName());
             }
         }
         public static string GetLocalIPAddress()
@@ -214,7 +201,7 @@ namespace AgentApp
             {
                 if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
                 {
-                    if (ni.Name == "Wi-Fi")
+                    if ("Wi-Fi Wireless Network Connection".Contains(ni.Name))
                     {
                         foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
                         {

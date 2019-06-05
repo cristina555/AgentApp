@@ -16,6 +16,7 @@ namespace AgentApp.Agents
         public AgentRemote()
         {
             _parameters = new List<string>();
+            this.SetName("AgentRemote");
             this.SetAgentInfo("Collect information from network");
         }
         public List<string> GetParameters
@@ -81,11 +82,14 @@ namespace AgentApp.Agents
         private void RunNetwork()
         {
             List<string> topics = new List<string>();
+            string info = "";
             foreach(string i in _parameters)
             {
                 topics.Add(GetInfo(i));
+                info += GetInfo(i);
                 Console.WriteLine(GetInfo(i));
             }
+            this.SetAgentCodebase(info);
         }
         public override void Run()
         {

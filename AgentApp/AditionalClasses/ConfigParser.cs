@@ -11,10 +11,6 @@ namespace AgentApp.AditionalClasses
 {
     public class ConfigParser
     {
-        #region Field
-        List<IPEndPoint> _hostsList;
-        #endregion Field
-
         #region Methods
         public Dictionary<IPAddress, Tuple<string, int, string[]>> GetNetworkHosts()
         {

@@ -24,6 +24,7 @@ namespace AgentApp
         #region Constructor
         public AgentPI()
         {
+            this.SetName("AgentPI");
             this.SetAgentInfo("Calculate the value of PI");
         }
         public AgentPI(int id) : base(id)

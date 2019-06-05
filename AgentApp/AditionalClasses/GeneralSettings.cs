@@ -29,7 +29,7 @@ namespace AgentApp.AditionalClasses
             AgentProxy agent = null;
             foreach (AgentProxy ap in _agentsToCreate.Keys)
             {
-                if (ap.GetAgentInfo().Equals(info))
+                if (ap.GetName().Equals(info))
                 {
                     agent = ap;
                 }
