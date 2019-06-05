@@ -24,7 +24,5 @@ namespace MobileAgent.AgentManager
         bool IsRemote();
         void Suspend();
         void Run();
-        void GetUI();
-
     }
 }

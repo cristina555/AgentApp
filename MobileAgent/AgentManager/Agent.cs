@@ -108,7 +108,6 @@ namespace MobileAgent.AgentManager
             throw new Exception("Aceasta metoda trebuie completata");
         }
         abstract public void Run();
-        abstract public void GetUI();
         #endregion Methods
 
     }

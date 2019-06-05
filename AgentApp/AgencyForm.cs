@@ -10,6 +10,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using MobileAgent.Exceptions;
+using System.Threading;
 
 namespace AgentApp
 {
@@ -19,7 +20,9 @@ namespace AgentApp
         ConfigParser _configParser = null;
         GeneralSettings gs = null;
         Random r;
-        
+        Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = null;
+
+
         public AgencyForm()
         {
             
@@ -27,6 +30,7 @@ namespace AgentApp
             _configParser = new ConfigParser();
             gs = new GeneralSettings();
             r = new Random();
+            _hosts = new Dictionary<IPAddress, Tuple<string, int, string[]>>();
             StartAgency();
             CreateStationaryAgent();
             FillAgentsList();
@@ -60,7 +64,7 @@ namespace AgentApp
             //}
 
             // simulare
-            Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = _configParser.GetNetworkHosts();
+            _hosts = _configParser.GetNetworkHosts();
             try
             {
 
@@ -126,11 +130,20 @@ namespace AgentApp
                 string selected = this.listAgents.GetItemText(this.comboBoxAgents.SelectedItem);
                 Random random = new Random();
                 int agentID = random.Next(1000, 9999);
+
                 AgentProxy agentToCreate= gs.GetAgentProxy(selected);
+                Form ui = gs.GetUI(agentToCreate);
                 agentToCreate.SetAgentId(agentID);
                 int idHost = _agency.GetAgencyID();
                 agentToCreate.SetAgencyCreationContext(_agency.GetAgencyContext());
                 agentToCreate.SetAgentContext(_agency.GetAgencyContext());
+
+                var thread = new Thread(() =>
+                {
+                   Application.Run(ui);
+                });
+                thread.Start();
+
                 _agency.CreateAgent(agentToCreate);
                 UpdateAgentsList();
             }
@@ -189,8 +202,8 @@ namespace AgentApp
         }
         private void FillAgentsList()
         {            
-            List<AgentProxy> ags = gs.GetStaticListofAgents();
-            foreach(AgentProxy aproxy in ags)
+            Dictionary<AgentProxy, Form> ags = gs.GetStaticListofAgents();
+            foreach(AgentProxy aproxy in ags.Keys)
             {
                 comboBoxAgents.Items.Add(aproxy.GetAgentInfo());
             }

@@ -56,16 +56,6 @@ namespace AgentApp.Agents
         {
             ShowAgencies();
         }
-        public override void GetUI()
-        {
-            //var thread = new Thread(() =>
-            //{
-            //    Form f = new Form();
-            //    Application.Run(f);
-            //});
-            //thread.Start();
-            throw new NotImplementedException();
-        }
         #endregion Methods
 
     }

@@ -56,39 +56,39 @@
             // groupBox
             // 
             this.groupBox.Controls.Add(this.console);
-            this.groupBox.Location = new System.Drawing.Point(12, 214);
-            this.groupBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox.Location = new System.Drawing.Point(9, 174);
+            this.groupBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox.Name = "groupBox";
-            this.groupBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox.Size = new System.Drawing.Size(375, 206);
+            this.groupBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox.Size = new System.Drawing.Size(281, 167);
             this.groupBox.TabIndex = 0;
             this.groupBox.TabStop = false;
             // 
             // console
             // 
-            this.console.Location = new System.Drawing.Point(7, 12);
-            this.console.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.console.Location = new System.Drawing.Point(5, 10);
+            this.console.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.console.Multiline = true;
             this.console.Name = "console";
             this.console.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.console.Size = new System.Drawing.Size(362, 189);
+            this.console.Size = new System.Drawing.Size(272, 154);
             this.console.TabIndex = 0;
             // 
             // info
             // 
-            this.info.Location = new System.Drawing.Point(19, 25);
-            this.info.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.info.Location = new System.Drawing.Point(14, 20);
+            this.info.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.info.Multiline = true;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(368, 37);
+            this.info.Size = new System.Drawing.Size(277, 31);
             this.info.TabIndex = 1;
             // 
             // createButton
             // 
-            this.createButton.Location = new System.Drawing.Point(21, 30);
-            this.createButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.createButton.Location = new System.Drawing.Point(16, 24);
+            this.createButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(133, 34);
+            this.createButton.Size = new System.Drawing.Size(100, 28);
             this.createButton.TabIndex = 2;
             this.createButton.Text = "Create agent";
             this.createButton.UseVisualStyleBackColor = true;
@@ -96,29 +96,30 @@
             // 
             // agentsList
             // 
-            this.agentsList.Location = new System.Drawing.Point(19, 151);
-            this.agentsList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.agentsList.Location = new System.Drawing.Point(14, 123);
+            this.agentsList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.agentsList.Multiline = true;
             this.agentsList.Name = "agentsList";
             this.agentsList.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.agentsList.Size = new System.Drawing.Size(362, 57);
+            this.agentsList.Size = new System.Drawing.Size(272, 47);
             this.agentsList.TabIndex = 3;
             // 
             // labelAgents
             // 
             this.labelAgents.AutoSize = true;
-            this.labelAgents.Location = new System.Drawing.Point(16, 120);
+            this.labelAgents.Location = new System.Drawing.Point(12, 98);
+            this.labelAgents.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelAgents.Name = "labelAgents";
-            this.labelAgents.Size = new System.Drawing.Size(93, 17);
+            this.labelAgents.Size = new System.Drawing.Size(70, 13);
             this.labelAgents.TabIndex = 4;
             this.labelAgents.Text = "List of agents";
             // 
             // dispatchButton
             // 
-            this.dispatchButton.Location = new System.Drawing.Point(21, 126);
-            this.dispatchButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dispatchButton.Location = new System.Drawing.Point(16, 102);
+            this.dispatchButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dispatchButton.Name = "dispatchButton";
-            this.dispatchButton.Size = new System.Drawing.Size(133, 34);
+            this.dispatchButton.Size = new System.Drawing.Size(100, 28);
             this.dispatchButton.TabIndex = 6;
             this.dispatchButton.Text = "Dispatch Agent";
             this.dispatchButton.UseVisualStyleBackColor = true;
@@ -126,10 +127,10 @@
             // 
             // disposeButton
             // 
-            this.disposeButton.Location = new System.Drawing.Point(21, 250);
-            this.disposeButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.disposeButton.Location = new System.Drawing.Point(16, 203);
+            this.disposeButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.disposeButton.Name = "disposeButton";
-            this.disposeButton.Size = new System.Drawing.Size(133, 34);
+            this.disposeButton.Size = new System.Drawing.Size(100, 28);
             this.disposeButton.TabIndex = 7;
             this.disposeButton.Text = "Dispose Agent";
             this.disposeButton.UseVisualStyleBackColor = true;
@@ -151,28 +152,29 @@
             this.groupBox2.Controls.Add(this.disposeButton);
             this.groupBox2.Controls.Add(this.dispatchButton);
             this.groupBox2.Controls.Add(this.createButton);
-            this.groupBox2.Location = new System.Drawing.Point(423, 25);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox2.Location = new System.Drawing.Point(317, 20);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(330, 390);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Size = new System.Drawing.Size(248, 317);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             // 
             // textBoxIpAddress
             // 
-            this.textBoxIpAddress.Location = new System.Drawing.Point(175, 177);
+            this.textBoxIpAddress.Location = new System.Drawing.Point(131, 144);
+            this.textBoxIpAddress.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBoxIpAddress.Multiline = true;
             this.textBoxIpAddress.Name = "textBoxIpAddress";
-            this.textBoxIpAddress.Size = new System.Drawing.Size(135, 24);
+            this.textBoxIpAddress.Size = new System.Drawing.Size(102, 20);
             this.textBoxIpAddress.TabIndex = 19;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(21, 177);
-            this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.button2.Location = new System.Drawing.Point(16, 144);
+            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(133, 34);
+            this.button2.Size = new System.Drawing.Size(100, 28);
             this.button2.TabIndex = 18;
             this.button2.Text = "Dispatch";
             this.button2.UseVisualStyleBackColor = true;
@@ -180,37 +182,38 @@
             // labelAddress
             // 
             this.labelAddress.AutoSize = true;
-            this.labelAddress.Location = new System.Drawing.Point(172, 158);
+            this.labelAddress.Location = new System.Drawing.Point(129, 128);
+            this.labelAddress.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelAddress.Name = "labelAddress";
-            this.labelAddress.Size = new System.Drawing.Size(60, 17);
+            this.labelAddress.Size = new System.Drawing.Size(45, 13);
             this.labelAddress.TabIndex = 17;
             this.labelAddress.Text = "Address";
             // 
             // labelChoose
             // 
             this.labelChoose.AutoSize = true;
-            this.labelChoose.Location = new System.Drawing.Point(172, 113);
+            this.labelChoose.Location = new System.Drawing.Point(129, 92);
+            this.labelChoose.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelChoose.Name = "labelChoose";
-            this.labelChoose.Size = new System.Drawing.Size(97, 17);
+            this.labelChoose.Size = new System.Drawing.Size(74, 13);
             this.labelChoose.TabIndex = 16;
             this.labelChoose.Text = "Choose Agent";
             // 
             // comboBoxAgents
             // 
             this.comboBoxAgents.FormattingEnabled = true;
-            this.comboBoxAgents.Location = new System.Drawing.Point(21, 78);
-            this.comboBoxAgents.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxAgents.Location = new System.Drawing.Point(16, 63);
             this.comboBoxAgents.Name = "comboBoxAgents";
-            this.comboBoxAgents.Size = new System.Drawing.Size(285, 24);
+            this.comboBoxAgents.Size = new System.Drawing.Size(215, 21);
             this.comboBoxAgents.TabIndex = 15;
             // 
             // deactivateButton
             // 
             this.deactivateButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.deactivateButton.Location = new System.Drawing.Point(21, 350);
-            this.deactivateButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.deactivateButton.Location = new System.Drawing.Point(16, 284);
+            this.deactivateButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.deactivateButton.Name = "deactivateButton";
-            this.deactivateButton.Size = new System.Drawing.Size(133, 28);
+            this.deactivateButton.Size = new System.Drawing.Size(100, 23);
             this.deactivateButton.TabIndex = 12;
             this.deactivateButton.Text = "Exit";
             this.deactivateButton.UseVisualStyleBackColor = true;
@@ -218,10 +221,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(21, 302);
-            this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.button1.Location = new System.Drawing.Point(16, 245);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 33);
+            this.button1.Size = new System.Drawing.Size(56, 27);
             this.button1.TabIndex = 9;
             this.button1.Text = "Agenti";
             this.button1.UseVisualStyleBackColor = true;
@@ -230,60 +233,61 @@
             // port
             // 
             this.port.AutoSize = true;
-            this.port.Location = new System.Drawing.Point(172, 204);
+            this.port.Location = new System.Drawing.Point(129, 166);
+            this.port.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.port.Name = "port";
-            this.port.Size = new System.Drawing.Size(34, 17);
+            this.port.Size = new System.Drawing.Size(26, 13);
             this.port.TabIndex = 11;
             this.port.Text = "Port";
             // 
             // textBoxPort
             // 
-            this.textBoxPort.Location = new System.Drawing.Point(213, 205);
-            this.textBoxPort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBoxPort.Location = new System.Drawing.Point(160, 167);
+            this.textBoxPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBoxPort.Name = "textBoxPort";
-            this.textBoxPort.Size = new System.Drawing.Size(97, 22);
+            this.textBoxPort.Size = new System.Drawing.Size(74, 20);
             this.textBoxPort.TabIndex = 10;
             // 
             // listAgents
             // 
             this.listAgents.FormattingEnabled = true;
-            this.listAgents.Location = new System.Drawing.Point(175, 132);
-            this.listAgents.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.listAgents.Location = new System.Drawing.Point(131, 107);
+            this.listAgents.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listAgents.Name = "listAgents";
-            this.listAgents.Size = new System.Drawing.Size(135, 24);
+            this.listAgents.Size = new System.Drawing.Size(102, 21);
             this.listAgents.TabIndex = 9;
             // 
             // cloneButton
             // 
-            this.cloneButton.Location = new System.Drawing.Point(173, 30);
-            this.cloneButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cloneButton.Location = new System.Drawing.Point(130, 24);
+            this.cloneButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cloneButton.Name = "cloneButton";
-            this.cloneButton.Size = new System.Drawing.Size(133, 34);
+            this.cloneButton.Size = new System.Drawing.Size(100, 28);
             this.cloneButton.TabIndex = 8;
             this.cloneButton.Text = "Clone Agent";
             this.cloneButton.UseVisualStyleBackColor = true;
             // 
             // textBoxStationaryAgent
             // 
-            this.textBoxStationaryAgent.Location = new System.Drawing.Point(19, 78);
-            this.textBoxStationaryAgent.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBoxStationaryAgent.Location = new System.Drawing.Point(14, 63);
+            this.textBoxStationaryAgent.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBoxStationaryAgent.Multiline = true;
             this.textBoxStationaryAgent.Name = "textBoxStationaryAgent";
-            this.textBoxStationaryAgent.Size = new System.Drawing.Size(368, 25);
+            this.textBoxStationaryAgent.Size = new System.Drawing.Size(277, 21);
             this.textBoxStationaryAgent.TabIndex = 9;
             // 
             // AgencyForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(769, 434);
+            this.ClientSize = new System.Drawing.Size(577, 353);
             this.Controls.Add(this.textBoxStationaryAgent);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.labelAgents);
             this.Controls.Add(this.agentsList);
             this.Controls.Add(this.info);
             this.Controls.Add(this.groupBox);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "AgencyForm";
             this.Text = "Interfata agentie";
             this.groupBox.ResumeLayout(false);
