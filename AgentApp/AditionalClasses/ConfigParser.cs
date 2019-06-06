@@ -17,14 +17,12 @@ namespace AgentApp.AditionalClasses
         #endregion Constructor
 
         #region Properties
-        public Dictionary<IPAddress, Tuple<string, int, string[]>> NetworkHosts { get; } = null;
+        public Dictionary<IPAddress, Tuple<string, int, string[]>> NetworkHosts { get; } = new Dictionary<IPAddress, Tuple<string, int, string[]>>();
         #endregion Properties
 
-        #region Methods
+        #region Private Methods
         private void FormNetworkHosts()
         {
-            Dictionary<IPAddress, Tuple<string, int, string[]>> hosts = new Dictionary<IPAddress, Tuple<string, int, string[]>>();
-
             var _config = (CustomConfig)ConfigurationManager.GetSection("networkConfig");
 
             foreach (HostElement instance in _config.Instances)
@@ -35,6 +33,42 @@ namespace AgentApp.AditionalClasses
                 NetworkHosts.Add(ip, Tuple.Create(instance.Name, port, n));
             }
         }
-        #endregion Methods
+        #endregion Private Methods
+
+        #region Public Methods
+        public List<string> GetNeighbours(string name)
+        {
+            foreach (Tuple<string, int, string[]> t in NetworkHosts.Values)
+            {
+                if(t.Item1.Equals(name))
+                {
+                    return new List<string>(t.Item3);
+                }
+            }
+            return null;
+        }
+        public IPAddress GetIPAdress(string name)
+        {
+            foreach(IPAddress ip in NetworkHosts.Keys)
+            {
+                if(NetworkHosts[ip].Item1.Equals(name))
+                {
+                    return ip;
+                }
+            }
+            return null;
+        }
+        public int GetPort(string name)
+        {
+            foreach (Tuple<string, int, string[]> t in NetworkHosts.Values)
+            {
+                if (t.Item1.Equals(name))
+                {
+                    return t.Item2;
+                }
+            }
+            return 0;
+        }
+        #endregion Public Methods
     }
 }

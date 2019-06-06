@@ -81,8 +81,9 @@ namespace AgentApp
                 string[] neighbours = t.Item3;
 
                 _agency = new Agency(ipAddress, port);
-                _agency.SetName = name;
-                _agency.SetNeighboursHosts = neighbours;
+                this.Text += " " + name;
+                _agency.SetName(name);
+                _agency.SetNeighbours(new List<string>(neighbours));
                 info.Text = "Agentia: " + name + " se afla la " + ipAddress + ", portul " + port;
                 _agency.Activate();
                 _agency.Start();
@@ -101,8 +102,8 @@ namespace AgentApp
         private void agent_OnArrival()
         {
             AgentProxy agent = _agency.GetAgentProxies().Last();
-            console.Text += "Agentul ruleaza..."+Environment.NewLine;
-            console.Text += agent.GetAgentCodebase();
+            console.Text += "Agentul " + agent.GetName() + " ruleaza..." + Environment.NewLine;
+            console.Text += agent.GetAgentCodebase() + Environment.NewLine;
             UpdateAgentsList();
         }
         private void CreateStationaryAgent()
@@ -119,13 +120,14 @@ namespace AgentApp
             List<AgentProxy> _agentsList = _agency.GetAgentProxies();
             agentsList.Clear();
             listAgents.Items.Clear();
+            listAgents.Text = "";
             if (_agentsList != null)
             {
                 foreach (AgentProxy agentProxy in _agentsList)
                 {
                     agentsList.Text += agentProxy.GetName() + "-> " + agentProxy.GetAgentInfo() + System.Environment.NewLine;
                     listAgents.Items.Add(agentProxy.GetName());
-                    listAgents.Text = "";
+                    
                 }
             }
         }
@@ -136,6 +138,11 @@ namespace AgentApp
             {
                 comboBoxIPAddresses.Items.Add(aproxy);
                 comboBoxPorts.Items.Add(_hosts[aproxy].Item2);
+                
+            }
+            foreach(string s in _hosts[_agency.GetAgencyIPEndPoint().Address].Item3 )
+            {
+                comboBoxN.Items.Add(s);
             }
         }
         private void FillAgentsList()
@@ -182,6 +189,7 @@ namespace AgentApp
                 Form ui = gs.GetUI(agentToCreate);
                 agentToCreate.SetAgentId(agentID);
                 agentToCreate.SetAgencyCreationContext(_agency.GetAgencyIPEndPoint());
+                agentToCreate.SetAgentCurrentContext(_agency);
                 if (ui.Controls.Count != 0)
                 {
                     var thread = new Thread(() =>
@@ -205,25 +213,58 @@ namespace AgentApp
             {
                 string selected = this.listAgents.GetItemText(listAgents.SelectedItem);
                 AgentProxy agentDispatched = _agency.GetAgentProxy(selected);
-                string ipAddress = comboBoxIPAddresses.GetItemText(comboBoxIPAddresses.SelectedItem);
-                int portNumber = Int32.Parse(comboBoxPorts.GetItemText(comboBoxPorts.SelectedItem));
-                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), portNumber);
+
+                //string ipAddress = comboBoxIPAddresses.GetItemText(comboBoxIPAddresses.SelectedItem);
+                //int portNumber = Int32.Parse(comboBoxPorts.GetItemText(comboBoxPorts.SelectedItem));
+                string location = comboBoxN.GetItemText(comboBoxN.SelectedItem);
+                IPAddress ipAddress = _configParser.GetIPAdress(location);
+                int portNumber = _configParser.GetPort(location);
+                IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
                 _agency.Dispatch(agentDispatched, ipEndPoint);
+                //_agency.OnRefuseConnection += new Agency.dgEventRaiser1(agent_OnRefuse);
                 UpdateAgentsList();
-                //_agency.OnDispatching += new Agency.dgEventRaiser1(UpdateAgentsList);
             }
             catch (AgentNotFoundException anfe)
             {
                 MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Trimite agent!");
             }
-            catch (IOException io)
+            catch (NullReferenceException nfe)
             {
-                MessageBox.Show("IOException ! Mesaj: " + io.Message + " -> Trimite agent!");
+                MessageBox.Show("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
+            }
+            catch (SocketException io)
+            {
+                MessageBox.Show("SocketException ! Mesaj: " + io.Message + " -> Trimite agent!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Trimite agent!");
+                MessageBox.Show("Exception ! Mesaj: " + ex.Message +" -> Trimite agent!");
             }
+        }
+        private void dispatchButtonNetwork_Click(object sender, EventArgs e)
+        {
+            string selected = this.listAgents.GetItemText(listAgents.SelectedItem);
+
+            AgentRemote agentDispatched = (AgentRemote)_agency.GetAgentProxy(selected);
+            agentDispatched.agenciesVisited.Add(_agency.GetName());
+            foreach (string s in _agency.GetNeighbours())
+            {
+                if (!agentDispatched.agenciesVisited.Contains(s))
+                {
+                    agentDispatched.queue.Enqueue(s);
+                    agentDispatched.agenciesVisited.Add(s);
+                }
+            }
+            string next = agentDispatched.queue.Peek();
+            IPAddress ipAddress = _configParser.GetIPAdress(next);
+            int portNumber = _configParser.GetPort(next);
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+            _agency.Dispatch(agentDispatched, ipEndPoint);
+            UpdateAgentsList();
+        }
+        public void agent_OnRefuse()
+        {
+            MessageBox.Show("Nu se poate realiza connexiunea ");
         }
         private void disposeButton_Click(object sender, EventArgs e)
         {
@@ -239,7 +280,6 @@ namespace AgentApp
             _agency.ShutDown();
             this.Close();
         }
-        #endregion Controlers
-        
+        #endregion Controlers        
     }
 }

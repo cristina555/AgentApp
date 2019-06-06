@@ -8,12 +8,14 @@ namespace AgentApp.Agents
     [Serializable]
     public class AgentRemote : Agent
     {
+        public List<string> agenciesVisited =  new List<string>();
+        public Queue<string> queue = new Queue<string>();
         #region Constructor
         public AgentRemote()
         {
             Parameters = new List<string>();
             this.SetName("AgentRemote");
-            this.SetAgentInfo("Collect information from network");
+            this.SetAgentInfo("Collect information from network");            
         }
         #endregion Constructor
 
@@ -75,12 +77,37 @@ namespace AgentApp.Agents
             AgencyContext agentProxy = this.GetAgentCurrentContext();
             this.SetAgentCodebase(info);
         }
+        private void CollectInfo()
+        {
+            if (queue.Count != 0)
+            {
+                AgencyContext agencyContext = this.GetAgentCurrentContext();
+                string s = queue.Dequeue();
+                foreach (string n in agencyContext.GetNeighbours())
+                {
+                    if (!agenciesVisited.Contains(s))
+                    {
+                        queue.Enqueue(n);
+                        agenciesVisited.Add(n);
+                    }
+                }
+                IPAddress ipAddress = AgencyForm._configParser.GetIPAdress(s);
+                int portNumber = AgencyForm._configParser.GetPort(s);
+                IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+                this.SetAgentCodebase("AgentRemote");
+                agencyContext.Dispatch(this, ipEndPoint);
+            }
+            else
+            {
+                this.SetAgentCodebase("Stop");
+            }
+        }
         #endregion Private Methods
 
         #region Public Methods
         public override void Run()
         {
-            RunNetwork();
+            CollectInfo();
         }
         #endregion Public Methods
 

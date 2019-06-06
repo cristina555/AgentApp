@@ -15,16 +15,18 @@ namespace MobileAgent.AgentManager
     public class Agency : AgencyContext
     {
         #region Private Fields
-        CloneListener cloneListener = null;
-        MobilityListener mobilityListener = null;
-        PersistencyListener persistencyListener =  null;
+       // CloneListener cloneListener = null;
+        //MobilityListener mobilityListener = null;
+       // PersistencyListener persistencyListener =  null;
 
         List<AgentProxy> _agentList = null;
         AgentProxy _stationaryAgent;
         Socket _agencySocket = null;
         IPEndPoint _ipEndPoint = null;
         int _agencyID;
-        Dictionary<IPEndPoint, Socket> _connectionMap = new Dictionary<IPEndPoint, Socket>();
+        string _name;
+        List<string> _neighbours = new List<string>();
+        //Dictionary<IPEndPoint, Socket> _connectionMap = new Dictionary<IPEndPoint, Socket>();
         #endregion Private Fields
 
         #region Public Fields
@@ -33,6 +35,7 @@ namespace MobileAgent.AgentManager
         public event dgEventRaiser OnArrival;
         //public event dgEventRaiser1 OnDispatching ;
         //public event dgEventRaiser OnReverting;
+        public event dgEventRaiser1 OnRefuseConnection;
         #endregion  Public Fields
 
         #region Constructors
@@ -63,8 +66,15 @@ namespace MobileAgent.AgentManager
         #endregion Constructors
 
         #region Properties
-        public string GetName { get; private set; }
-        public string[] GetNeighboursHosts { get; private set; }
+        
+        public string GetName()
+        {
+            return _name;
+        }
+        public List<string> GetNeighbours()
+        {
+            return _neighbours;
+        }
         public List<AgentProxy> GetAgentProxies()
         {
              return _agentList;            
@@ -81,19 +91,13 @@ namespace MobileAgent.AgentManager
         {
             return _stationaryAgent;
         }
-        public string SetName
+        public void SetName(string name)
         {
-            set
-            {
-                GetName = value;
-            }
+            _name = name;
         }
-        public string[] SetNeighboursHosts
+        public void SetNeighbours(List<string> neighbours)
         {
-            set
-            {
-                GetNeighboursHosts = value;
-            }
+             _neighbours =  neighbours;
         }
         public void SetStationaryAgent(AgentProxy stationaryAgent)
         {
@@ -169,7 +173,7 @@ namespace MobileAgent.AgentManager
                     agentThread.IsBackground = true;
                     agentThread.Start();                                 
                 }
-                Thread.Sleep(2000);
+                Thread.Sleep(5000);
                 OnArrival();
                 //RetractAgent(agentProxy, agentProxy.GetAgencyCreationContext());
                 //OnReverting();
@@ -242,7 +246,14 @@ namespace MobileAgent.AgentManager
                 //else
                 //{
                     Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                    connectSocket.Connect(destination);
+                    //try {
+                        connectSocket.Connect(destination);
+                   // }
+                   // catch (Exception)
+                   // {
+                   //     OnRefuseConnection();
+                   // }
+                    
                     //_connectionMap.Add(destination, connectSocket);
                     networkStream = new NetworkStream(connectSocket);
                     IFormatter formatter = new BinaryFormatter();
@@ -261,35 +272,36 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace +" --> Agency Dispach Agent.");
             }
-            catch (IOException io)
+            catch (SocketException io)
             {
-                Console.WriteLine("IOException caught! Mesaj : " + io.Message + " --> Agency Dispach Agent.");
+                Console.WriteLine("SocketException caught! Mesaj : " + io.Message + io.StackTrace +" --> Agency Dispach Agent.");
             }
             catch (Exception ex)
             {
+                //OnRefuseConnection();
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
         }
-        public void DispatchEvent(AgentEvent ev)
-        {
-            switch (ev.GetId())
-            {
-                case CloneEvent.CLONING:
-                case CloneEvent.CLONE:
-                case CloneEvent.CLONED:
-                    ProcessCloneEvent((CloneEvent)ev);
-                    break;
-                case MobilityEvent.DISPATCHING:
-                case MobilityEvent.REVERTING:
-                case MobilityEvent.ARRIVAL:
-                    ProcessMobilityEvent((MobilityEvent)ev);
-                    break;
-                case PersistencyEvent.DEACTIVATING:
-                case PersistencyEvent.ACTIVATION:
-                    ProcessPersistencyEvent((PersistencyEvent)ev);
-                    break;
-            }
-        }
+        //public void DispatchEvent(AgentEvent ev)
+        //{
+        //    switch (ev.GetId())
+        //    {
+        //        case CloneEvent.CLONING:
+        //        case CloneEvent.CLONE:
+        //        case CloneEvent.CLONED:
+        //            ProcessCloneEvent((CloneEvent)ev);
+        //            break;
+        //        case MobilityEvent.DISPATCHING:
+        //        case MobilityEvent.REVERTING:
+        //        case MobilityEvent.ARRIVAL:
+        //            ProcessMobilityEvent((MobilityEvent)ev);
+        //            break;
+        //        case PersistencyEvent.DEACTIVATING:
+        //        case PersistencyEvent.ACTIVATION:
+        //            ProcessPersistencyEvent((PersistencyEvent)ev);
+        //            break;
+        //    }
+        //}
         public void Dispose(AgentProxy agentProxy) 
 		{
             throw new Exception("Aceasta metoda trebuie completata");
@@ -322,7 +334,7 @@ namespace MobileAgent.AgentManager
             //{
                 Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 connectSocket.Connect(location);
-                _connectionMap.Add(location, connectSocket);
+                //_connectionMap.Add(location, connectSocket);
                 networkStream = new NetworkStream(connectSocket);                
            // }
             IFormatter formatter = new BinaryFormatter();
@@ -334,182 +346,181 @@ namespace MobileAgent.AgentManager
         {
            
         }
-        
         public void Deactivate(long duration)
         {
             throw new Exception("Aceasta metoda trebuie completata");
         }
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public void AddCloneListener(CloneListener listener)
-        {
-            if (cloneListener == null)
-            {
-                cloneListener = listener;
-            }
-            else if (cloneListener == listener)
-            {
-                return;
-            }
-            else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
-            {
-                ((AgentEventListener)cloneListener).AddCloneListener(listener);
-            }
-            else if (cloneListener.GetType().IsInstanceOfType(typeof(CloneListener)))
-            {
-                cloneListener = new AgentEventListener(cloneListener, listener);
-            }
-        }
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public void AddMobilityListener(MobilityListener listener)
-        {
-            if (mobilityListener == null)
-            {
-                mobilityListener = listener;
-            }
-            else if (mobilityListener == listener)
-            {
-                return;
-            }
-            else if (mobilityListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
-            {
-                ((AgentEventListener)mobilityListener).AddMobilityListener(listener);
-            }
-            else if (mobilityListener.GetType().IsInstanceOfType(typeof(MobilityListener)))
-            {
-                mobilityListener = new AgentEventListener(mobilityListener, listener);
-            }
-        }
-        public void AddPersistencyListener(PersistencyListener listener)
-        {
-            if (persistencyListener == null)
-            {
-                persistencyListener = listener;
-            }
-            else if (persistencyListener == listener)
-            {
-                return;
-            }
-            else if (persistencyListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
-            {
-                ((AgentEventListener)persistencyListener).AddPersistencyListener(listener);
-            }
-            else if (persistencyListener.GetType().IsInstanceOfType(typeof(PersistencyListener)))
-            {
-                persistencyListener = new AgentEventListener(persistencyListener, listener);
-            }
-        }
-        public void AddContextListener(ContextListener listener)
-        {
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        protected void ProcessCloneEvent(CloneEvent ev)
-        {
-            if (cloneListener != null)
-            {
-                switch (ev.GetId())
-                {
-                    case CloneEvent.CLONING:
-                        cloneListener.OnCloning(ev);
-                        break;
-                    case CloneEvent.CLONE:
-                        cloneListener.OnClone(ev);
-                        break;
-                    case CloneEvent.CLONED:
-                        cloneListener.OnCloned(ev);
-                        break;
-                }
-            }
-        }
-        protected void ProcessMobilityEvent(MobilityEvent ev)
-        {
-            if (mobilityListener != null)
-            {
-                switch (ev.GetId())
-                {
-                    case MobilityEvent.DISPATCHING:
-                        mobilityListener.OnDispatching(ev);
-                        break;
-                    case MobilityEvent.REVERTING:
-                        mobilityListener.OnReverting(ev);
-                        break;
-                    case MobilityEvent.ARRIVAL:
-                        mobilityListener.OnArrival(ev);
-                        break;
-                }
-            }
-        }
-        protected void ProcessPersistencyEvent(PersistencyEvent ev)
-        {
-            if (persistencyListener != null)
-            {
-                switch (ev.GetId())
-                {
-                    case PersistencyEvent.DEACTIVATING:
-                        persistencyListener.OnDeactivating(ev);
-                        break;
-                    case PersistencyEvent.ACTIVATION:
-                        persistencyListener.OnActivation(ev);
-                        break;
-                }
-            }
-        }
-        protected void ProcessContextEvent(ContextEvent ev)
-        {
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public void RemoveCloneListener(CloneListener l)
-        {
-            if (cloneListener == l)
-            {
-                cloneListener = null;
-            }
-            else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
-            {
-                ((AgentEventListener)cloneListener).RemoveCloneListener(l);
-                if (((AgentEventListener)cloneListener).Size() == 0)
-                {
-                    cloneListener = null;
-                }
-            }
-        }
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public void RemoveMobilityListener(MobilityListener l)
-        {
-            if (mobilityListener == l)
-            {
-                mobilityListener = null;
-            }
-            else if (mobilityListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
-            {
-                ((AgentEventListener)mobilityListener).RemoveMobilityListener(l);
-                if (((AgentEventListener)mobilityListener).Size() == 0)
-                {
-                    mobilityListener = null;
-                }
-            }
-        }
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public void RemovePersistencyListener(PersistencyListener l)
-        {
-            if (persistencyListener == l)
-            {
-                persistencyListener = null;
-            }
-            else if (persistencyListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
-            {
-                ((AgentEventListener)persistencyListener).AddPersistencyListener(l);
-                if (((AgentEventListener)persistencyListener).Size() == 0)
-                {
-                    persistencyListener = null;
-                }
-            }
-        }
-        public void RemoveContextListener(ContextListener listener)
-        {
-            //Not implemented
-            throw new Exception("Aceasta metoda trebuie completata");
-        }
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        //public void AddCloneListener(CloneListener listener)
+        //{
+        //    if (cloneListener == null)
+        //    {
+        //        cloneListener = listener;
+        //    }
+        //    else if (cloneListener == listener)
+        //    {
+        //        return;
+        //    }
+        //    else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+        //    {
+        //        ((AgentEventListener)cloneListener).AddCloneListener(listener);
+        //    }
+        //    else if (cloneListener.GetType().IsInstanceOfType(typeof(CloneListener)))
+        //    {
+        //        cloneListener = new AgentEventListener(cloneListener, listener);
+        //    }
+        //}
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        //public void AddMobilityListener(MobilityListener listener)
+        //{
+        //    if (mobilityListener == null)
+        //    {
+        //        mobilityListener = listener;
+        //    }
+        //    else if (mobilityListener == listener)
+        //    {
+        //        return;
+        //    }
+        //    else if (mobilityListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+        //    {
+        //        ((AgentEventListener)mobilityListener).AddMobilityListener(listener);
+        //    }
+        //    else if (mobilityListener.GetType().IsInstanceOfType(typeof(MobilityListener)))
+        //    {
+        //        mobilityListener = new AgentEventListener(mobilityListener, listener);
+        //    }
+        //}
+        //public void AddPersistencyListener(PersistencyListener listener)
+        //{
+        //    if (persistencyListener == null)
+        //    {
+        //        persistencyListener = listener;
+        //    }
+        //    else if (persistencyListener == listener)
+        //    {
+        //        return;
+        //    }
+        //    else if (persistencyListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+        //    {
+        //        ((AgentEventListener)persistencyListener).AddPersistencyListener(listener);
+        //    }
+        //    else if (persistencyListener.GetType().IsInstanceOfType(typeof(PersistencyListener)))
+        //    {
+        //        persistencyListener = new AgentEventListener(persistencyListener, listener);
+        //    }
+        //}
+        //public void AddContextListener(ContextListener listener)
+        //{
+        //    throw new Exception("Aceasta metoda trebuie completata");
+        //}
+        //protected void ProcessCloneEvent(CloneEvent ev)
+        //{
+        //    if (cloneListener != null)
+        //    {
+        //        switch (ev.GetId())
+        //        {
+        //            case CloneEvent.CLONING:
+        //                cloneListener.OnCloning(ev);
+        //                break;
+        //            case CloneEvent.CLONE:
+        //                cloneListener.OnClone(ev);
+        //                break;
+        //            case CloneEvent.CLONED:
+        //                cloneListener.OnCloned(ev);
+        //                break;
+        //        }
+        //    }
+        //}
+        //protected void ProcessMobilityEvent(MobilityEvent ev)
+        //{
+        //    if (mobilityListener != null)
+        //    {
+        //        switch (ev.GetId())
+        //        {
+        //            case MobilityEvent.DISPATCHING:
+        //                mobilityListener.OnDispatching(ev);
+        //                break;
+        //            case MobilityEvent.REVERTING:
+        //                mobilityListener.OnReverting(ev);
+        //                break;
+        //            case MobilityEvent.ARRIVAL:
+        //                mobilityListener.OnArrival(ev);
+        //                break;
+        //        }
+        //    }
+        //}
+        //protected void ProcessPersistencyEvent(PersistencyEvent ev)
+        //{
+        //    if (persistencyListener != null)
+        //    {
+        //        switch (ev.GetId())
+        //        {
+        //            case PersistencyEvent.DEACTIVATING:
+        //                persistencyListener.OnDeactivating(ev);
+        //                break;
+        //            case PersistencyEvent.ACTIVATION:
+        //                persistencyListener.OnActivation(ev);
+        //                break;
+        //        }
+        //    }
+        //}
+        //protected void ProcessContextEvent(ContextEvent ev)
+        //{
+        //    throw new Exception("Aceasta metoda trebuie completata");
+        //}
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        //public void RemoveCloneListener(CloneListener l)
+        //{
+        //    if (cloneListener == l)
+        //    {
+        //        cloneListener = null;
+        //    }
+        //    else if (cloneListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+        //    {
+        //        ((AgentEventListener)cloneListener).RemoveCloneListener(l);
+        //        if (((AgentEventListener)cloneListener).Size() == 0)
+        //        {
+        //            cloneListener = null;
+        //        }
+        //    }
+        //}
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        //public void RemoveMobilityListener(MobilityListener l)
+        //{
+        //    if (mobilityListener == l)
+        //    {
+        //        mobilityListener = null;
+        //    }
+        //    else if (mobilityListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+        //    {
+        //        ((AgentEventListener)mobilityListener).RemoveMobilityListener(l);
+        //        if (((AgentEventListener)mobilityListener).Size() == 0)
+        //        {
+        //            mobilityListener = null;
+        //        }
+        //    }
+        //}
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        //public void RemovePersistencyListener(PersistencyListener l)
+        //{
+        //    if (persistencyListener == l)
+        //    {
+        //        persistencyListener = null;
+        //    }
+        //    else if (persistencyListener.GetType().IsInstanceOfType(typeof(AgentEventListener)))
+        //    {
+        //        ((AgentEventListener)persistencyListener).AddPersistencyListener(l);
+        //        if (((AgentEventListener)persistencyListener).Size() == 0)
+        //        {
+        //            persistencyListener = null;
+        //        }
+        //    }
+        //}
+        //public void RemoveContextListener(ContextListener listener)
+        //{
+        //    //Not implemented
+        //    throw new Exception("Aceasta metoda trebuie completata");
+        //}
         #endregion Methods
     }
 }
