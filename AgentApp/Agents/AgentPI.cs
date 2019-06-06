@@ -1,31 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MobileAgent.AgentManager;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace AgentApp
 {
     [Serializable]
     public class AgentPI : Agent
     {
-        #region Fields
-        private int dec;
-        Form f = new Form();
-        Button send = new Button();
-        Label labelNrDec = new Label();
-        TextBox textBoxNrDec = new TextBox();
-
-        #endregion Fields
-
+ 
         #region Constructor
         public AgentPI()
         {
-            this.SetName("AgentPI");
-            this.SetAgentInfo("Calculate the value of PI");
+            SetName("AgentPI");
+            SetAgentInfo("Calculate the value of PI");
         }
         public AgentPI(int id) : base(id)
         {
@@ -33,36 +19,33 @@ namespace AgentApp
         }
         #endregion Constructor
 
-        #region Methods
+        #region Properties
         public int SetDec
         {
             set
             {
-                dec = value;
+                GetDec = value;
             }
         }
-        public int GetDec
-        {
-            get
-            {
-                return dec;
-            }
-        }
+        public int GetDec { get; private set; }
+        #endregion Properties
+
+        #region Private Methods
         private void CalculPi()
         {
             string codebase="";
 
-            dec++;
+            GetDec++;
 
-            uint[] x = new uint[dec * 10 / 3 + 2];
-            uint[] r = new uint[dec * 10 / 3 + 2];
+            uint[] x = new uint[GetDec * 10 / 3 + 2];
+            uint[] r = new uint[GetDec * 10 / 3 + 2];
 
-            uint[] pi = new uint[dec];
+            uint[] pi = new uint[GetDec];
 
             for (int j = 0; j < x.Length; j++)
                 x[j] = 20;
 
-            for (int i = 0; i < dec; i++)
+            for (int i = 0; i < GetDec; i++)
             {
                 uint carry = 0;
                 for (int j = 0; j < x.Length; j++)
@@ -103,11 +86,14 @@ namespace AgentApp
             codebase += "Rezultatul este: " + result + "\n";
             this.SetAgentCodebase(codebase);
         }
+        #endregion Private Methods
+
+        #region Public Methods
         public override void Run()
         {
             CalculPi();
         }
-        #endregion Methods
+        #endregion Public Methods
     }
 
 }

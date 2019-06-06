@@ -11,13 +11,13 @@ namespace MobileAgent.AgentManager
     {
 		int GetAgentId();
         IPEndPoint GetAgencyCreationContext();
-        IPEndPoint GetAgentCurrentContext();
+        AgencyContext GetAgentCurrentContext();
         String GetAgentCodebase();
         String GetAgentInfo();
         string GetName();
         int GetStatus();
         void SetAgentId(int id);
-        void SetAgentCurrentContext(IPEndPoint currentContext);
+        void SetAgentCurrentContext(AgencyContext currentContext);
         void SetCreationTime();
         void SetAgentCodebase(String codebase);
         void SetAgentInfo(String info);

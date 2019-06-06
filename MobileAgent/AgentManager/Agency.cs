@@ -12,25 +12,28 @@ using System.IO;
 
 namespace MobileAgent.AgentManager
 {   
-    public class Agency : AgentContext
+    public class Agency : AgencyContext
     {
-        #region Fields
-        private CloneListener cloneListener = null;
-        private MobilityListener mobilityListener = null;
-        private PersistencyListener persistencyListener =  null;
-        private string _name;
-        private string[] _neighboursHosts;
-        private List<AgentProxy> _agentList = null;
-        private AgentProxy _stationaryAgent;
+        #region Private Fields
+        CloneListener cloneListener = null;
+        MobilityListener mobilityListener = null;
+        PersistencyListener persistencyListener =  null;
+
+        List<AgentProxy> _agentList = null;
+        AgentProxy _stationaryAgent;
         Socket _agencySocket = null;
         IPEndPoint _ipEndPoint = null;
-        private int _agencyID;
+        int _agencyID;
         Dictionary<IPEndPoint, Socket> _connectionMap = new Dictionary<IPEndPoint, Socket>();
+        #endregion Private Fields
+
+        #region Public Fields
         public delegate void dgEventRaiser();
+        public delegate void dgEventRaiser1();
         public event dgEventRaiser OnArrival;
-        public event dgEventRaiser OnDispatching;
-        public event dgEventRaiser OnReverting;
-        #endregion Fields
+        //public event dgEventRaiser1 OnDispatching ;
+        //public event dgEventRaiser OnReverting;
+        #endregion  Public Fields
 
         #region Constructors
         public Agency()
@@ -50,34 +53,18 @@ namespace MobileAgent.AgentManager
             }
             catch(SocketException e)
             {
-                Console.WriteLine("SocketException caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
+                Console.WriteLine("SocketException caught! Message: " + e.Message + " --> Constructor Agency.");
             }
             catch (Exception e)
-            {
-                Console.WriteLine("Exception caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
+            { 
+                Console.WriteLine("Exception caught! Message: " + e.Message + " --> Constructor Agency.");
             }
         }
         #endregion Constructors
 
         #region Properties
-        public string GetName
-        {
-            get
-            {
-                return _name;
-            }
-        }
-        public string[] GetNeighboursHosts
-        {
-            get
-            {
-                return _neighboursHosts;
-            }
-        }
+        public string GetName { get; private set; }
+        public string[] GetNeighboursHosts { get; private set; }
         public List<AgentProxy> GetAgentProxies()
         {
              return _agentList;            
@@ -86,7 +73,7 @@ namespace MobileAgent.AgentManager
         {
              return _agencyID;            
         }
-        public IPEndPoint GetAgencyContext()
+        public IPEndPoint GetAgencyIPEndPoint()
         {
              return _ipEndPoint;
         }
@@ -98,14 +85,14 @@ namespace MobileAgent.AgentManager
         {
             set
             {
-                _name = value;
+                GetName = value;
             }
         }
         public string[] SetNeighboursHosts
         {
             set
             {
-                _neighboursHosts = value;
+                GetNeighboursHosts = value;
             }
         }
         public void SetStationaryAgent(AgentProxy stationaryAgent)
@@ -122,11 +109,13 @@ namespace MobileAgent.AgentManager
                 _agencySocket.Bind(_ipEndPoint);
 
             }
-            catch (SocketException e)
+            catch (SocketException se)
             {
-                Console.WriteLine("SocketException caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
+                Console.WriteLine("SocketException caught! Mesaj : " + se.Message+ " --> Activate Agency.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Activate Agency.");
             }
         }
         public void Start()
@@ -141,11 +130,13 @@ namespace MobileAgent.AgentManager
                 mainThread.Start();
 
             }
-            catch (SocketException e)
+            catch (SocketException se)
             {
-                Console.WriteLine("SocketException caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
+                Console.WriteLine("SocketException caught! Mesaj : " + se.Message + " --> Start Agency.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Start Agency.");
             }
         }
         private void StartListening()
@@ -154,6 +145,7 @@ namespace MobileAgent.AgentManager
             while (true)
             {
                 Socket mySocket = _agencySocket.Accept();
+                Console.WriteLine(mySocket);
                 Thread newThread = new Thread(new ParameterizedThreadStart(StartAccept));
                 newThread.IsBackground = true;
                 newThread.Start(mySocket);
@@ -164,29 +156,32 @@ namespace MobileAgent.AgentManager
             try
             {
                 Socket s = (Socket)obj;
+                Console.WriteLine(s.AddressFamily);
                 NetworkStream networkStream = new NetworkStream(s);
                 IFormatter formatter = new BinaryFormatter();
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
                 _agentList.Add(agentProxy);
-                agentProxy.SetAgentCurrentContext(_ipEndPoint);
+                agentProxy.SetAgentCurrentContext(this);
 
-                if (agentProxy.GetAgencyCreationContext() == _ipEndPoint)
+                if (agentProxy.GetAgencyCreationContext() != _ipEndPoint)
                 {
                     Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
                     agentThread.IsBackground = true;
-                    agentThread.Start();
+                    agentThread.Start();                                 
                 }
-                Thread.Sleep(5000);
-
+                Thread.Sleep(2000);
                 OnArrival();
-                RetractAgent(agentProxy, agentProxy.GetAgencyCreationContext());
+                //RetractAgent(agentProxy, agentProxy.GetAgencyCreationContext());
+                //OnReverting();
 
             }
-            catch (SocketException e)
+            catch (SocketException se)
             {
-                Console.WriteLine("SocketException caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
+                Console.WriteLine("SocketException caught! Mesaj : " + se.Message + " -->Agency Accept Agents.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Accept Agents.");
             }
         }
         public void CreateAgent(AgentProxy agentProxy)
@@ -195,58 +190,84 @@ namespace MobileAgent.AgentManager
             {
                 _agentList.Add(agentProxy);
             }
-            catch (Exception e)
+            catch(AgencyNotFoundException anfe)
             {
-                Console.WriteLine("Exception caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
+                Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Create Agent.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Create Agent.");
             }
         }
+        //TODO
         public AgentProxy Clone(AgentProxy agent) 
-        {            
-            AgentProxy agentCloned= null;
-            agentCloned.SetAgentCodebase(agentCloned.GetAgentInfo() + " cloned");
+        {
+            AgentProxy agentCloned = null;
+            try
+            {
+                agentCloned.SetName(agentCloned.GetName() + " cloned");
+                agentCloned.SetAgentInfo(agentCloned.GetAgentInfo() + " cloned");
+                _agentList.Add(agentCloned);
+                return agentCloned;
+            }
+            catch(CloneNotSupportedException cnse)
+            {
+                Console.WriteLine("CloneNotSupportedException caught! Mesaj : " + cnse.Message + " --> Agency Clone Agent.");
+            }
+            catch (AgencyNotFoundException anfe)
+            {
+                Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Clone Agent.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Clone Agent.");
+            }
             return agentCloned;
         }
         
+        //More exceptions
         public void Dispatch(AgentProxy agentProxy, IPEndPoint destination)
         {
             try
             {
-                NetworkStream networkStream;
-                if (_connectionMap.ContainsKey(destination))
-                {
-                    networkStream = new NetworkStream(_connectionMap[destination]);
-                }
-                else
-                {
+                NetworkStream networkStream =  null;
+                //if (_connectionMap.ContainsKey(destination))
+                //{
+                //    networkStream = new NetworkStream(_connectionMap[destination]);
+                //    IFormatter formatter = new BinaryFormatter();
+                //    agentProxy.SetAgentCurrentContext(null);
+                //    formatter.Serialize(networkStream, agentProxy);
+                //    _agentList.Remove(agentProxy);
+                //}
+                //else
+                //{
                     Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     connectSocket.Connect(destination);
-                    _connectionMap.Add(destination, connectSocket);
+                    //_connectionMap.Add(destination, connectSocket);
                     networkStream = new NetworkStream(connectSocket);
-                }
-                IFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(networkStream, agentProxy);
-                _agentList.Remove(agentProxy);
-                OnDispatching();
+                    IFormatter formatter = new BinaryFormatter();
+                    agentProxy.SetAgentCurrentContext(null);
+                    formatter.Serialize(networkStream, agentProxy);
+                    _agentList.Remove(agentProxy);
+                //}
+                
+                //OnDispatching();
             }
-            catch (AgentNotFoundException anfe)
+            catch (AgencyNotFoundException anfe)
             {
-                Console.WriteLine("AgentNotFoundException caught!!!");
-                Console.WriteLine("Source : " + anfe.Source);
-                Console.WriteLine("Message : " + anfe.Message);
+                Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Dispach Agent.");
+            }
+            catch (NullReferenceException nfe)
+            {
+                Console.WriteLine("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace +" --> Agency Dispach Agent.");
             }
             catch (IOException io)
             {
-                Console.WriteLine("IOException caught!!!");
-                Console.WriteLine("Source : " + io.Source);
-                Console.WriteLine("Message : " + io.Message);
+                Console.WriteLine("IOException caught! Mesaj : " + io.Message + " --> Agency Dispach Agent.");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("Exception caught!!!");
-                Console.WriteLine("Source : " + e.Source);
-                Console.WriteLine("Message : " + e.Message);
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
         }
         public void DispatchEvent(AgentEvent ev)
@@ -289,20 +310,21 @@ namespace MobileAgent.AgentManager
             return agentProxy;
         }
        
+        //TODO
         public void RetractAgent(AgentProxy agentProxy, IPEndPoint location) 
 		{
             NetworkStream networkStream;
-            if (_connectionMap.ContainsKey(location))
-            {
-                networkStream = new NetworkStream(_connectionMap[location]);
-                            }
-            else
-            {
+            //if (_connectionmap.containskey(location))
+            //{
+            //    networkstream = new networkstream(_connectionmap[location]);
+            //                }
+            //else
+            //{
                 Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 connectSocket.Connect(location);
                 _connectionMap.Add(location, connectSocket);
                 networkStream = new NetworkStream(connectSocket);                
-            }
+           // }
             IFormatter formatter = new BinaryFormatter();
             formatter.Serialize(networkStream, agentProxy);
             _agentList.Remove(agentProxy);

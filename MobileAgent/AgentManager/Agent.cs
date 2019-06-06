@@ -8,13 +8,16 @@ namespace MobileAgent.AgentManager
     [Serializable]
     abstract public class Agent : AgentProxy
     {
-        #region Fields
+        #region Public Fields
         public readonly static int ACTIVE = 1;
         public readonly static int INACTIVE = 0;
         public readonly static int REMOTE = 2;
         public readonly static int LOCAL = 3;
         public readonly static int OK = 0;
         public readonly static int NOK = 1;
+        #endregion Public Fields
+
+        #region Private Fields
         private string _name;
         private int _status = NOK;
         private int _state = INACTIVE;
@@ -23,8 +26,8 @@ namespace MobileAgent.AgentManager
         private string _creationTime;
         private IPEndPoint _agencyCreationContext;
         private string _agentInfo;
-        private IPEndPoint _currentContext;
-        #endregion Fields
+        private AgencyContext _currentContext;
+        #endregion Private Fields
 
         #region Constructors
         public Agent()
@@ -52,7 +55,7 @@ namespace MobileAgent.AgentManager
         {
             return _agencyCreationContext;
         }
-        public IPEndPoint GetAgentCurrentContext()
+        public AgencyContext GetAgentCurrentContext()
         {
             return _currentContext;
         }
@@ -88,7 +91,7 @@ namespace MobileAgent.AgentManager
         {
             _agentInfo = info;
         }
-        public void SetAgentCurrentContext(IPEndPoint currentContext)
+        public void SetAgentCurrentContext(AgencyContext currentContext)
         {
             _currentContext = currentContext;
         }

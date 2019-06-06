@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MobileAgent.AgentManager;
 using System.Net;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace AgentApp.Agents
 {
@@ -15,10 +10,10 @@ namespace AgentApp.Agents
     {
         #region Fields
         List<IPEndPoint> _agenciesVisited = null;
-        String info = "" ;
+        string info = "" ;
         #endregion Fields
 
-        #region Constructor
+        #region Constructors
         public AgentInfo()
         {
             _agenciesVisited = new List<IPEndPoint>();
@@ -29,12 +24,12 @@ namespace AgentApp.Agents
         {
              _agenciesVisited = new List<IPEndPoint>();
         }
-        #endregion Constructor
+        #endregion Constructors
 
-        #region Methods
+        #region Private Methods
         private void AddAgency()
         {
-            IPEndPoint ip = this.GetAgentCurrentContext(); 
+            IPEndPoint ip = GetAgentCurrentContext().GetAgencyIPEndPoint(); 
             if (!_agenciesVisited.Contains(ip))
             {
                 _agenciesVisited.Add(ip);
@@ -52,11 +47,14 @@ namespace AgentApp.Agents
             }
             this.SetAgentCodebase(info);
         }
+        #endregion Private Methods
+
+        #region Public Methods
         public override void Run()
         {
             ShowAgencies();
         }
-        #endregion Methods
+        #endregion Public Methods
 
     }
 }

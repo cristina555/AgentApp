@@ -16,13 +16,17 @@ namespace AgentApp
 {
     public partial class AgencyForm : Form
     {
-        Agency _agency = null;
-        ConfigParser _configParser = null;
-        GeneralSettings gs = null;
+        #region Private Fields
+        Agency _agency = null;        
         Random r;
-        Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = null;
+        #endregion Private Fields
 
+        #region Public Fields
+        public static ConfigParser _configParser = null;
+        public static GeneralSettings gs = null;
+        #endregion Public Fields
 
+        #region Constructors
         public AgencyForm()
         {
             
@@ -30,13 +34,14 @@ namespace AgentApp
             _configParser = new ConfigParser();
             gs = new GeneralSettings();
             r = new Random();
-            _hosts = new Dictionary<IPAddress, Tuple<string, int, string[]>>();
             StartAgency();
             CreateStationaryAgent();
             FillAgentsList();
-           
-
+            FillIPAddressAndPortsList();
         }
+        #endregion Constructors 
+
+        #region Private Methods
         private void StartAgency()
         {
 
@@ -64,7 +69,7 @@ namespace AgentApp
             //}
 
             // simulare
-            _hosts = _configParser.GetNetworkHosts();
+            Dictionary<IPAddress, Tuple<string, int, string[]>>  _hosts = _configParser.NetworkHosts;
             try
             {
 
@@ -85,22 +90,27 @@ namespace AgentApp
             }
             catch (FormatException fe)
             {
-                MessageBox.Show(fe.Message + " --> Adresa IP invalida!");
+                MessageBox.Show("FormatException !" + fe.Message + " --> Start Agentie, adresa IP invalida!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception !" + ex.Message + " --> Start Agentie!");
             }
 
         }
-        public void agent_OnArrival()
+        private void agent_OnArrival()
         {
             AgentProxy agent = _agency.GetAgentProxies().Last();
             console.Text += "Agentul ruleaza..."+Environment.NewLine;
             console.Text += agent.GetAgentCodebase();
+            UpdateAgentsList();
         }
         private void CreateStationaryAgent()
         {
             Random random = new Random();
             int agentID = random.Next(1000, 9999);
             AgentSystemInfo agentSystemInfo = new AgentSystemInfo(agentID);
-            agentSystemInfo.SetAgentCurrentContext(_agency.GetAgencyContext());
+            agentSystemInfo.SetAgentCurrentContext(_agency);
             _agency.SetStationaryAgent(agentSystemInfo);
             textBoxStationaryAgent.Text = agentSystemInfo.GetName() + "-> " + agentSystemInfo.GetAgentInfo() + System.Environment.NewLine;
         }
@@ -113,89 +123,30 @@ namespace AgentApp
             {
                 foreach (AgentProxy agentProxy in _agentsList)
                 {
-                    agentsList.Text = agentProxy.GetName() + "-> " + agentProxy.GetAgentInfo() + System.Environment.NewLine;
+                    agentsList.Text += agentProxy.GetName() + "-> " + agentProxy.GetAgentInfo() + System.Environment.NewLine;
                     listAgents.Items.Add(agentProxy.GetName());
+                    listAgents.Text = "";
                 }
             }
         }
-        private void createButton_Click(object sender, EventArgs e)
+        private void FillIPAddressAndPortsList()
         {
-            try
+            Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = _configParser.NetworkHosts;
+            foreach (IPAddress aproxy in _hosts.Keys)
             {
-                string selected = this.listAgents.GetItemText(this.comboBoxAgents.SelectedItem);
-                Random random = new Random();
-                int agentID = random.Next(1000, 9999);
-
-                AgentProxy agentToCreate= gs.GetAgentProxy(selected);
-                Form ui = gs.GetUI(agentToCreate);
-                agentToCreate.SetAgentId(agentID);
-                agentToCreate.SetAgencyCreationContext(_agency.GetAgencyContext());
-                agentToCreate.SetAgentCurrentContext(_agency.GetAgencyContext());
-                if (ui.Controls.Count != 0)
-                {
-                    var thread = new Thread(() =>
-                    {
-                        Application.Run(ui);
-                    });
-                    thread.Start();
-                }
-                _agency.CreateAgent(agentToCreate);
-                UpdateAgentsList();
+                comboBoxIPAddresses.Items.Add(aproxy);
+                comboBoxPorts.Items.Add(_hosts[aproxy].Item2);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Exception caught! Mesaj: " + ex.Message);
-            }
-
-        }
-        private void dispatchButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string selected = this.listAgents.GetItemText(this.listAgents.SelectedItem);
-                AgentProxy agentDispatched = _agency.GetAgentProxy(selected);
-                string ipAddress = textBoxIpAddress.Text;
-                int portNumber = Int32.Parse(textBoxPort.Text);
-                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), portNumber);
-                _agency.Dispatch(agentDispatched, ipEndPoint);
-                _agency.OnDispatching += new Agency.dgEventRaiser(UpdateAgentsList);
-            }
-            catch (AgentNotFoundException anfe)
-            {
-                MessageBox.Show("AgentNotFoundException caught! Mesaj: " + anfe.Message);
-            }
-            catch (IOException io)
-            {
-                MessageBox.Show("IOException caught! Mesaj: " + io.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Exception caught! Mesaj: " + ex.Message);
-            }
-        }
-        private void disposeButton_Click(object sender, EventArgs e)
-        {
-
-        }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            UpdateAgentsList();
-        }
-
-        private void deactivateButton_Click(object sender, EventArgs e)
-        {
-            _agency.ShutDown();
-            this.Close();
         }
         private void FillAgentsList()
-        {            
-            Dictionary<AgentProxy, Form> ags = gs.GetStaticListofAgents();
-            foreach(AgentProxy aproxy in ags.Keys)
+        {
+            Dictionary<AgentProxy, Form> ags = gs.StaticListofAgents;
+            foreach (AgentProxy aproxy in ags.Keys)
             {
                 comboBoxAgents.Items.Add(aproxy.GetName());
             }
         }
-        public static string GetLocalIPAddress()
+        private static string GetLocalIPAddress()
         {
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -216,6 +167,79 @@ namespace AgentApp
             throw new Exception("No network adapters with an IPv4 address in the system!");
 
         }
+        #endregion Private Methods
 
+        #region Controlers
+        private void createButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string selected = this.listAgents.GetItemText(this.comboBoxAgents.SelectedItem);
+                Random random = new Random();
+                int agentID = random.Next(1000, 9999);
+
+                AgentProxy agentToCreate = gs.GetAgentProxy(selected);
+                Form ui = gs.GetUI(agentToCreate);
+                agentToCreate.SetAgentId(agentID);
+                agentToCreate.SetAgencyCreationContext(_agency.GetAgencyIPEndPoint());
+                if (ui.Controls.Count != 0)
+                {
+                    var thread = new Thread(() =>
+                    {
+                        Application.Run(ui);
+                    });
+                    thread.Start();
+                }
+                _agency.CreateAgent(agentToCreate);
+                UpdateAgentsList();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Creare agent!");
+            }
+
+        }
+        private void dispatchButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string selected = this.listAgents.GetItemText(listAgents.SelectedItem);
+                AgentProxy agentDispatched = _agency.GetAgentProxy(selected);
+                string ipAddress = comboBoxIPAddresses.GetItemText(comboBoxIPAddresses.SelectedItem);
+                int portNumber = Int32.Parse(comboBoxPorts.GetItemText(comboBoxPorts.SelectedItem));
+                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), portNumber);
+                _agency.Dispatch(agentDispatched, ipEndPoint);
+                UpdateAgentsList();
+                //_agency.OnDispatching += new Agency.dgEventRaiser1(UpdateAgentsList);
+            }
+            catch (AgentNotFoundException anfe)
+            {
+                MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Trimite agent!");
+            }
+            catch (IOException io)
+            {
+                MessageBox.Show("IOException ! Mesaj: " + io.Message + " -> Trimite agent!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Trimite agent!");
+            }
+        }
+        private void disposeButton_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            UpdateAgentsList();
+        }
+
+        private void deactivateButton_Click(object sender, EventArgs e)
+        {
+            _agency.ShutDown();
+            this.Close();
+        }
+        #endregion Controlers
+        
     }
 }

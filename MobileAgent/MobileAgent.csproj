@@ -44,8 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentManager\Agency.cs" />
+    <Compile Include="AgentManager\AgencyContext.cs" />
     <Compile Include="AgentManager\Agent.cs" />
-    <Compile Include="AgentManager\AgentContext.cs" />
     <Compile Include="AgentManager\AgentProxy.cs" />
     <Compile Include="EventAgent\Listeners\AgentEventListener.cs" />
     <Compile Include="EventAgent\Events\AgentEvent.cs" />
@@ -68,9 +68,7 @@
     <Compile Include="Exceptions\InvalidAgentException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AdditionalClasses\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

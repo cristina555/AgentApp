@@ -9,7 +9,7 @@ namespace AgentApp.AditionalClasses
 {
     public class NetworkCollection : ConfigurationElementCollection
     {
-        
+        #region Properties
         public HostElement this[int index]
         {
             get
@@ -36,14 +36,17 @@ namespace AgentApp.AditionalClasses
                 BaseAdd(value);
             }
         }
+        #endregion Properties
+
+        #region Methods
         protected override ConfigurationElement CreateNewElement()
         {
             return new HostElement();
         }
-
         protected override object GetElementKey(ConfigurationElement element)
         {
             return ((HostElement)element).Name;
         }
+        #endregion Methods
     }
 }

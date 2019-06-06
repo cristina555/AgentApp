@@ -5,14 +5,11 @@ using System.Management;
 
 namespace AgentApp.Agents
 {
+    [Serializable]
     public class AgentSystemInfo : Agent
     {
         #region Fields
         static string _info="";
-        string _operatingSystem;
-        string _operatingSystemArchitecture;
-        string _operatingSystemServicePack;
-        string _processor;
         #endregion Fields
 
         #region Constructors
@@ -28,54 +25,15 @@ namespace AgentApp.Agents
         #endregion Constructors
 
         #region Properties
-        public string GetOperatingSystem
-        {
-            get
-            {
-                return _operatingSystem;
-            }
-        }
-        public string GetOperatingSystemArchitecture
-        {
-            get
-            {
-                return _operatingSystemArchitecture;
-            }
-        }
-        public string GetSystemServicePack
-        {
-            get
-            {
-                return _operatingSystemServicePack;
-            }
-        }
-        public string GetProcesor
-        {
-            get
-            {
-                return _processor;
-            }
-        }
-        //public string SetOperatingSystem
-        //{
-        //    set
-        //    {
-        //        _operatingSystem = value;
-        //    }
-        //}
-        //public string SetProcessor
-        //{
-        //    set
-        //    {
-        //        _processor = value;
-        //    }
-        //}
+        public string GetOperatingSystem { get; private set; }
+        public string GetOperatingSystemArchitecture { get; private set; }
+        public string GetSystemServicePack { get; private set; }
+        public string GetProcesor { get; private set; }
         #endregion Properties
 
-        #region Methods
+        #region Private Methods
         private void GetOperatingSystemInfo()
         {
-            string operatingSystem = "";
             //Console.WriteLine("Displaying operating system info...\n");
             _info += "Displaying operating system info...\n\n";
             ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
@@ -85,20 +43,20 @@ namespace AgentApp.Agents
                 {
                     //Console.WriteLine("Operating System: " + managementObject["Caption"].ToString());   //Display operating system caption
                     _info += "Operating System: " + managementObject["Caption"].ToString()+"\n";
-                    _operatingSystem = managementObject["Caption"].ToString();
+                    GetOperatingSystem = managementObject["Caption"].ToString();
 
                 }
                 if (managementObject["OSArchitecture"] != null)
                 {
                     //Console.WriteLine("Operating System Architecture  :  " + managementObject["OSArchitecture"].ToString());   //Display operating system architecture.
                     _info += "Operating System Architecture  :  " + managementObject["OSArchitecture"].ToString()+"\n";
-                    _operatingSystemArchitecture = managementObject["OSArchitecture"].ToString();
+                    GetOperatingSystemArchitecture = managementObject["OSArchitecture"].ToString();
                 }
                 if (managementObject["CSDVersion"] != null)
                 {
                     //Console.WriteLine("Operating System Service Pack   :  " + managementObject["CSDVersion"].ToString());     //Display operating system version.
                     _info += "Operating System Service Pack   :  " + managementObject["CSDVersion"].ToString()+"\n";
-                    _operatingSystemServicePack = managementObject["CSDVersion"].ToString();
+                    GetSystemServicePack = managementObject["CSDVersion"].ToString();
                 }
             }
         }
@@ -115,10 +73,13 @@ namespace AgentApp.Agents
                 {
                     //Console.WriteLine(processor_name.GetValue("ProcessorNameString"));   //Display processor ingo.
                     _info += processor_name.GetValue("ProcessorNameString")+"\n";
-                    _processor = processor_name.GetValue("ProcessorNameString").ToString();
+                    GetProcesor = processor_name.GetValue("ProcessorNameString").ToString();
                 }
             }
         }
+        #endregion Private Methods
+
+        #region Public Methods
         public override void Run()
         {
             GetOperatingSystemInfo();
@@ -126,6 +87,6 @@ namespace AgentApp.Agents
             this.SetAgentCodebase(_info);
 
         }
-        #endregion Methods
+        #endregion Public Methods
     }
 }

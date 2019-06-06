@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Configuration;
 
 namespace AgentApp.AditionalClasses
 {
     public class CustomConfig : ConfigurationSection
     {
+        #region Properties
         [ConfigurationProperty("instances")]
         [ConfigurationCollection(typeof(NetworkCollection))]
         public NetworkCollection Instances
         {
             get
             {
-                // Get the collection and parse it
                 return (NetworkCollection)this["instances"];
             }
         }
+        #endregion Properties
     }
 }

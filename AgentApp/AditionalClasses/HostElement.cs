@@ -9,6 +9,7 @@ namespace AgentApp.AditionalClasses
 {
     public class HostElement : ConfigurationElement
     {
+        #region Properties
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {
@@ -33,5 +34,6 @@ namespace AgentApp.AditionalClasses
             get { return (string)base["neighbours"]; }
             set { base["neighbours"] = value; }
         }
+        #endregion Properties
     }
 }

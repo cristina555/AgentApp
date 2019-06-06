@@ -1,53 +1,36 @@
 ﻿using MobileAgent.AgentManager;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AgentApp.Agents
 {
     [Serializable]
     public class AgentRemote : Agent
     {
-        List<string> _parameters;
-        Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts;
+        #region Constructor
         public AgentRemote()
         {
-            _parameters = new List<string>();
+            Parameters = new List<string>();
             this.SetName("AgentRemote");
             this.SetAgentInfo("Collect information from network");
         }
-        public List<string> GetParameters
-        {
-            get
-            {
-                return _parameters;
-            }
-        }
-        public Dictionary<IPAddress, Tuple<string, int, string[]>> GetHosts
-        {
-            get
-            {
-                return _hosts;
-            }
-        }
-        public List<string>  SetParameters
-        {
-            set
-            {
-                _parameters = value;
-            }
-        }
+        #endregion Constructor
+
+        #region Properties
+        public List<string> Parameters { get;  set; }
+        public Dictionary<IPAddress, Tuple<string, int, string[]>> GetHosts { get; private set; }
         public Dictionary<IPAddress, Tuple<string, int, string[]>> SetHosts
         {
             set
             {
-                _hosts = value;
+                GetHosts = value;
             }
         }
-        public string GetInfo(string parameter)
+        #endregion Properties
+
+        #region Private Methods
+        private string GetInfo(string parameter)
         {
             string info = "";
             switch(parameter)
@@ -83,18 +66,23 @@ namespace AgentApp.Agents
         {
             List<string> topics = new List<string>();
             string info = "";
-            foreach(string i in _parameters)
+            foreach(string i in Parameters)
             {
                 topics.Add(GetInfo(i));
-                info += GetInfo(i);
+                info += GetInfo(i) + Environment.NewLine;
                 Console.WriteLine(GetInfo(i));
             }
+            AgencyContext agentProxy = this.GetAgentCurrentContext();
             this.SetAgentCodebase(info);
         }
+        #endregion Private Methods
+
+        #region Public Methods
         public override void Run()
         {
             RunNetwork();
         }
+        #endregion Public Methods
 
     }
 }

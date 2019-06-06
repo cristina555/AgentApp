@@ -51,9 +51,9 @@ namespace MobileAgent.EventAgent
         #endregion Constructors
 
         #region Methods
-        public AgentContext GetAgentContext()
+        public AgencyContext GetAgentContext()
         {
-            return (AgentContext)_source;
+            return (AgencyContext)_source;
         }
         public AgentProxy getAgentProxy()
         {

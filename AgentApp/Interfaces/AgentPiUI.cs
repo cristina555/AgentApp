@@ -1,24 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AgentApp.Interfaces
 {
     public partial class AgentPiUI : Form
     {
+        #region Constructor
         public AgentPiUI()
         {
             InitializeComponent();
         }
+        #endregion Constructor
+
+        #region Controlers
         private void Button1_Click(object sender, EventArgs e)
         {
 
         }
+        #endregion Controlers
     }
 }
