@@ -79,27 +79,30 @@ namespace AgentApp.Agents
         }
         private void CollectInfo()
         {
+          
+            AgencyContext agencyContext = this.GetAgentCurrentContext();
+            string s = queue.Dequeue();
+            foreach (string n in agencyContext.GetNeighbours())
+            {
+                if (!agenciesVisited.Contains(n))
+                {
+                    queue.Enqueue(n);
+                    agenciesVisited.Add(n);
+                }
+            }
             if (queue.Count != 0)
             {
-                AgencyContext agencyContext = this.GetAgentCurrentContext();
-                string s = queue.Dequeue();
-                foreach (string n in agencyContext.GetNeighbours())
-                {
-                    if (!agenciesVisited.Contains(s))
-                    {
-                        queue.Enqueue(n);
-                        agenciesVisited.Add(n);
-                    }
-                }
-                IPAddress ipAddress = AgencyForm._configParser.GetIPAdress(s);
-                int portNumber = AgencyForm._configParser.GetPort(s);
+
+                string next = queue.Peek();
+                IPAddress ipAddress = AgencyForm._configParser.GetIPAdress(next);
+                int portNumber = AgencyForm._configParser.GetPort(next);
                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
                 this.SetAgentCodebase("AgentRemote");
                 agencyContext.Dispatch(this, ipEndPoint);
             }
             else
             {
-                this.SetAgentCodebase("Stop");
+                SetAgentCodebase("Stop");
             }
         }
         #endregion Private Methods
