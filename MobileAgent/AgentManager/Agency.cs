@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using MobileAgent.EventAgent;
 using MobileAgent.Exceptions;
 using System.Net.Sockets;
 using System.Net;
@@ -19,13 +17,14 @@ namespace MobileAgent.AgentManager
         //MobilityListener mobilityListener = null;
        // PersistencyListener persistencyListener =  null;
 
-        List<AgentProxy> _agentList = null;
-        AgentProxy _stationaryAgent;
+        List<AgentProxy> _agentsMobileList = null;
+        List<AgentProxy> _agentsStatList = null;
         Socket _agencySocket = null;
         IPEndPoint _ipEndPoint = null;
         int _agencyID;
         string _name;
         List<string> _neighbours = new List<string>();
+        AgentProxy _lastRunnableAgent = null;
         //Dictionary<IPEndPoint, Socket> _connectionMap = new Dictionary<IPEndPoint, Socket>();
         #endregion Private Fields
 
@@ -35,7 +34,7 @@ namespace MobileAgent.AgentManager
         public event dgEventRaiser OnArrival;
         //public event dgEventRaiser1 OnDispatching ;
         //public event dgEventRaiser OnReverting;
-        public event dgEventRaiser1 OnRefuseConnection;
+       // public event dgEventRaiser1 OnRefuseConnection;
         #endregion  Public Fields
 
         #region Constructors
@@ -49,7 +48,8 @@ namespace MobileAgent.AgentManager
             {
                 Random random = new Random();
                 _agencyID = random.Next(1000, 9999);
-                _agentList = new List<AgentProxy>();
+                _agentsMobileList = new List<AgentProxy>();
+                _agentsStatList = new List<AgentProxy>();
                 _agencySocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 _ipEndPoint = new IPEndPoint(ipAddress, port);
                 Console.WriteLine("Agentia creata la portul " + port + ".");
@@ -75,9 +75,20 @@ namespace MobileAgent.AgentManager
         {
             return _neighbours;
         }
-        public List<AgentProxy> GetAgentProxies()
+        public AgentProxy GetLastRunnableAgent()
         {
-             return _agentList;            
+            return _lastRunnableAgent;
+        }
+        public List<AgentProxy> GetAgentProxies( int type)
+        {
+            if (type == Agent.MOBILE)
+            {
+                return _agentsMobileList;
+            }
+            else
+            {
+                return _agentsStatList;
+            }
         }
         public int GetAgencyID()
         {
@@ -87,9 +98,16 @@ namespace MobileAgent.AgentManager
         {
              return _ipEndPoint;
         }
-        public AgentProxy GetStationaryAgent()
+        public AgentProxy GetStationaryAgent(string name)
         {
-            return _stationaryAgent;
+            foreach(AgentProxy ap in _agentsStatList)
+            {
+                if(ap.GetName() == name)
+                {
+                    return ap;
+                }
+            }
+            return null;
         }
         public void SetName(string name)
         {
@@ -99,9 +117,9 @@ namespace MobileAgent.AgentManager
         {
              _neighbours =  neighbours;
         }
-        public void SetStationaryAgent(AgentProxy stationaryAgent)
+        public void SetLastRunnableAgent(AgentProxy agentProxy)
         {
-            _stationaryAgent = stationaryAgent;
+            _lastRunnableAgent = agentProxy;
         }
         #endregion Properties
 
@@ -164,16 +182,16 @@ namespace MobileAgent.AgentManager
                 NetworkStream networkStream = new NetworkStream(s);
                 IFormatter formatter = new BinaryFormatter();
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
-                _agentList.Add(agentProxy);
+                _agentsMobileList.Add(agentProxy);
                 agentProxy.SetAgentCurrentContext(this);
-
-                if (agentProxy.GetAgencyCreationContext() != _ipEndPoint)
-                {
+                IPEndPoint ip = agentProxy.GetAgencyCreationContext();
+                //if (ip.Equals(_ipEndPoint))
+               // {
                     Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
                     agentThread.IsBackground = true;
                     agentThread.Start();                                 
-                }
-                Thread.Sleep(5000);
+               // }
+                Thread.Sleep(2000);
                 OnArrival();
                 //RetractAgent(agentProxy, agentProxy.GetAgencyCreationContext());
                 //OnReverting();
@@ -181,18 +199,27 @@ namespace MobileAgent.AgentManager
             }
             catch (SocketException se)
             {
-                Console.WriteLine("SocketException caught! Mesaj : " + se.Message + " -->Agency Accept Agents.");
+                Console.WriteLine("SocketException caught! Mesaj : " + se.Message +  " -->Agency Accept Agents.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Accept Agents.");
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + ex.StackTrace +" --> Agency Accept Agents.");
             }
         }
         public void CreateAgent(AgentProxy agentProxy)
         {
             try
             {
-                _agentList.Add(agentProxy);
+                agentProxy.SetAgentCurrentContext(this);
+                agentProxy.SetAgencyCreationContext(this.GetAgencyIPEndPoint());
+                if (agentProxy.GetMobility().Equals(Agent.MOBILE))
+                {
+                    _agentsMobileList.Add(agentProxy);
+                }
+                else
+                {
+                    _agentsStatList.Add(agentProxy);
+                }
             }
             catch(AgencyNotFoundException anfe)
             {
@@ -204,17 +231,23 @@ namespace MobileAgent.AgentManager
             }
         }
         //TODO
-        public AgentProxy Clone(AgentProxy agent) 
+        public void Clone(AgentProxy agent) 
         {
             AgentProxy agentCloned = null;
             try
             {
                 agentCloned.SetName(agentCloned.GetName() + " cloned");
                 agentCloned.SetAgentInfo(agentCloned.GetAgentInfo() + " cloned");
-                _agentList.Add(agentCloned);
-                return agentCloned;
+                if (agent.GetMobility() == Agent.MOBILE)
+                {
+                    _agentsMobileList.Add(agentCloned);
+                }
+                else
+                {
+                    _agentsStatList.Add(agentCloned);
+                }
             }
-            catch(CloneNotSupportedException cnse)
+            catch (CloneNotSupportedException cnse)
             {
                 Console.WriteLine("CloneNotSupportedException caught! Mesaj : " + cnse.Message + " --> Agency Clone Agent.");
             }
@@ -226,7 +259,6 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Clone Agent.");
             }
-            return agentCloned;
         }
         
         //More exceptions
@@ -245,21 +277,28 @@ namespace MobileAgent.AgentManager
                 //}
                 //else
                 //{
-                    Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                    //try {
-                        connectSocket.Connect(destination);
-                   // }
-                   // catch (Exception)
-                   // {
-                   //     OnRefuseConnection();
-                   // }
+                Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                try
+                {
+                    connectSocket.Connect(destination);
+                }
+                catch (Exception)
+                {
                     
-                    //_connectionMap.Add(destination, connectSocket);
+                }
+                if (connectSocket.Connected)
+                //_connectionMap.Add(destination, connectSocket);
+                {
                     networkStream = new NetworkStream(connectSocket);
                     IFormatter formatter = new BinaryFormatter();
                     agentProxy.SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, agentProxy);
-                    _agentList.Remove(agentProxy);
+                    _agentsMobileList.Remove(agentProxy);
+                }
+                else
+                {
+                    Console.WriteLine("Refuse connection");
+                }
                 //}
                 
                 //OnDispatching();
@@ -308,38 +347,28 @@ namespace MobileAgent.AgentManager
         }
 
        
-        public AgentProxy GetAgentProxy(string name)
+        public AgentProxy GetMobileAgentProxy(string name)
         {
-            AgentProxy agentProxy = null;
-            foreach (AgentProxy aP in _agentList)
+            foreach (AgentProxy aP in _agentsMobileList)
             {
                 if (aP.GetName().Equals(name)) 
                 {
-                    agentProxy = aP;
-                    break;
+                    return  aP;
                 }
             }
-            return agentProxy;
+            return null;
         }
        
         //TODO
         public void RetractAgent(AgentProxy agentProxy, IPEndPoint location) 
 		{
             NetworkStream networkStream;
-            //if (_connectionmap.containskey(location))
-            //{
-            //    networkstream = new networkstream(_connectionmap[location]);
-            //                }
-            //else
-            //{
-                Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                connectSocket.Connect(location);
-                //_connectionMap.Add(location, connectSocket);
-                networkStream = new NetworkStream(connectSocket);                
-           // }
+            Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            connectSocket.Connect(location);
+            networkStream = new NetworkStream(connectSocket);                
             IFormatter formatter = new BinaryFormatter();
             formatter.Serialize(networkStream, agentProxy);
-            _agentList.Remove(agentProxy);
+            _agentsMobileList.Remove(agentProxy);
             //OnReverting();
         }
         public void ShutDown()
@@ -350,6 +379,7 @@ namespace MobileAgent.AgentManager
         {
             throw new Exception("Aceasta metoda trebuie completata");
         }
+
         //[MethodImpl(MethodImplOptions.Synchronized)]
         //public void AddCloneListener(CloneListener listener)
         //{

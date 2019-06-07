@@ -13,7 +13,7 @@ namespace AgentApp.Interfaces
         #region Constructor
         public AgentRemoteUI()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
         #endregion Constructor
 
@@ -21,8 +21,8 @@ namespace AgentApp.Interfaces
         private AgentProxy KeyByValue(string agentName)
         {
             GeneralSettings gs = new GeneralSettings();
-            Dictionary<AgentProxy, Form> dict = AgencyForm.gs.StaticListofAgents;
-            foreach (KeyValuePair<AgentProxy, Form> pair in dict)
+            Dictionary<AgentProxy, string> dict = AgencyForm.gs.ListofAgentsM;
+            foreach (KeyValuePair<AgentProxy, string> pair in dict)
             {
                 if (pair.Key.GetName() == agentName)
                 {
@@ -36,20 +36,30 @@ namespace AgentApp.Interfaces
         #region Controlers
         private void buttonSend_Click(object sender, EventArgs e)
         {
-            AgentRemote agentRemote = null;
-            List<string> _parameters = new List<string>();
-            foreach (object itemChecked in checkedListBox1.CheckedItems)
+            try
             {
-                _parameters.Add(itemChecked.ToString());
+                AgentRemote agentRemote = null;
+                List<string> _parameters = new List<string>();
+                foreach (object itemChecked in checkedListBox1.CheckedItems)
+                {
+                    _parameters.Add(itemChecked.ToString());
+                }
+                agentRemote = (AgentRemote)KeyByValue("AgentRemote");
+                agentRemote.Parameters = _parameters;
+                ConfigParser configParser = new ConfigParser();
+                Dictionary<IPAddress, Tuple<string, int, string[]>> hosts = configParser.NetworkHosts;
+                Close();
             }
-            agentRemote = (AgentRemote)KeyByValue("AgentRemote");
-            agentRemote.Parameters = _parameters;
-            ConfigParser configParser = new ConfigParser();
-            Dictionary<IPAddress, Tuple<string, int, string[]>> hosts = configParser.NetworkHosts;
+            catch(NullReferenceException nre)
+            {
+                MessageBox.Show("NullReferenceException !" + nre.Message + " --> Trimite parametrii agentului!");
 
-            agentRemote.SetHosts = hosts;
-            Close();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
+            }
         }
         #endregion controlers
-       }
+    }
 }

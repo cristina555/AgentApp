@@ -36,19 +36,18 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 30);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(13, 25);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 13);
+            this.label1.Size = new System.Drawing.Size(65, 17);
             this.label1.TabIndex = 5;
             this.label1.Text = "Informatii";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(226, 72);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
+            this.button1.Location = new System.Drawing.Point(301, 89);
+            this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 31);
+            this.button1.Size = new System.Drawing.Size(107, 38);
             this.button1.TabIndex = 4;
             this.button1.Text = "Trimite";
             this.button1.UseVisualStyleBackColor = true;
@@ -63,20 +62,21 @@
             "Arhitectura sistem de operare",
             "Service Pack sistem de operare",
             "Informatii procesor"});
-            this.checkedListBox1.Location = new System.Drawing.Point(12, 58);
+            this.checkedListBox1.Location = new System.Drawing.Point(13, 58);
+            this.checkedListBox1.Margin = new System.Windows.Forms.Padding(4);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(191, 64);
+            this.checkedListBox1.Size = new System.Drawing.Size(259, 106);
             this.checkedListBox1.TabIndex = 6;
             // 
             // AgentRemoteUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(338, 144);
+            this.ClientSize = new System.Drawing.Size(451, 177);
             this.Controls.Add(this.checkedListBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "AgentRemoteUI";
             this.Text = "Interfata AgentRemote";
             this.ResumeLayout(false);

@@ -152,28 +152,28 @@ namespace ConsoleApp1
                 }
             }
         }
-        static void Main(string[] args)
-        {
-            //GetLocalIPAddress();
-            //Console.WriteLine(Method2());
-            clsGraph graph = new clsGraph(5);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(1, 0);
-            graph.AddEdge(1, 3);
-            graph.AddEdge(2, 0);
-            graph.AddEdge(2, 4);
-            graph.AddEdge(3, 1);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(4, 2);
-            graph.AddEdge(4, 3);
-            //Print adjacency matrix
-            graph.PrintAdjacecnyMatrix();
+        //static void Main(string[] args)
+        //{
+        //    //GetLocalIPAddress();
+        //    //Console.WriteLine(Method2());
+        //    clsGraph graph = new clsGraph(5);
+        //    graph.AddEdge(0, 1);
+        //    graph.AddEdge(0, 2);
+        //    graph.AddEdge(1, 0);
+        //    graph.AddEdge(1, 3);
+        //    graph.AddEdge(2, 0);
+        //    graph.AddEdge(2, 4);
+        //    graph.AddEdge(3, 1);
+        //    graph.AddEdge(3, 4);
+        //    graph.AddEdge(4, 2);
+        //    graph.AddEdge(4, 3);
+        //    //Print adjacency matrix
+        //    graph.PrintAdjacecnyMatrix();
 
-            Console.WriteLine("BFS traversal starting from vertex 0:");
-            graph.BFS(0);
-            Console.WriteLine("DFS traversal starting from vertex 0:");
-            graph.DFS(0);
-        }
+        //    Console.WriteLine("BFS traversal starting from vertex 0:");
+        //    graph.BFS(0);
+        //    Console.WriteLine("DFS traversal starting from vertex 0:");
+        //    graph.DFS(0);
+        //}
     }
 }

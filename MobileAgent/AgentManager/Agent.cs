@@ -15,12 +15,15 @@ namespace MobileAgent.AgentManager
         public readonly static int LOCAL = 3;
         public readonly static int OK = 0;
         public readonly static int NOK = 1;
+        public readonly static int STATIC = 0;
+        public readonly static int MOBILE = 1;
         #endregion Public Fields
 
         #region Private Fields
         private string _name;
         private int _status = NOK;
         private int _state = INACTIVE;
+        private int _mobility;
         private int _id;
         private string _codebase;
         private string _creationTime;
@@ -50,6 +53,10 @@ namespace MobileAgent.AgentManager
         public int GetStatus()
         {
             return _status;
+        }
+        public int GetMobility()
+        {
+            return _mobility;
         }
         public IPEndPoint GetAgencyCreationContext()
         {
@@ -103,6 +110,10 @@ namespace MobileAgent.AgentManager
         {
             _status = status;
         }
+        public void SetMobility(int mobility)
+        {
+            _mobility = mobility;
+        }
         #endregion Properties
 
         #region Methods
@@ -125,7 +136,10 @@ namespace MobileAgent.AgentManager
         {
             return _state == REMOTE;
         }
-        
+        public bool IsMobile()
+        {
+            return _mobility == MOBILE;
+        }
         public void Suspend()
         {
             //Not implemented

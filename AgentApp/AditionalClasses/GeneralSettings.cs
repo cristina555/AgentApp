@@ -1,4 +1,5 @@
 ﻿using AgentApp.Agents;
+using AgentApp.Agents.StationaryAgents;
 using MobileAgent.AgentManager;
 using System;
 using System.Collections.Generic;
@@ -11,27 +12,43 @@ namespace AgentApp.AditionalClasses
         #region Constructor
         public GeneralSettings()
         {
-            CreateStaticListofAgents();
+            CreateListofAgentsM();
+            CreateListofAgentsS();
         }
         #endregion Constructor
 
         #region Properties
-        public Dictionary<AgentProxy, Form> StaticListofAgents { get; } = new Dictionary<AgentProxy, Form>();
+        public Dictionary<AgentProxy, string> ListofAgentsM { get; } = new Dictionary<AgentProxy, string>();
+        public List<AgentProxy> ListofAgentsS { get; } = new List<AgentProxy> ();
+
         #endregion Properties
 
         #region  Private Methods
-        private void  CreateStaticListofAgents()
+        private void  CreateListofAgentsM()
         {
             AgentInfo agentInfo = new AgentInfo();
-            StaticListofAgents.Add(agentInfo, new Form());
+            ListofAgentsM.Add(agentInfo, "");
 
             AgentPI agentPI = new AgentPI();
-            Form agentPiUI = new Interfaces.AgentPiUI();
-            StaticListofAgents.Add(agentPI, agentPiUI);
+            ListofAgentsM.Add(agentPI, "agentPiUI");
 
             AgentRemote agentRemote = new AgentRemote();
-            Form agentRemoteUI = new Interfaces.AgentRemoteUI();
-            StaticListofAgents.Add(agentRemote, agentRemoteUI);
+            ListofAgentsM.Add(agentRemote, "agentRemoteUI");
+
+        }
+        private void CreateListofAgentsS()
+        {
+            AgentOS agentOS = new AgentOS();
+            ListofAgentsS.Add(agentOS);
+
+            AgentOSA agentOSA = new AgentOSA();
+            ListofAgentsS.Add(agentOSA);
+
+            AgentOSSP agentOSSP = new AgentOSSP();
+            ListofAgentsS.Add(agentOSSP);
+
+            AgentP agentP = new AgentP();
+            ListofAgentsS.Add(agentP);
 
         }
         #endregion Private Methods
@@ -40,7 +57,7 @@ namespace AgentApp.AditionalClasses
         public AgentProxy GetAgentProxy(String info)
         {
             AgentProxy agent = null;
-            foreach (AgentProxy ap in StaticListofAgents.Keys)
+            foreach (AgentProxy ap in ListofAgentsM.Keys)
             {
                 if (ap.GetName().Equals(info))
                 {
@@ -53,7 +70,24 @@ namespace AgentApp.AditionalClasses
         {
             try
             {
-                return StaticListofAgents[ap];
+                string ui =  ListofAgentsM[ap];
+                switch (ui)
+                {
+                    case "agentPiUI":
+                        {
+                            return new Interfaces.AgentPiUI();
+                        }
+                    case "agentRemoteUI":
+                        {
+                           return new Interfaces.AgentRemoteUI();
+                        }
+                    default:
+                        {
+                            return new Form();
+
+                        }
+                }
+                    
             }
             catch (KeyNotFoundException knfe)
             {

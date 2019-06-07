@@ -56,16 +56,19 @@
     <Compile Include="AditionalClasses\GeneralSettings.cs" />
     <Compile Include="AditionalClasses\HostElement.cs" />
     <Compile Include="AditionalClasses\NetworkCollection.cs" />
-    <Compile Include="Agents\AgentInfo.cs" />
-    <Compile Include="Agents\AgentPI.cs" />
-    <Compile Include="Agents\AgentRemote.cs" />
-    <Compile Include="Agents\AgentSystemInfo.cs" />
+    <Compile Include="Agents\MobileAgents\AgentInfo.cs" />
+    <Compile Include="Agents\MobileAgents\AgentPI.cs" />
+    <Compile Include="Agents\MobileAgents\AgentRemote.cs" />
     <Compile Include="AgencyForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="AgencyForm.Designer.cs">
       <DependentUpon>AgencyForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Agents\StationaryAgents\AgentOS.cs" />
+    <Compile Include="Agents\StationaryAgents\AgentOSSP.cs" />
+    <Compile Include="Agents\StationaryAgents\AgentP.cs" />
+    <Compile Include="Agents\StationaryAgents\AgentsOSA.cs" />
     <Compile Include="Interfaces\AgentPiUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +101,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="App1.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -117,6 +121,7 @@
       <Name>MobileAgent</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
