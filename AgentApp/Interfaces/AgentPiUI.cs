@@ -6,7 +6,7 @@ namespace AgentApp.Interfaces
     public partial class AgentPiUI : Form
     {
         #region Constructor
-        public AgentPiUI()
+        public AgentPiUI(int id)
         {
             InitializeComponent();
         }

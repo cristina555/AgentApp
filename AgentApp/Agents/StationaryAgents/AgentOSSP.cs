@@ -32,7 +32,11 @@ namespace AgentApp.Agents
             {
                 if (managementObject["CSDVersion"] != null)
                 {
-                    _info += "Operating System Service Pack   :  " + managementObject["CSDVersion"].ToString() + Environment.NewLine;
+                    _info += "Sistemul de operare( Service Pack):  " + managementObject["CSDVersion"].ToString() + Environment.NewLine;
+                }
+                else
+                {
+                    _info += "Nu s-a gasit sistemul de operare - Service Pack!";
                 }
             }
         }

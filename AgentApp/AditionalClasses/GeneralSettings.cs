@@ -17,24 +17,18 @@ namespace AgentApp.AditionalClasses
         }
         #endregion Constructor
 
-        #region Properties
-        public Dictionary<AgentProxy, string> ListofAgentsM { get; } = new Dictionary<AgentProxy, string>();
+        #region 
+        public List<string> ListofAgentsM { get; } = new List<string>();
         public List<AgentProxy> ListofAgentsS { get; } = new List<AgentProxy> ();
 
         #endregion Properties
 
         #region  Private Methods
-        private void  CreateListofAgentsM()
+        private void CreateListofAgentsM()
         {
-            AgentInfo agentInfo = new AgentInfo();
-            ListofAgentsM.Add(agentInfo, "");
-
-            AgentPI agentPI = new AgentPI();
-            ListofAgentsM.Add(agentPI, "agentPiUI");
-
-            AgentRemote agentRemote = new AgentRemote();
-            ListofAgentsM.Add(agentRemote, "agentRemoteUI");
-
+            ListofAgentsM.Add("AgentInfo");
+            ListofAgentsM.Add("AgentPI");
+            ListofAgentsM.Add("AgentRemote");
         }
         private void CreateListofAgentsS()
         {
@@ -56,30 +50,47 @@ namespace AgentApp.AditionalClasses
         #region Public Methods
         public AgentProxy GetAgentProxy(String info)
         {
-            AgentProxy agent = null;
-            foreach (AgentProxy ap in ListofAgentsM.Keys)
+            try
             {
-                if (ap.GetName().Equals(info))
+                switch (info)
                 {
-                    agent = ap;
+                    case "AgentRemote":
+                        {
+                            return new AgentRemote();
+                        }
+                    case "AgentInfo":
+                        {
+                            return new AgentInfo();
+                        }
+                    case "AgentPI":
+                        {
+                            return new AgentPI();
+                        }
+                    default:
+                        {
+                            return null;
+                        }
                 }
             }
-            return agent;
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception caught! Mesaj: " + ex.Message);
+            }
+            return null;
         }
-        public Form GetUI(AgentProxy ap)
+        public Form GetUI(string agentProxy, int id)
         {
             try
             {
-                string ui =  ListofAgentsM[ap];
-                switch (ui)
+                switch (agentProxy)
                 {
-                    case "agentPiUI":
+                    case "AgentPI":
                         {
-                            return new Interfaces.AgentPiUI();
+                            return new Interfaces.AgentPiUI( id);
                         }
-                    case "agentRemoteUI":
+                    case "AgentRemote":
                         {
-                           return new Interfaces.AgentRemoteUI();
+                           return new Interfaces.AgentRemoteUI(id);
                         }
                     default:
                         {
@@ -88,10 +99,6 @@ namespace AgentApp.AditionalClasses
                         }
                 }
                     
-            }
-            catch (KeyNotFoundException knfe)
-            {
-                MessageBox.Show("KeyNotFoundException caught! Mesaj: "+ knfe.Message);
             }
             catch(Exception ex)
             {

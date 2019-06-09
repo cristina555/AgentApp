@@ -34,6 +34,10 @@ namespace AgentApp.Agents
                 {
                     _info += processor_name.GetValue("ProcessorNameString") + Environment.NewLine;
                 }
+                else
+                {
+                    _info += "Nu s-a gasit procesorul!";
+                }
             }
         }
         #endregion Private Methods

@@ -32,6 +32,8 @@ namespace MobileAgent.AgentManager
         public delegate void dgEventRaiser();
         public delegate void dgEventRaiser1();
         public event dgEventRaiser OnArrival;
+        public bool isConnected = false;
+
         //public event dgEventRaiser1 OnDispatching ;
         //public event dgEventRaiser OnReverting;
        // public event dgEventRaiser1 OnRefuseConnection;
@@ -231,21 +233,16 @@ namespace MobileAgent.AgentManager
             }
         }
         //TODO
-        public void Clone(AgentProxy agent) 
+        public void Clone(AgentProxy agentCloned) 
         {
-            AgentProxy agentCloned = null;
             try
             {
+                agentCloned.SetAgentCurrentContext(this);
+                agentCloned.SetAgencyCreationContext(this.GetAgencyIPEndPoint());
                 agentCloned.SetName(agentCloned.GetName() + " cloned");
                 agentCloned.SetAgentInfo(agentCloned.GetAgentInfo() + " cloned");
-                if (agent.GetMobility() == Agent.MOBILE)
-                {
-                    _agentsMobileList.Add(agentCloned);
-                }
-                else
-                {
-                    _agentsStatList.Add(agentCloned);
-                }
+                _agentsMobileList.Add(agentCloned);
+                
             }
             catch (CloneNotSupportedException cnse)
             {
@@ -289,11 +286,13 @@ namespace MobileAgent.AgentManager
                 if (connectSocket.Connected)
                 //_connectionMap.Add(destination, connectSocket);
                 {
+                    isConnected = true;
                     networkStream = new NetworkStream(connectSocket);
                     IFormatter formatter = new BinaryFormatter();
                     agentProxy.SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
+
                 }
                 else
                 {
@@ -358,7 +357,17 @@ namespace MobileAgent.AgentManager
             }
             return null;
         }
-       
+        public AgentProxy GetMobileAgentProxy(int id)
+        {
+            foreach (AgentProxy aP in _agentsMobileList)
+            {
+                if (aP.GetAgentId().Equals(id))
+                {
+                    return aP;
+                }
+            }
+            return null;
+        }
         //TODO
         public void RetractAgent(AgentProxy agentProxy, IPEndPoint location) 
 		{

@@ -30,11 +30,14 @@ namespace AgentApp.Agents
             ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
             foreach (ManagementObject managementObject in mos.Get())
             {
-
                 if (managementObject["OSArchitecture"] != null)
                 {
                     _info += "Operating System Architecture  :  " + managementObject["OSArchitecture"].ToString() + Environment.NewLine;
-                }               
+                }
+                else
+                {
+                    _info += "Nu s-a gasit arhitectura sistemului de operare!";
+                }
             }
         }
         #endregion Private Methods

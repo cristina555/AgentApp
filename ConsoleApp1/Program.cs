@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -44,6 +45,17 @@ namespace ConsoleApp1
                 }
             }
             throw new Exception("No network adapters with an IPv4 address in the system!");
+        }
+        private static void GetOSServicePackInfo()
+        {
+            ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
+            foreach (ManagementObject managementObject in mos.Get())
+            {
+                if (managementObject["CSDVersion"] != null)
+                {
+                    Console.WriteLine( "Operating System Service Pack:  " + managementObject["CSDVersion"].ToString() + Environment.NewLine);
+                }
+            }
         }
         public class clsGraph
         {
@@ -152,28 +164,29 @@ namespace ConsoleApp1
                 }
             }
         }
-        //static void Main(string[] args)
-        //{
-        //    //GetLocalIPAddress();
-        //    //Console.WriteLine(Method2());
-        //    clsGraph graph = new clsGraph(5);
-        //    graph.AddEdge(0, 1);
-        //    graph.AddEdge(0, 2);
-        //    graph.AddEdge(1, 0);
-        //    graph.AddEdge(1, 3);
-        //    graph.AddEdge(2, 0);
-        //    graph.AddEdge(2, 4);
-        //    graph.AddEdge(3, 1);
-        //    graph.AddEdge(3, 4);
-        //    graph.AddEdge(4, 2);
-        //    graph.AddEdge(4, 3);
-        //    //Print adjacency matrix
-        //    graph.PrintAdjacecnyMatrix();
+        static void Main(string[] args)
+        {
+            //GetLocalIPAddress();
+            //Console.WriteLine(Method2());
+            //clsGraph graph = new clsGraph(5);
+            //graph.AddEdge(0, 1);
+            //graph.AddEdge(0, 2);
+            //graph.AddEdge(1, 0);
+            //graph.AddEdge(1, 3);
+            //graph.AddEdge(2, 0);
+            //graph.AddEdge(2, 4);
+            //graph.AddEdge(3, 1);
+            //graph.AddEdge(3, 4);
+            //graph.AddEdge(4, 2);
+            //graph.AddEdge(4, 3);
+            ////Print adjacency matrix
+            //graph.PrintAdjacecnyMatrix();
 
-        //    Console.WriteLine("BFS traversal starting from vertex 0:");
-        //    graph.BFS(0);
-        //    Console.WriteLine("DFS traversal starting from vertex 0:");
-        //    graph.DFS(0);
-        //}
+            //Console.WriteLine("BFS traversal starting from vertex 0:");
+            //graph.BFS(0);
+            //Console.WriteLine("DFS traversal starting from vertex 0:");
+            //graph.DFS(0);
+            GetOSServicePackInfo();
+        }
     }
 }

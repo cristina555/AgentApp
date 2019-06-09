@@ -10,27 +10,32 @@ namespace AgentApp.Interfaces
 {
     public partial class AgentRemoteUI : Form
     {
+        #region Properties
+        public int ID { get; set; }
+
+        #endregion Properties
         #region Constructor
-        public AgentRemoteUI()
+        public AgentRemoteUI(int id)
         {
             InitializeComponent();
+            ID = id;
         }
         #endregion Constructor
 
         #region Private Methods
-        private AgentProxy KeyByValue(string agentName)
-        {
-            GeneralSettings gs = new GeneralSettings();
-            Dictionary<AgentProxy, string> dict = AgencyForm.gs.ListofAgentsM;
-            foreach (KeyValuePair<AgentProxy, string> pair in dict)
-            {
-                if (pair.Key.GetName() == agentName)
-                {
-                    return pair.Key;
-                }
-            }
-            return null;
-        }
+        //private AgentProxy KeyByValue(string agentName)
+        //{
+        //    GeneralSettings gs = new GeneralSettings();
+        //    Dictionary<AgentProxy, string> dict = AgencyForm.gs.ListofAgentsM;
+        //    foreach (KeyValuePair<AgentProxy, string> pair in dict)
+        //    {
+        //        if (pair.Key.GetName() == agentName)
+        //        {
+        //            return pair.Key;
+        //        }
+        //    }
+        //    return null;
+        //}
         #endregion Private Methods
 
         #region Controlers
@@ -44,7 +49,7 @@ namespace AgentApp.Interfaces
                 {
                     _parameters.Add(itemChecked.ToString());
                 }
-                agentRemote = (AgentRemote)KeyByValue("AgentRemote");
+                agentRemote = (AgentRemote)AgencyForm.agency.GetMobileAgentProxy(ID); 
                 agentRemote.Parameters = _parameters;
                 ConfigParser configParser = new ConfigParser();
                 Dictionary<IPAddress, Tuple<string, int, string[]>> hosts = configParser.NetworkHosts;

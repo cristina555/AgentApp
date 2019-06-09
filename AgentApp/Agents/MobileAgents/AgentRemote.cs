@@ -73,24 +73,29 @@ namespace AgentApp.Agents
         }
         private void CollectInfo()
         {
+            String information = "";
             AgencyContext agencyContext = GetAgentCurrentContext();
             agencyContext.SetLastRunnableAgent(this);
-            foreach (string par in Parameters)
-            {
-                AgentProxy agentStatic = agencyContext.GetStationaryAgent(GetInfo(par));
-                agentStatic.Run();
-                if (!_info.ContainsKey(agencyContext.GetName()))
-                {
-                    _info.Add(agencyContext.GetName(), agentStatic.GetAgentCodebase());
-                }
-                else
-                {
-                    _info[agencyContext.GetName()] = _info[agencyContext.GetName()] + agentStatic.GetAgentCodebase();
-                }
-            }
-            SetAgentCodebase(GetAgentCodebase() + agencyContext.GetName() + ": " +Environment.NewLine + _info[agencyContext.GetName()] + Environment.NewLine);
             if (queue.Count != 0)
             {
+                
+                foreach (string par in Parameters)
+                {
+                    AgentProxy agentStatic = agencyContext.GetStationaryAgent(GetInfo(par));
+                    agentStatic.Run();
+                    if (!_info.ContainsKey(agencyContext.GetName()))
+                    {
+                        _info.Add(agencyContext.GetName(), agentStatic.GetAgentCodebase());
+                    }
+                    else
+                    {
+                        _info[agencyContext.GetName()] += agentStatic.GetAgentCodebase();
+                    }
+                    information += agentStatic.GetAgentCodebase();
+
+                }
+                SetAgentCodebase(GetAgentCodebase() + agencyContext.GetName() + ": " + Environment.NewLine + information + Environment.NewLine);
+
                 string s = queue.Dequeue();
                 foreach (string n in agencyContext.GetNeighbours())
                 {
@@ -125,6 +130,7 @@ namespace AgentApp.Agents
             //{
             //    SetAgentCodebase(GetAgentCodebase() + s + ": " + _info[s] + Environment.NewLine);
             //}
+            //_info.Clear();
         }
         #endregion Public Methods
 

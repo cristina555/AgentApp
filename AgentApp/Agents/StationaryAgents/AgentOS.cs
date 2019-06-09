@@ -31,8 +31,12 @@ namespace AgentApp.Agents.StationaryAgents
             {
                 if (managementObject["Caption"] != null)
                 {
-                    _info += "Operating System: " + managementObject["Caption"].ToString() + Environment.NewLine;
-                }                
+                    _info += "Sistem de operare: " + managementObject["Caption"].ToString() + Environment.NewLine;
+                }
+                else
+                {
+                    _info += "Nu s-a gasit sistemul de operare!";
+                }
             }
         }
         #endregion Private Methods
