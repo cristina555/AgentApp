@@ -88,6 +88,7 @@ namespace AgentApp
                 agency.Activate();
                 agency.Start();
                 agency.OnArrival += new Agency.dgEventRaiser(Agent_OnArrival);
+                agency.RefuseConnection += Agency_RefuseConnection;
             }
             catch (FormatException fe)
             {
@@ -97,6 +98,11 @@ namespace AgentApp
             {
                 MessageBox.Show("Exception !" + ex.Message + " --> Start Agentie!");
             }
+
+        }
+        private static void Agency_RefuseConnection( object sender, UnconnectedAgencyArgs e)
+        {
+            MessageBox.Show("Nu se poate realiza conexiunea cu agentia: " + e.Name);
 
         }
         private void Agent_OnArrival()
@@ -318,7 +324,6 @@ namespace AgentApp
                 int portNumber = configParser.GetPort(next);
                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
                 agency.Dispatch(agentDispatched, ipEndPoint);
-                //if(agency.isConnected == )
                 UpdateAgentsList();
             }
             catch (AgentNotFoundException anfe)

@@ -47,6 +47,7 @@
     <Compile Include="AgentManager\AgencyContext.cs" />
     <Compile Include="AgentManager\Agent.cs" />
     <Compile Include="AgentManager\AgentProxy.cs" />
+    <Compile Include="AgentManager\UnconnectedAgencyArgs.cs" />
     <Compile Include="EventAgent\Listeners\AgentEventListener.cs" />
     <Compile Include="EventAgent\Events\AgentEvent.cs" />
     <Compile Include="EventAgent\Adapters\CloneAdapter.cs" />

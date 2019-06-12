@@ -25,7 +25,7 @@ namespace MobileAgent.AgentManager
         string _name;
         List<string> _neighbours = new List<string>();
         AgentProxy _lastRunnableAgent = null;
-        //Dictionary<IPEndPoint, Socket> _connectionMap = new Dictionary<IPEndPoint, Socket>();
+        Dictionary<IPEndPoint, NetworkStream> _connectionMap = new Dictionary<IPEndPoint, NetworkStream>();
         #endregion Private Fields
 
         #region Public Fields
@@ -36,7 +36,9 @@ namespace MobileAgent.AgentManager
 
         //public event dgEventRaiser1 OnDispatching ;
         //public event dgEventRaiser OnReverting;
-       // public event dgEventRaiser1 OnRefuseConnection;
+        //public event dgEventRaiser1 OnRefuseConnection;
+        public event EventHandler<UnconnectedAgencyArgs> RefuseConnection;
+
         #endregion  Public Fields
 
         #region Constructors
@@ -186,7 +188,9 @@ namespace MobileAgent.AgentManager
                 AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
                 _agentsMobileList.Add(agentProxy);
                 agentProxy.SetAgentCurrentContext(this);
+                SetLastRunnableAgent(agentProxy);
                 IPEndPoint ip = agentProxy.GetAgencyCreationContext();
+
                 //if (ip.Equals(_ipEndPoint))
                // {
                     Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
@@ -232,6 +236,7 @@ namespace MobileAgent.AgentManager
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Create Agent.");
             }
         }
+        
         //TODO
         public void Clone(AgentProxy agentCloned) 
         {
@@ -263,17 +268,9 @@ namespace MobileAgent.AgentManager
         {
             try
             {
+                IFormatter formatter = new BinaryFormatter();
                 NetworkStream networkStream =  null;
-                //if (_connectionMap.ContainsKey(destination))
-                //{
-                //    networkStream = new NetworkStream(_connectionMap[destination]);
-                //    IFormatter formatter = new BinaryFormatter();
-                //    agentProxy.SetAgentCurrentContext(null);
-                //    formatter.Serialize(networkStream, agentProxy);
-                //    _agentList.Remove(agentProxy);
-                //}
-                //else
-                //{
+               
                 Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 try
                 {
@@ -284,11 +281,10 @@ namespace MobileAgent.AgentManager
                     
                 }
                 if (connectSocket.Connected)
-                //_connectionMap.Add(destination, connectSocket);
+                   
                 {
                     isConnected = true;
                     networkStream = new NetworkStream(connectSocket);
-                    IFormatter formatter = new BinaryFormatter();
                     agentProxy.SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
@@ -296,9 +292,11 @@ namespace MobileAgent.AgentManager
                 }
                 else
                 {
+                    UnconnectedAgencyArgs args = new UnconnectedAgencyArgs();
+                    args.Name = destination;
+                    OnRefuseConnection(args);
                     Console.WriteLine("Refuse connection");
                 }
-                //}
                 
                 //OnDispatching();
             }
@@ -319,6 +317,15 @@ namespace MobileAgent.AgentManager
                 //OnRefuseConnection();
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
+        }
+        protected virtual void OnRefuseConnection(UnconnectedAgencyArgs e)
+        {
+            //EventHandler<ThresholdReachedEventArgs> handler = ThresholdReached;
+            //if (handler != null)
+            //{
+            //    handler(this, e);
+            //}
+            RefuseConnection?.Invoke(this, e);
         }
         //public void DispatchEvent(AgentEvent ev)
         //{

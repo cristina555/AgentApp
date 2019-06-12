@@ -75,7 +75,6 @@ namespace AgentApp.Agents
         {
             String information = "";
             AgencyContext agencyContext = GetAgentCurrentContext();
-            agencyContext.SetLastRunnableAgent(this);
             if (queue.Count != 0)
             {
                 
