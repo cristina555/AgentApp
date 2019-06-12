@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MobileAgent.AgentManager;
 using System.Net;
+using System.Xml;
 
 namespace AgentApp.Agents
 {
@@ -53,6 +54,10 @@ namespace AgentApp.Agents
         public override void Run()
         {
             ShowAgencies();
+        }
+        public override void GetUI()
+        {
+            XmlDocument xmlDoc = new XmlDocument();
         }
         #endregion Public Methods
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml;
 using MobileAgent.AgentManager;
 
 namespace AgentApp
@@ -92,6 +93,10 @@ namespace AgentApp
         public override void Run()
         {
             CalculPi();
+        }
+        public override void GetUI()
+        {
+            XmlDocument xmlDoc = new XmlDocument();
         }
         #endregion Public Methods
     }

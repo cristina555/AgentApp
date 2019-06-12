@@ -50,6 +50,10 @@ namespace AgentApp.Agents
             this.SetAgentCodebase(_info);
 
         }
+        public override void GetUI()
+        {
+            throw new NotImplementedException();
+        }
         #endregion Public Methods
     }
 }

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using MobileAgent.EventAgent;
 
 namespace MobileAgent.AgentManager
 {   
@@ -31,13 +32,14 @@ namespace MobileAgent.AgentManager
         #region Public Fields
         public delegate void dgEventRaiser();
         public delegate void dgEventRaiser1();
-        public event dgEventRaiser OnArrival;
+       // public event dgEventRaiser OnArrival;
         public bool isConnected = false;
 
         //public event dgEventRaiser1 OnDispatching ;
         //public event dgEventRaiser OnReverting;
         //public event dgEventRaiser1 OnRefuseConnection;
-        public event EventHandler<UnconnectedAgencyArgs> RefuseConnection;
+        public event EventHandler<UnconnectedAgencyArgs> RefuseConnectionEvent;
+        public event EventHandler<MobilityEventArgs> MobilityEvent;
 
         #endregion  Public Fields
 
@@ -191,16 +193,10 @@ namespace MobileAgent.AgentManager
                 SetLastRunnableAgent(agentProxy);
                 IPEndPoint ip = agentProxy.GetAgencyCreationContext();
 
-                //if (ip.Equals(_ipEndPoint))
-               // {
-                    Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
-                    agentThread.IsBackground = true;
-                    agentThread.Start();                                 
-               // }
-                Thread.Sleep(2000);
-                OnArrival();
-                //RetractAgent(agentProxy, agentProxy.GetAgencyCreationContext());
-                //OnReverting();
+                Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
+                agentThread.IsBackground = true;
+                agentThread.Start();                                 
+               
 
             }
             catch (SocketException se)
@@ -264,7 +260,7 @@ namespace MobileAgent.AgentManager
         }
         
         //More exceptions
-        public void Dispatch(AgentProxy agentProxy, IPEndPoint destination)
+        public bool Dispatch(AgentProxy agentProxy, IPEndPoint destination)
         {
             try
             {
@@ -288,16 +284,18 @@ namespace MobileAgent.AgentManager
                     agentProxy.SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
+                    return true;
 
                 }
                 else
                 {
                     UnconnectedAgencyArgs args = new UnconnectedAgencyArgs();
-                    args.Name = destination;
+                    args.Name = destination.ToString();
                     OnRefuseConnection(args);
                     Console.WriteLine("Refuse connection");
+                    
                 }
-                
+                return false;
                 //OnDispatching();
             }
             catch (AgencyNotFoundException anfe)
@@ -317,15 +315,15 @@ namespace MobileAgent.AgentManager
                 //OnRefuseConnection();
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
+            return false;
         }
-        protected virtual void OnRefuseConnection(UnconnectedAgencyArgs e)
+        public void OnRefuseConnection(UnconnectedAgencyArgs e)
         {
-            //EventHandler<ThresholdReachedEventArgs> handler = ThresholdReached;
-            //if (handler != null)
-            //{
-            //    handler(this, e);
-            //}
-            RefuseConnection?.Invoke(this, e);
+            RefuseConnectionEvent?.Invoke(this, e);
+        }
+        public void OnArrival(MobilityEventArgs e)
+        {
+            MobilityEvent?.Invoke(this, e);
         }
         //public void DispatchEvent(AgentEvent ev)
         //{

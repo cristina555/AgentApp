@@ -32,7 +32,7 @@ namespace AgentApp.Agents
             {
                 if (processor_name.GetValue("ProcessorNameString") != null)
                 {
-                    _info += processor_name.GetValue("ProcessorNameString") + Environment.NewLine;
+                    _info += "Procesor: " + processor_name.GetValue("ProcessorNameString") + Environment.NewLine;
                 }
                 else
                 {
@@ -47,6 +47,10 @@ namespace AgentApp.Agents
         {
             GetProcessorInfo();
             this.SetAgentCodebase(_info);
+        }
+        public override void GetUI()
+        {
+            throw new NotImplementedException();
         }
         #endregion Public Methods
     }

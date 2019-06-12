@@ -48,6 +48,10 @@ namespace AgentApp.Agents.StationaryAgents
             this.SetAgentCodebase(_info);
 
         }
+        public override void GetUI()
+        {
+            throw new NotImplementedException();
+        }
         #endregion Public Methods
     }
 }

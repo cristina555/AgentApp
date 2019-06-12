@@ -32,7 +32,7 @@ namespace AgentApp.Agents
             {
                 if (managementObject["OSArchitecture"] != null)
                 {
-                    _info += "Operating System Architecture  :  " + managementObject["OSArchitecture"].ToString() + Environment.NewLine;
+                    _info += "Arhitectura sistemului de operare:  " + managementObject["OSArchitecture"].ToString() + Environment.NewLine;
                 }
                 else
                 {
@@ -48,6 +48,10 @@ namespace AgentApp.Agents
             GetOSArchitectureInfo();
             this.SetAgentCodebase(_info);
 
+        }
+        public override void GetUI()
+        {
+            throw new NotImplementedException();
         }
         #endregion Public Methods
     }

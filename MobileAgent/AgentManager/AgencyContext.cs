@@ -15,7 +15,7 @@ namespace MobileAgent.AgentManager
         IPEndPoint GetAgencyIPEndPoint();
         void CreateAgent(AgentProxy agentProxy);
         void Clone(AgentProxy agentCloned);
-        void Dispatch(AgentProxy agentProxy, IPEndPoint destination);
+        bool Dispatch(AgentProxy agentProxy, IPEndPoint destination);
         void Dispose(AgentProxy agentProxy);
         AgentProxy GetMobileAgentProxy(string name);
         AgentProxy GetMobileAgentProxy(int id);
@@ -25,6 +25,11 @@ namespace MobileAgent.AgentManager
         void Start();
         void Activate();
         void Deactivate(long duration);
+        void OnRefuseConnection(UnconnectedAgencyArgs e);
+
+        void OnArrival(MobilityEventArgs e);
+
+
         //void DispatchEvent(AgentEvent ev);
 
     }

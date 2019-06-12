@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using MobileAgent.Exceptions;
 using System.Threading;
+using MobileAgent.EventAgent;
 
 namespace AgentApp
 {
@@ -87,8 +88,8 @@ namespace AgentApp
                 info.Text = "Agentia: " + name + " se afla la " + ipAddress + ", portul " + port;
                 agency.Activate();
                 agency.Start();
-                agency.OnArrival += new Agency.dgEventRaiser(Agent_OnArrival);
-                agency.RefuseConnection += Agency_RefuseConnection;
+                agency.MobilityEvent += Agent_OnArrival;
+                agency.RefuseConnectionEvent += Agency_RefuseConnection;
             }
             catch (FormatException fe)
             {
@@ -105,21 +106,10 @@ namespace AgentApp
             MessageBox.Show("Nu se poate realiza conexiunea cu agentia: " + e.Name);
 
         }
-        private void Agent_OnArrival()
+        private void Agent_OnArrival(object sender, MobilityEventArgs e)
         {
-            AgentProxy agent = agency.GetLastRunnableAgent();
-            if(!agent.GetAgencyCreationContext().Equals(agency.GetAgencyIPEndPoint()))
-            {
-                console.Text += "Agentul " + agent.GetName() + " ruleaza..." + Environment.NewLine;
-                console.Text += agent.GetAgentCodebase() + Environment.NewLine;
-                //agent.SetAgentCodebase("");
-                UpdateAgentsList();
-            }
-            else
-            {
-                console.Text += "Agentul " + agent.GetName() + " a adunat informatiile: " + Environment.NewLine;
-                console.Text += agent.GetAgentCodebase() + Environment.NewLine;
-            }
+            console.Text += e.Source + Environment.NewLine;
+            console.Text += e.Information + Environment.NewLine;
             UpdateAgentsList();
         }
         private void CreateStationaryAgent()
@@ -307,23 +297,38 @@ namespace AgentApp
         {
             try
             {
+
                 string selected = listAgents.GetItemText(listAgents.SelectedItem);
 
                 AgentRemote agentDispatched = (AgentRemote)agency.GetMobileAgentProxy(selected);
+                //agentDispatched.queue.Enqueue(Tuple.Create(agency.GetName());
                 agentDispatched.agenciesVisited.Add(agency.GetName());
-                foreach (string s in agency.GetNeighbours())
+                foreach (string n in agency.GetNeighbours())
                 {
-                    if (!agentDispatched.agenciesVisited.Contains(s))
+                    if (!agentDispatched.agenciesVisited.Contains(n))
                     {
-                        agentDispatched.queue.Enqueue(s);
-                        agentDispatched.agenciesVisited.Add(s);
+                        Queue<string> s = new Queue<string>();
+                        s.Enqueue(agency.GetName());
+                        agentDispatched.queue.Enqueue(Tuple.Create(n, s));
+                        agentDispatched.agenciesVisited.Add(n);
                     }
                 }
-                string next = agentDispatched.queue.Peek();
+                string next = agentDispatched.queue.Peek().Item1;
                 IPAddress ipAddress = configParser.GetIPAdress(next);
                 int portNumber = configParser.GetPort(next);
                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                agency.Dispatch(agentDispatched, ipEndPoint);
+                while(!agency.Dispatch(agentDispatched, ipEndPoint)&&(agentDispatched.queue.Count != 0))
+                {
+                    string pop = agentDispatched.queue.Dequeue().Item1;
+                    if (agentDispatched.queue.Count != 0)
+                    {
+                        next = agentDispatched.queue.Peek().Item1;
+                        ipAddress = configParser.GetIPAdress(next);
+                        portNumber = configParser.GetPort(next);
+                        ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+                    }
+                }
+
                 UpdateAgentsList();
             }
             catch (AgentNotFoundException anfe)
