@@ -13,6 +13,7 @@ namespace AgentApp.Agents
         #region Private Fields
         Queue<string> wayBack = new Queue<string>();
         Dictionary<string, String> _info = null;
+        
         #endregion Private Fields
 
         #region Public Fields
@@ -67,16 +68,118 @@ namespace AgentApp.Agents
             }
             return type;
         }
-        private void CollectInfo()
+        
+        private void AddNeighbours(AgencyContext agencyContext, Queue<string> agencyQueue)
         {
-            String information = "";
-            AgencyContext agencyContext = GetAgentCurrentContext();
-            MobilityEventArgs args = new MobilityEventArgs();
+            foreach(string n in agencyContext.GetNeighbours())
+            {
+                if(!agenciesVisited.Contains(n))
+                {
+                    Queue<string> q = new Queue<string>();
+                    q.Enqueue(agencyContext.GetName());
+                    foreach (Object obj in agencyQueue)
+                    {
+                        q.Enqueue(obj.ToString());
+                    }
+                    queue.Enqueue(Tuple.Create(n, q));
+                    agenciesVisited.Add(n);
+                }
+            }
+        }
+        private void TryDispatch(AgencyContext agencyContext, IPEndPoint destination)
+        {
+
+            while (!agencyContext.Dispatch(this, destination))
+            {
+                if (queue.Count != 0)
+                {
+                    Tuple<string, Queue<string>> t = queue.Dequeue();
+                    if (queue.Count != 0)
+                    {
+                        string next = queue.Peek().Item1;
+                        if (agencyContext.GetNeighbours().Contains(next))
+                        {
+                            IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(next);
+                            int portNumber = AgencyForm.configParser.GetPort(next);
+                            destination = new IPEndPoint(ipAddress, portNumber);
+                        }
+                        else
+                        {
+                            CreateWayBack(t.Item2);
+                            wayBack.Dequeue();
+                            string back = wayBack.Peek();
+                            IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
+                            int portNumber = AgencyForm.configParser.GetPort(back);
+                            destination = new IPEndPoint(ipAddress, portNumber);
+                        }
+                    }
+                    else
+                    {
+                        t.Item2.Dequeue();                       
+                        destination = RetractAgent(agencyContext, t.Item2);
+                        if(destination == null)
+                        {
+                            break;
+                        }
+                    }
+
+                }
+                else
+                {
+                    break;
+                                     
+                }
+                                
+            }            
+        }
+        private void CreateWayBack(Queue<string> b)
+        {
+            wayBack = b;
+            List<string> q = new List<string>(queue.Peek().Item2.ToArray());
+            q.Reverse();
+            q.RemoveAt(0);
+            foreach (string el in q)
+            {
+                wayBack.Enqueue(el);
+            }
+        }
+        private IPEndPoint RetractAgent(AgencyContext agencyContext, Queue<string> t)
+        {
+            IPEndPoint destination = null;
+            SetWorkStatus(Agent.DONE);
+            wayBack = t;
             if (wayBack.Count != 0)
             {
-                args.Source = "Agentul " + GetName() +" se duce la " + queue.Peek().Item1 + " si se intoarce prin: ";
-                args.Information = agencyContext.GetName();
-
+                string back = wayBack.Dequeue();
+                IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
+                int portNumber = AgencyForm.configParser.GetPort(back);
+                destination = new IPEndPoint(ipAddress, portNumber);
+            }
+            else
+            {
+                if (!agencyContext.GetAgencyIPEndPoint().Equals(GetAgencyCreationContext()))
+                {
+                    destination = GetAgencyCreationContext();
+                }
+                
+            }
+            return destination;
+        }
+        private void RunNetwork(AgencyContext agencyContext)
+        {
+            MobilityEventArgs args = new MobilityEventArgs();
+            if (wayBack.Count !=0)
+            {
+                if (queue.Count != 0)
+                {
+                    args.Source = "Agentul " + GetName() + "se intoarce pentru a se duce la " + queue.Peek().Item1;
+                    args.Information = "";
+                }
+                else
+                {
+                    args.Source = "Agentul " + GetName() + "se intoarce la sursa";
+                    args.Information = "";
+                }
                 string s = wayBack.Dequeue();
                 if (wayBack.Count != 0)
                 {
@@ -84,134 +187,132 @@ namespace AgentApp.Agents
                     IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
                     int portNumber = AgencyForm.configParser.GetPort(back);
                     IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                    agencyContext.Dispatch(this, ipEndPoint);
+                    TryDispatch(agencyContext, ipEndPoint);
                 }
                 else
                 {
-                    string cont = queue.Peek().Item1;
-                    IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(cont);
-                    int portNumber = AgencyForm.configParser.GetPort(cont);
-                    IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                    //while (!agencyContext.Dispatch(this, ipEndPoint))
-                    //{
-                    //    string pop = queue.Dequeue().Item1;
-                    //    if (queue.Count != 0)
-                    //    {
-                    //        cont = queue.Peek().Item1;
-                    //        ipAddress = AgencyForm.configParser.GetIPAdress(cont);
-                    //        portNumber = AgencyForm.configParser.GetPort(cont);
-                    //        ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                    //    }
-                    //}
+                    if (queue.Count != 0)
+                    {
+                        string cont = queue.Peek().Item1;
+                        IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(cont);
+                        int portNumber = AgencyForm.configParser.GetPort(cont);
+                        IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+                        TryDispatch(agencyContext, ipEndPoint);
+                    }
+                    else
+                    {
+                        TryDispatch(agencyContext, GetAgencyCreationContext());
+                    }
                 }
             }
             else
             {
-
-                if (queue.Count != 0)
+                
+                if (agencyContext.GetAgencyIPEndPoint().Equals(GetAgencyCreationContext()))
                 {
-
-                    foreach (string par in Parameters)
+                    if (GetWorkStatus() == Agent.READY)
                     {
-                        AgentProxy agentStatic = agencyContext.GetStationaryAgent(GetInfo(par));
-                        agentStatic.Run();
-                        if (!_info.ContainsKey(agencyContext.GetName()))
+                        agenciesVisited.Clear();
+                        _info.Clear();
+                        SetAgentCodebase("");
+                        agenciesVisited.Add(agencyContext.GetName());
+                        AddNeighbours(agencyContext, new Queue<string>());
+                        if (queue.Count != 0)
                         {
-                            _info.Add(agencyContext.GetName(), agentStatic.GetAgentCodebase());
-                        }
-                        else
-                        {
-                            _info[agencyContext.GetName()] += agentStatic.GetAgentCodebase();
-                        }
-                        information += agentStatic.GetAgentCodebase();
-
-                    }
-                    SetAgentCodebase(GetAgentCodebase() + agencyContext.GetName() + ": " + _info[agencyContext.GetName()] + Environment.NewLine);
-
-                    args.Source = "Agentul  " + GetName() + " ruleaza...";
-                    args.Information = agencyContext.GetName() + ": " + information;
-
-                    Tuple<string, Queue<string>> s = queue.Dequeue();
-                    foreach (string n in agencyContext.GetNeighbours())
-                    {
-                        if (!agenciesVisited.Contains(n))
-                        {
-                            Queue<string> stack = new Queue<string>();
-                            stack.Enqueue(agencyContext.GetName());
-                            foreach (Object obj in s.Item2)
-                            {
-                                stack.Enqueue(obj.ToString());
-                            }
-                            queue.Enqueue(Tuple.Create(n, stack));
-                            agenciesVisited.Add(n);
-                        }
-                    }
-                    if (queue.Count != 0)
-                    {
-                        string next = queue.Peek().Item1;
-                        if (agencyContext.GetNeighbours().Contains(next))
-                        {
-
+                            string next = queue.Peek().Item1;
                             IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(next);
                             int portNumber = AgencyForm.configParser.GetPort(next);
                             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                            while(!agencyContext.Dispatch(this, ipEndPoint)&&(queue.Count!=0))
-                            {
-                                string pop = queue.Dequeue().Item1;
-                                if (queue.Count != 0)
-                                {
-                                    next = queue.Peek().Item1;
-                                    if(agencyContext.GetNeighbours().Contains(next))
-                                    ipAddress = AgencyForm.configParser.GetIPAdress(next);
-                                    portNumber = AgencyForm.configParser.GetPort(next);
-                                    ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                                }
-                            }
-                            
+                            TryDispatch(agencyContext, ipEndPoint);
                         }
-                        else
-                        {
-                            wayBack = s.Item2;
-                            List<string> q = new List<string>(queue.Peek().Item2.ToArray());
-                            q.Reverse();
-                            q.RemoveAt(0);
-                            foreach (string el in q)
-                            {
-                                wayBack.Enqueue(el);
-                            }
-                            string back = wayBack.Peek();
-                            IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
-                            int portNumber = AgencyForm.configParser.GetPort(back);
-                            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                            agencyContext.Dispatch(this, ipEndPoint);
-                        }
-
+                        
                     }
                     else
                     {
-
-                        agenciesVisited.Clear();
-                        agencyContext.Dispatch(this, GetAgencyCreationContext());
+                        if (!GetAgentCodebase().Equals(""))
+                        {
+                            args.Source = "Agentul  " + GetName() + " a adunat informatiile: ";
+                            args.Information = GetAgentCodebase();
+                        }
+                        else
+                        {
+                            args.Source = "Agentul " + GetName() + " nu a adunat nicio informatie !";
+                            args.Information = "";
+                        }
 
                     }
-
                 }
                 else
                 {
-                    args.Source = "Agentul  " + GetName() + " a adunat informatiile: ";
-                    args.Information = GetAgentCodebase();
+                    if (queue.Count != 0)
+                    {
+                        Tuple<string, Queue<string>> t = queue.Dequeue();
+                        args.Source = "Agentul  " + GetName() + " ruleaza...";
+                        args.Information = agencyContext.GetName() + ": " + ColectInformation(agencyContext);
+
+                        AddNeighbours(agencyContext, t.Item2);
+                        if (queue.Count != 0)
+                        {
+                            string next = queue.Peek().Item1;
+                            if (agencyContext.GetNeighbours().Contains(next))
+                            {
+                                IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(next);
+                                int portNumber = AgencyForm.configParser.GetPort(next);
+                                IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+                                TryDispatch(agencyContext, ipEndPoint);
+                            }
+                            else
+                            {
+                                CreateWayBack(t.Item2);
+                                string back = wayBack.Peek();
+                                IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
+                                int portNumber = AgencyForm.configParser.GetPort(back);
+                                IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+                                TryDispatch(agencyContext, ipEndPoint);
+                            }
+                        }
+                        else
+                        {
+                            SetWorkStatus(Agent.DONE);
+                            TryDispatch(agencyContext, GetAgencyCreationContext());
+                        }
+
+                    }
+                    
+                    
                 }
             }
             agencyContext.OnArrival(args);
+        }
+        private string ColectInformation(AgencyContext agencyContext)
+        {
+            string information = "";
+            foreach (string par in Parameters)
+            {
+                IStationary agentStatic = agencyContext.GetStationaryAgent(GetInfo(par));
+                String i = agentStatic.GetInfo();
+                if (!_info.ContainsKey(agencyContext.GetName()))
+                {
+                    _info.Add(agencyContext.GetName(), i);
+                }
+                else
+                {
+                    _info[agencyContext.GetName()] += i;
+                }
+                information += i;
+
+            }
+            SetAgentCodebase(GetAgentCodebase() + agencyContext.GetName() + ": " + _info[agencyContext.GetName()] + Environment.NewLine);
+            return information;
         }
         #endregion Private Methods
 
         #region Public Methods
         public override void Run()
         {
-            CollectInfo();
             
-
+            AgencyContext agencyContext = GetAgentCurrentContext();
+            RunNetwork(agencyContext);
         }
         public override void GetUI()
         {

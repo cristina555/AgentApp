@@ -37,36 +37,36 @@
             this.dispatchButton = new System.Windows.Forms.Button();
             this.disposeButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.cloneButton = new System.Windows.Forms.Button();
-            this.listAgents = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.comboBoxN = new System.Windows.Forms.ComboBox();
-            this.comboBoxPorts = new System.Windows.Forms.ComboBox();
-            this.comboBoxIPAddresses = new System.Windows.Forms.ComboBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dispatchButtonNetwork = new System.Windows.Forms.Button();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.labelAddress = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.comboBoxIPAddresses = new System.Windows.Forms.ComboBox();
+            this.comboBoxN = new System.Windows.Forms.ComboBox();
+            this.port = new System.Windows.Forms.Label();
+            this.comboBoxPorts = new System.Windows.Forms.ComboBox();
+            this.listAgents = new System.Windows.Forms.ComboBox();
+            this.cloneButton = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxAgents = new System.Windows.Forms.ComboBox();
             this.deactivateButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.port = new System.Windows.Forms.Label();
             this.stationaryAgents = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox
@@ -166,71 +166,39 @@
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             // 
-            // groupBox4
+            // groupBox5
             // 
-            this.groupBox4.Controls.Add(this.createButton);
-            this.groupBox4.Controls.Add(this.comboBoxAgents);
-            this.groupBox4.Location = new System.Drawing.Point(12, 20);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(268, 102);
-            this.groupBox4.TabIndex = 23;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Alege agent -  creare";
+            this.groupBox5.Controls.Add(this.tabControl1);
+            this.groupBox5.Controls.Add(this.listAgents);
+            this.groupBox5.Controls.Add(this.cloneButton);
+            this.groupBox5.Controls.Add(this.disposeButton);
+            this.groupBox5.Location = new System.Drawing.Point(12, 137);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(268, 371);
+            this.groupBox5.TabIndex = 24;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Alege agent - clonare/trimitere";
             // 
-            // cloneButton
+            // tabControl1
             // 
-            this.cloneButton.Location = new System.Drawing.Point(11, 77);
-            this.cloneButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.cloneButton.Name = "cloneButton";
-            this.cloneButton.Size = new System.Drawing.Size(115, 34);
-            this.cloneButton.TabIndex = 8;
-            this.cloneButton.Text = "Clonare agent";
-            this.cloneButton.UseVisualStyleBackColor = true;
-            this.cloneButton.Click += new System.EventHandler(this.cloneButton_Click);
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(11, 127);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(247, 173);
+            this.tabControl1.TabIndex = 16;
             // 
-            // listAgents
+            // tabPage1
             // 
-            this.listAgents.FormattingEnabled = true;
-            this.listAgents.Location = new System.Drawing.Point(11, 36);
-            this.listAgents.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.listAgents.Name = "listAgents";
-            this.listAgents.Size = new System.Drawing.Size(243, 24);
-            this.listAgents.TabIndex = 9;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 10);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 17);
-            this.label3.TabIndex = 22;
-            this.label3.Text = "Gazde vecine";
-            // 
-            // comboBoxN
-            // 
-            this.comboBoxN.FormattingEnabled = true;
-            this.comboBoxN.Location = new System.Drawing.Point(13, 30);
-            this.comboBoxN.Name = "comboBoxN";
-            this.comboBoxN.Size = new System.Drawing.Size(98, 24);
-            this.comboBoxN.TabIndex = 21;
-            // 
-            // comboBoxPorts
-            // 
-            this.comboBoxPorts.FormattingEnabled = true;
-            this.comboBoxPorts.Location = new System.Drawing.Point(13, 105);
-            this.comboBoxPorts.Margin = new System.Windows.Forms.Padding(4);
-            this.comboBoxPorts.Name = "comboBoxPorts";
-            this.comboBoxPorts.Size = new System.Drawing.Size(135, 24);
-            this.comboBoxPorts.TabIndex = 20;
-            // 
-            // comboBoxIPAddresses
-            // 
-            this.comboBoxIPAddresses.FormattingEnabled = true;
-            this.comboBoxIPAddresses.Location = new System.Drawing.Point(13, 70);
-            this.comboBoxIPAddresses.Margin = new System.Windows.Forms.Padding(4);
-            this.comboBoxIPAddresses.Name = "comboBoxIPAddresses";
-            this.comboBoxIPAddresses.Size = new System.Drawing.Size(135, 24);
-            this.comboBoxIPAddresses.TabIndex = 19;
+            this.tabPage1.Controls.Add(this.dispatchButtonNetwork);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(239, 144);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "In retea";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // dispatchButtonNetwork
             // 
@@ -243,6 +211,23 @@
             this.dispatchButtonNetwork.UseVisualStyleBackColor = true;
             this.dispatchButtonNetwork.Click += new System.EventHandler(this.dispatchButtonNetwork_Click);
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.dispatchButton);
+            this.tabPage2.Controls.Add(this.labelAddress);
+            this.tabPage2.Controls.Add(this.label3);
+            this.tabPage2.Controls.Add(this.comboBoxIPAddresses);
+            this.tabPage2.Controls.Add(this.comboBoxN);
+            this.tabPage2.Controls.Add(this.port);
+            this.tabPage2.Controls.Add(this.comboBoxPorts);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(239, 144);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "La o adresa specificata";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
             // labelAddress
             // 
             this.labelAddress.AutoSize = true;
@@ -251,6 +236,81 @@
             this.labelAddress.Size = new System.Drawing.Size(69, 17);
             this.labelAddress.TabIndex = 17;
             this.labelAddress.Text = "Adresa IP";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 10);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(95, 17);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "Gazde vecine";
+            // 
+            // comboBoxIPAddresses
+            // 
+            this.comboBoxIPAddresses.FormattingEnabled = true;
+            this.comboBoxIPAddresses.Location = new System.Drawing.Point(13, 70);
+            this.comboBoxIPAddresses.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxIPAddresses.Name = "comboBoxIPAddresses";
+            this.comboBoxIPAddresses.Size = new System.Drawing.Size(135, 24);
+            this.comboBoxIPAddresses.TabIndex = 19;
+            // 
+            // comboBoxN
+            // 
+            this.comboBoxN.FormattingEnabled = true;
+            this.comboBoxN.Location = new System.Drawing.Point(13, 30);
+            this.comboBoxN.Name = "comboBoxN";
+            this.comboBoxN.Size = new System.Drawing.Size(98, 24);
+            this.comboBoxN.TabIndex = 21;
+            // 
+            // port
+            // 
+            this.port.AutoSize = true;
+            this.port.Location = new System.Drawing.Point(155, 108);
+            this.port.Name = "port";
+            this.port.Size = new System.Drawing.Size(34, 17);
+            this.port.TabIndex = 11;
+            this.port.Text = "Port";
+            // 
+            // comboBoxPorts
+            // 
+            this.comboBoxPorts.FormattingEnabled = true;
+            this.comboBoxPorts.Location = new System.Drawing.Point(13, 105);
+            this.comboBoxPorts.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxPorts.Name = "comboBoxPorts";
+            this.comboBoxPorts.Size = new System.Drawing.Size(135, 24);
+            this.comboBoxPorts.TabIndex = 20;
+            // 
+            // listAgents
+            // 
+            this.listAgents.FormattingEnabled = true;
+            this.listAgents.Location = new System.Drawing.Point(11, 36);
+            this.listAgents.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.listAgents.Name = "listAgents";
+            this.listAgents.Size = new System.Drawing.Size(243, 24);
+            this.listAgents.TabIndex = 9;
+            // 
+            // cloneButton
+            // 
+            this.cloneButton.Location = new System.Drawing.Point(11, 77);
+            this.cloneButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cloneButton.Name = "cloneButton";
+            this.cloneButton.Size = new System.Drawing.Size(115, 34);
+            this.cloneButton.TabIndex = 8;
+            this.cloneButton.Text = "Clonare agent";
+            this.cloneButton.UseVisualStyleBackColor = true;
+            this.cloneButton.Click += new System.EventHandler(this.cloneButton_Click);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.createButton);
+            this.groupBox4.Controls.Add(this.comboBoxAgents);
+            this.groupBox4.Location = new System.Drawing.Point(12, 20);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(268, 102);
+            this.groupBox4.TabIndex = 23;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Alege agent -  creare";
             // 
             // comboBoxAgents
             // 
@@ -283,15 +343,6 @@
             this.button1.Text = "Agenti";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // port
-            // 
-            this.port.AutoSize = true;
-            this.port.Location = new System.Drawing.Point(155, 108);
-            this.port.Name = "port";
-            this.port.Size = new System.Drawing.Size(34, 17);
-            this.port.TabIndex = 11;
-            this.port.Text = "Port";
             // 
             // stationaryAgents
             // 
@@ -335,57 +386,6 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Informatii agentie";
             // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.tabControl1);
-            this.groupBox5.Controls.Add(this.listAgents);
-            this.groupBox5.Controls.Add(this.cloneButton);
-            this.groupBox5.Controls.Add(this.disposeButton);
-            this.groupBox5.Location = new System.Drawing.Point(12, 137);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(268, 371);
-            this.groupBox5.TabIndex = 24;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Alege agent - clonare/trimitere";
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(11, 127);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(247, 173);
-            this.tabControl1.TabIndex = 16;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.dispatchButton);
-            this.tabPage2.Controls.Add(this.labelAddress);
-            this.tabPage2.Controls.Add(this.label3);
-            this.tabPage2.Controls.Add(this.comboBoxIPAddresses);
-            this.tabPage2.Controls.Add(this.comboBoxN);
-            this.tabPage2.Controls.Add(this.port);
-            this.tabPage2.Controls.Add(this.comboBoxPorts);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(239, 144);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "La o adresa specificata";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.dispatchButtonNetwork);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(239, 144);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "In retea";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
             // AgencyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -401,16 +401,16 @@
             this.groupBox.ResumeLayout(false);
             this.groupBox.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

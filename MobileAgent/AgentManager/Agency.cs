@@ -104,9 +104,9 @@ namespace MobileAgent.AgentManager
         {
              return _ipEndPoint;
         }
-        public AgentProxy GetStationaryAgent(string name)
+        public IStationary GetStationaryAgent(string name)
         {
-            foreach(AgentProxy ap in _agentsStatList)
+            foreach(IStationary ap in _agentsStatList)
             {
                 if(ap.GetName() == name)
                 {
@@ -175,6 +175,7 @@ namespace MobileAgent.AgentManager
                 Socket mySocket = _agencySocket.Accept();
                 Console.WriteLine(mySocket);
                 Thread newThread = new Thread(new ParameterizedThreadStart(StartAccept));
+                newThread.Name = GetName() + ": Accept agents";
                 newThread.IsBackground = true;
                 newThread.Start(mySocket);
             }
@@ -194,6 +195,7 @@ namespace MobileAgent.AgentManager
                 IPEndPoint ip = agentProxy.GetAgencyCreationContext();
 
                 Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
+                agentThread.Name = GetName() + ": " + agentProxy.GetName();
                 agentThread.IsBackground = true;
                 agentThread.Start();                                 
                
@@ -214,6 +216,7 @@ namespace MobileAgent.AgentManager
             {
                 agentProxy.SetAgentCurrentContext(this);
                 agentProxy.SetAgencyCreationContext(this.GetAgencyIPEndPoint());
+                agentProxy.SetAgentCodebase("");
                 if (agentProxy.GetMobility().Equals(Agent.MOBILE))
                 {
                     _agentsMobileList.Add(agentProxy);
@@ -276,8 +279,7 @@ namespace MobileAgent.AgentManager
                 {
                     
                 }
-                if (connectSocket.Connected)
-                   
+                if (connectSocket.Connected)                   
                 {
                     isConnected = true;
                     networkStream = new NetworkStream(connectSocket);
@@ -392,6 +394,14 @@ namespace MobileAgent.AgentManager
         public void Deactivate(long duration)
         {
             throw new Exception("Aceasta metoda trebuie completata");
+        }
+        public void RunAgent(AgentProxy agentProxy)
+        {
+            agentProxy.SetWorkStatus(Agent.READY);
+            Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
+            agentThread.Name = GetName() + ": " +agentProxy.GetName();
+            agentThread.IsBackground = true;
+            agentThread.Start();
         }
 
         //[MethodImpl(MethodImplOptions.Synchronized)]

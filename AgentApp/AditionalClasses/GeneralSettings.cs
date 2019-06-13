@@ -19,7 +19,7 @@ namespace AgentApp.AditionalClasses
 
         #region 
         public List<string> ListofAgentsM { get; } = new List<string>();
-        public List<AgentProxy> ListofAgentsS { get; } = new List<AgentProxy> ();
+        public List<IStationary> ListofAgentsS { get; } = new List<IStationary> ();
 
         #endregion Properties
 

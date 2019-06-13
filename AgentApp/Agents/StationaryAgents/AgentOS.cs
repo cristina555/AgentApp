@@ -5,7 +5,7 @@ using System.Management;
 namespace AgentApp.Agents.StationaryAgents
 {
     [Serializable]
-    public class AgentOS : Agent
+    public class AgentOS : Agent , IStationary
     {
         #region Fields
         static string _info = "";
@@ -26,6 +26,7 @@ namespace AgentApp.Agents.StationaryAgents
         #region Private Methods
         private void GetOSInfo()
         {
+            
             ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
             foreach (ManagementObject managementObject in mos.Get())
             {
@@ -44,13 +45,20 @@ namespace AgentApp.Agents.StationaryAgents
         #region Public Methods
         public override void Run()
         {
-            GetOSInfo();
-            this.SetAgentCodebase(_info);
+            throw new NotImplementedException();
 
         }
         public override void GetUI()
         {
             throw new NotImplementedException();
+        }
+
+        public String GetInfo()
+        {
+            SetAgentCodebase("");
+            GetOSInfo();
+            this.SetAgentCodebase(_info);
+            return GetAgentCodebase();
         }
         #endregion Public Methods
     }

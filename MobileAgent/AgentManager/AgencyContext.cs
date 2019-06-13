@@ -19,7 +19,7 @@ namespace MobileAgent.AgentManager
         void Dispose(AgentProxy agentProxy);
         AgentProxy GetMobileAgentProxy(string name);
         AgentProxy GetMobileAgentProxy(int id);
-        AgentProxy GetStationaryAgent(string name);
+        IStationary GetStationaryAgent(string name);
         void RetractAgent(AgentProxy agentProxy, IPEndPoint location);
         void ShutDown();
         void Start();
@@ -28,6 +28,7 @@ namespace MobileAgent.AgentManager
         void OnRefuseConnection(UnconnectedAgencyArgs e);
 
         void OnArrival(MobilityEventArgs e);
+        void RunAgent(AgentProxy agentProxy);
 
 
         //void DispatchEvent(AgentEvent ev);

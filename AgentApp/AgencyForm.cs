@@ -73,7 +73,6 @@ namespace AgentApp
             Dictionary<IPAddress, Tuple<string, int, string[]>>  _hosts = configParser.NetworkHosts;
             try
             {
-
                 int hostIndex = _random.Next(_hosts.Count);
                 IPAddress ipAddress = _hosts.ElementAt(hostIndex).Key;
                 Tuple<string, int, string[]> t = _hosts[ipAddress];
@@ -101,21 +100,29 @@ namespace AgentApp
             }
 
         }
-        private static void Agency_RefuseConnection( object sender, UnconnectedAgencyArgs e)
+        private void Agency_RefuseConnection( object sender, UnconnectedAgencyArgs e)
         {
-            MessageBox.Show("Nu se poate realiza conexiunea cu agentia: " + e.Name);
-
+            this.Invoke((MethodInvoker)delegate
+            {
+                console.AppendText("Nu se poate realiza conexiunea cu " + e.Name + Environment.NewLine);
+                console.AppendText(".................................." + Environment.NewLine);
+            });
         }
         private void Agent_OnArrival(object sender, MobilityEventArgs e)
         {
-            console.Text += e.Source + Environment.NewLine;
-            console.Text += e.Information + Environment.NewLine;
-            UpdateAgentsList();
+            this.Invoke((MethodInvoker)delegate
+            {
+                console.AppendText(e.Source + Environment.NewLine);                
+                console.AppendText(e.Information + Environment.NewLine);                
+                console.AppendText(".................................." + Environment.NewLine);
+                UpdateAgentsList();
+            });
+            
         }
         private void CreateStationaryAgent()
         {
-            List<AgentProxy> list = gs.ListofAgentsS;
-            foreach(AgentProxy ap in list)
+            List<IStationary> list = gs.ListofAgentsS;
+            foreach(IStationary ap in list)
             {
                 int agentID = _random.Next(1000, 9999);
                 ap.SetAgentId(agentID);
@@ -295,58 +302,64 @@ namespace AgentApp
         }
         private void dispatchButtonNetwork_Click(object sender, EventArgs e)
         {
-            try
-            {
+            //try
+            //{
 
-                string selected = listAgents.GetItemText(listAgents.SelectedItem);
+            //    string selected = listAgents.GetItemText(listAgents.SelectedItem);
 
-                AgentRemote agentDispatched = (AgentRemote)agency.GetMobileAgentProxy(selected);
-                //agentDispatched.queue.Enqueue(Tuple.Create(agency.GetName());
-                agentDispatched.agenciesVisited.Add(agency.GetName());
-                foreach (string n in agency.GetNeighbours())
-                {
-                    if (!agentDispatched.agenciesVisited.Contains(n))
-                    {
-                        Queue<string> s = new Queue<string>();
-                        s.Enqueue(agency.GetName());
-                        agentDispatched.queue.Enqueue(Tuple.Create(n, s));
-                        agentDispatched.agenciesVisited.Add(n);
-                    }
-                }
-                string next = agentDispatched.queue.Peek().Item1;
-                IPAddress ipAddress = configParser.GetIPAdress(next);
-                int portNumber = configParser.GetPort(next);
-                IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                while(!agency.Dispatch(agentDispatched, ipEndPoint)&&(agentDispatched.queue.Count != 0))
-                {
-                    string pop = agentDispatched.queue.Dequeue().Item1;
-                    if (agentDispatched.queue.Count != 0)
-                    {
-                        next = agentDispatched.queue.Peek().Item1;
-                        ipAddress = configParser.GetIPAdress(next);
-                        portNumber = configParser.GetPort(next);
-                        ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                    }
-                }
+            //    AgentRemote agentDispatched = (AgentRemote)agency.GetMobileAgentProxy(selected);
+            //    agentDispatched.queue.Enqueue(Tuple.Create(agency.GetName());
+            //    agentDispatched.agenciesVisited.Add(agency.GetName());
+            //    foreach (string n in agency.GetNeighbours())
+            //    {
+            //        if (!agentDispatched.agenciesVisited.Contains(n))
+            //        {
+            //            Queue<string> s = new Queue<string>();
+            //            s.Enqueue(agency.GetName());
+            //            agentDispatched.queue.Enqueue(Tuple.Create(n, s));
+            //            agentDispatched.agenciesVisited.Add(n);
+            //        }
+            //    }
+            //    string next = agentDispatched.queue.Peek().Item1;
+            //    IPAddress ipAddress = configParser.GetIPAdress(next);
+            //    int portNumber = configParser.GetPort(next);
+            //    IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+            //    while(!agency.Dispatch(agentDispatched, ipEndPoint)&&(agentDispatched.queue.Count != 0))
+            //    {
+            //        string pop = agentDispatched.queue.Dequeue().Item1;
+            //        if (agentDispatched.queue.Count != 0)
+            //        {
+            //            next = agentDispatched.queue.Peek().Item1;
+            //            ipAddress = configParser.GetIPAdress(next);
+            //            portNumber = configParser.GetPort(next);
+            //            ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+            //        }
+            //    }
 
-                UpdateAgentsList();
-            }
-            catch (AgentNotFoundException anfe)
-            {
-                MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Trimite agent!");
-            }
-            catch (NullReferenceException nfe)
-            {
-                MessageBox.Show("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
-            }
-            catch (SocketException io)
-            {
-                MessageBox.Show("SocketException ! Mesaj: " + io.Message + " -> Trimite agent!");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Trimite agent!");
-            }
+            //    UpdateAgentsList();
+            //}
+            //catch (AgentNotFoundException anfe)
+            //{
+            //    MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Trimite agent!");
+            //}
+            //catch (NullReferenceException nfe)
+            //{
+            //    MessageBox.Show("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
+            //}
+            //catch (SocketException io)
+            //{
+            //    MessageBox.Show("SocketException ! Mesaj: " + io.Message + " -> Trimite agent!");
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Trimite agent!");
+            //}
+
+            string selected = listAgents.GetItemText(listAgents.SelectedItem);
+            AgentProxy agentDispatched = agency.GetMobileAgentProxy(selected);
+            agency.RunAgent(agentDispatched);
+            
+
         }
         private void disposeButton_Click(object sender, EventArgs e)
         {
@@ -364,6 +377,5 @@ namespace AgentApp
         }
 
         #endregion Controlers        
-
-     }
+    }
 }

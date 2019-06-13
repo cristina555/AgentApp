@@ -17,11 +17,14 @@ namespace MobileAgent.AgentManager
         public readonly static int NOK = 1;
         public readonly static int STATIC = 0;
         public readonly static int MOBILE = 1;
+        public readonly static int READY = 0;
+        public readonly static int DONE = 1;
         #endregion Public Fields
 
         #region Private Fields
         private string _name;
         private int _status = NOK;
+        private int _workStatus = DONE;
         private int _state = INACTIVE;
         private int _mobility;
         private int _id;
@@ -53,6 +56,10 @@ namespace MobileAgent.AgentManager
         public int GetStatus()
         {
             return _status;
+        }
+        public int GetWorkStatus()
+        {
+            return _workStatus;
         }
         public int GetMobility()
         {
@@ -109,6 +116,10 @@ namespace MobileAgent.AgentManager
         public void SetStatus(int status)
         {
             _status = status;
+        }
+        public void SetWorkStatus(int status)
+        {
+            _workStatus = status;
         }
         public void SetMobility(int mobility)
         {

@@ -17,6 +17,7 @@ namespace MobileAgent.AgentManager
         string GetName();
         int GetStatus();
         int GetMobility();
+        int GetWorkStatus();
         void SetAgentId(int id);
         void SetAgentCurrentContext(AgencyContext currentContext);
         void SetCreationTime();
@@ -25,6 +26,7 @@ namespace MobileAgent.AgentManager
         void SetAgencyCreationContext(IPEndPoint context);
         void SetName(string name);
         void SetStatus(int status);
+        void SetWorkStatus(int status);
         void SetMobility(int mobility);
         bool IsActive();
         bool IsRemote();

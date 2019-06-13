@@ -6,7 +6,7 @@ using System.Management;
 namespace AgentApp.Agents
 {
     [Serializable]
-    public class AgentP : Agent
+    public class AgentP : Agent , IStationary
     {
         #region Fields
         static string _info = "";
@@ -45,13 +45,21 @@ namespace AgentApp.Agents
         #region Public Methods
         public override void Run()
         {
-            GetProcessorInfo();
-            this.SetAgentCodebase(_info);
+            throw new NotImplementedException();
         }
         public override void GetUI()
         {
             throw new NotImplementedException();
         }
+
+        public String GetInfo()
+        {
+            SetAgentCodebase("");
+            GetProcessorInfo();
+            this.SetAgentCodebase(_info);
+            return GetAgentCodebase();
+        }
+
         #endregion Public Methods
     }
 }
