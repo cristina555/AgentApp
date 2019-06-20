@@ -12,6 +12,8 @@ using System.Windows.Forms;
 using MobileAgent.Exceptions;
 using System.Threading;
 using MobileAgent.EventAgent;
+using Timer = System.Timers.Timer;
+using System.Timers;
 
 namespace AgentApp
 {
@@ -25,6 +27,8 @@ namespace AgentApp
         public static Agency agency = null;
         public static ConfigParser configParser = null;
         public static GeneralSettings gs = null;
+        public Timer aTimer = new Timer(2000);
+        public List<AgentProxy> aps = new List<AgentProxy>();
         #endregion Public Fields
 
         #region Constructors
@@ -47,7 +51,7 @@ namespace AgentApp
         {
 
             //Real
-            //Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = _configParser.GetNetworkHosts();
+            //Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = configParser.NetworkHosts;
             //try
             //{
             //    IPAddress ipAddress = IPAddress.Parse(GetLocalIPAddress());
@@ -57,20 +61,25 @@ namespace AgentApp
             //    string[] neighbours = t.Item3;
 
             //    agency = new Agency(ipAddress, port);
-            //    agency.SetName = name;
-            //    agency.SetNeighboursHosts = neighbours;
+            //    agency.SetName(name);
+            //    agency.SetNeighbours(new List<string>(neighbours));
             //    info.Text = "Agentia: " + name + " se afla la " + ipAddress + ", portul " + port;
             //    agency.Activate();
             //    agency.Start();
-            //    agency.OnArrival += new Agency.dgEventRaiser(agent_OnArrival);
+            //    agency.MobilityEventArr += Agent_OnArrival;
+            //    agency.MobilityEventDis += Agent_OnDispaching;
+            //    agency.RefuseConnectionEvent += Agency_RefuseConnection;
             //}
             //catch (FormatException e)
             //{
             //    MessageBox.Show("Adresa IP invalida!");
             //}
-
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Exception !" + ex.Message + " --> Start Agentie!");
+            //}
             // simulare
-            Dictionary<IPAddress, Tuple<string, int, string[]>>  _hosts = configParser.NetworkHosts;
+            Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = configParser.NetworkHosts;
             try
             {
                 int hostIndex = _random.Next(_hosts.Count);
@@ -87,8 +96,13 @@ namespace AgentApp
                 info.Text = "Agentia: " + name + " se afla la " + ipAddress + ", portul " + port;
                 agency.Activate();
                 agency.Start();
-                agency.MobilityEvent += Agent_OnArrival;
+
+                agency.MobilityEventArr += Agent_OnArrival;
+                agency.MobilityEventDis += Agent_OnDispaching;
                 agency.RefuseConnectionEvent += Agency_RefuseConnection;
+                //agency.UpdateAgency += UpdateAgentsList;
+                aTimer.Elapsed += new ElapsedEventHandler(UpdateAgentsList);
+                aTimer.Enabled = true;
             }
             catch (FormatException fe)
             {
@@ -102,22 +116,44 @@ namespace AgentApp
         }
         private void Agency_RefuseConnection( object sender, UnconnectedAgencyArgs e)
         {
+            e.Date = DateTime.Now;
             this.Invoke((MethodInvoker)delegate
             {
-                console.AppendText("Nu se poate realiza conexiunea cu " + e.Name + Environment.NewLine);
+                console.AppendText( e.Date + Environment.NewLine);
+                string name = configParser.GetName(e.Name);
+                console.AppendText("Nu se poate realiza conexiunea cu " + name + Environment.NewLine);
                 console.AppendText(".................................." + Environment.NewLine);
             });
         }
         private void Agent_OnArrival(object sender, MobilityEventArgs e)
         {
+            e.Date = DateTime.Now;
             this.Invoke((MethodInvoker)delegate
             {
-                console.AppendText(e.Source + Environment.NewLine);                
-                console.AppendText(e.Information + Environment.NewLine);                
-                console.AppendText(".................................." + Environment.NewLine);
-                UpdateAgentsList();
+                if (e.Source != null && e.Information != null)
+                {
+                    console.AppendText(e.Date + Environment.NewLine);
+                    console.AppendText(e.Source + Environment.NewLine);
+                    console.AppendText(e.Information + Environment.NewLine);
+                    console.AppendText(".................................." + Environment.NewLine);
+                }
+                
             });
-            
+        }
+        private void Agent_OnDispaching(object sender, MobilityEventArgs e)
+        {
+            e.Date = DateTime.Now;
+            this.Invoke((MethodInvoker)delegate
+            {
+                if (e.Source != null && e.Information != null)
+                {
+                    console.AppendText(e.Date + Environment.NewLine);
+                    console.AppendText(e.Source + Environment.NewLine);
+                    console.AppendText(e.Information + Environment.NewLine);
+                    console.AppendText(".................................." + Environment.NewLine);
+                    
+                }
+            });
         }
         private void CreateStationaryAgent()
         {
@@ -131,33 +167,39 @@ namespace AgentApp
 
             }
         }
-        private void UpdateAgentsList()
+        private void UpdateAgentsList(object source, ElapsedEventArgs e)
         {
-            List<AgentProxy> aList = agency.GetAgentProxies(Agent.MOBILE);
-            agentsList.Clear();
-            listAgents.Items.Clear();
-            listAgents.Text = "";
-            if (aList != null)
+            this.Invoke((MethodInvoker)delegate
             {
-                foreach (AgentProxy agentProxy in aList)
+                List<AgentProxy> aList = agency.GetAgentProxies(Agent.MOBILE);
+                if (aList.Count != aps.Count)
                 {
-                    if (agentProxy.GetMobility() == Agent.MOBILE)
+                    aps = aList;
+                    agentsList.Clear();
+                    listAgents.Items.Clear();
+                    listAgents.Text = "";
+                    if (aList != null)
                     {
-                        agentsList.Text += agentProxy.GetAgentId() + ": "+agentProxy.GetName() + "-> " + agentProxy.GetAgentInfo() + System.Environment.NewLine;
-                        listAgents.Items.Add(agentProxy.GetName());
+                        foreach (AgentProxy agentProxy in aList)
+                        {
+                            if (agentProxy.IsMobile())
+                            {
+                                if (agentProxy.IsActive())
+                                {
+                                    agentsList.Text += agentProxy.GetAgentId() + ": " + agentProxy.GetName() + "-> " + agentProxy.GetAgentInfo() + System.Environment.NewLine;
+
+                                }
+                                listAgents.Items.Add(agentProxy.GetAgentId() + ": " + agentProxy.GetName());
+
+                            }
+                        }
                     }
                 }
-            }
+            });
         }
         private void FillIPAddressAndPortsList()
         {
             Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = configParser.NetworkHosts;
-            foreach (IPAddress aproxy in _hosts.Keys)
-            {
-                comboBoxIPAddresses.Items.Add(aproxy);
-                comboBoxPorts.Items.Add(_hosts[aproxy].Item2);
-                
-            }
             foreach(string s in _hosts[agency.GetAgencyIPEndPoint().Address].Item3 )
             {
                 comboBoxN.Items.Add(s);
@@ -174,7 +216,7 @@ namespace AgentApp
                 stationaryAgents.Text += aproxy.GetAgentId() +": " +aproxy.GetName() + "-> " + aproxy.GetAgentInfo() + Environment.NewLine;
             }
         }
-        private static string GetLocalIPAddress()
+        public string GetLocalIPAddress()
         {
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -195,6 +237,7 @@ namespace AgentApp
             throw new Exception("No network adapters with an IPv4 address in the system!");
 
         }
+
         #endregion Private Methods
 
         #region Controlers
@@ -202,27 +245,14 @@ namespace AgentApp
         {
             try
             {
-                string selected = this.listAgents.GetItemText(this.comboBoxAgents.SelectedItem);
+                string selected = listAgents.GetItemText(comboBoxAgents.SelectedItem);
                 int agentID = _random.Next(1000, 9999);
 
                 AgentProxy agentToCreate = gs.GetAgentProxy(selected);
                 agentToCreate.SetMobility(Agent.MOBILE);
                 agentToCreate.SetAgentId(agentID);
 
-           
-                Form ui = gs.GetUI(agentToCreate.GetName(), agentID);
-
-                if (ui.Controls.Count != 0)
-                {
-                    var thread = new Thread(() =>
-                    {
-                        Application.Run(ui);
-                    });
-                    thread.Start();
-                }
-
                 agency.CreateAgent(agentToCreate);
-                UpdateAgentsList();
             }
             catch(NullReferenceException nre)
             {
@@ -244,18 +274,7 @@ namespace AgentApp
                 agentToCreate.SetMobility(Agent.MOBILE);
                 agentToCreate.SetAgentId(agentID);
 
-                Form ui = gs.GetUI(selected, agentID);
-                if (ui.Controls.Count != 0)
-                {
-                    var thread = new Thread(() =>
-                    {
-                        Application.Run(ui);
-                    });
-                    thread.Start();
-                }
-
                 agency.Clone(agentToCreate);
-                UpdateAgentsList();
             }
             catch (NullReferenceException nre)
             {
@@ -272,16 +291,19 @@ namespace AgentApp
             {
                 string selected = listAgents.GetItemText(listAgents.SelectedItem);
                 AgentProxy agentDispatched = agency.GetMobileAgentProxy(selected);
+                if (agentDispatched.IsBoomerang())
+                {
+                    string location = comboBoxN.GetItemText(comboBoxN.SelectedItem);
+                    IPAddress ipAddress = configParser.GetIPAdress(location);
+                    int portNumber = configParser.GetPort(location);
+                    IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+                    agency.Dispatch(agentDispatched, ipEndPoint);
 
-                //string ipAddress = comboBoxIPAddresses.GetItemText(comboBoxIPAddresses.SelectedItem);
-                //int portNumber = Int32.Parse(comboBoxPorts.GetItemText(comboBoxPorts.SelectedItem));
-                string location = comboBoxN.GetItemText(comboBoxN.SelectedItem);
-                IPAddress ipAddress = configParser.GetIPAdress(location);
-                int portNumber = configParser.GetPort(location);
-                IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                agency.Dispatch(agentDispatched, ipEndPoint);
-                //agency.OnRefuseConnection += new Agency.dgEventRaiser1(agent_OnRefuse);
-                UpdateAgentsList();
+                }
+                else
+                {
+                    MessageBox.Show("Agentul nu poate fi trimis in retea: nu respecta tipul. Alegeti alt agent.");
+                }
             }
             catch (AgentNotFoundException anfe)
             {
@@ -302,72 +324,58 @@ namespace AgentApp
         }
         private void dispatchButtonNetwork_Click(object sender, EventArgs e)
         {
-            //try
-            //{
-
-            //    string selected = listAgents.GetItemText(listAgents.SelectedItem);
-
-            //    AgentRemote agentDispatched = (AgentRemote)agency.GetMobileAgentProxy(selected);
-            //    agentDispatched.queue.Enqueue(Tuple.Create(agency.GetName());
-            //    agentDispatched.agenciesVisited.Add(agency.GetName());
-            //    foreach (string n in agency.GetNeighbours())
-            //    {
-            //        if (!agentDispatched.agenciesVisited.Contains(n))
-            //        {
-            //            Queue<string> s = new Queue<string>();
-            //            s.Enqueue(agency.GetName());
-            //            agentDispatched.queue.Enqueue(Tuple.Create(n, s));
-            //            agentDispatched.agenciesVisited.Add(n);
-            //        }
-            //    }
-            //    string next = agentDispatched.queue.Peek().Item1;
-            //    IPAddress ipAddress = configParser.GetIPAdress(next);
-            //    int portNumber = configParser.GetPort(next);
-            //    IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-            //    while(!agency.Dispatch(agentDispatched, ipEndPoint)&&(agentDispatched.queue.Count != 0))
-            //    {
-            //        string pop = agentDispatched.queue.Dequeue().Item1;
-            //        if (agentDispatched.queue.Count != 0)
-            //        {
-            //            next = agentDispatched.queue.Peek().Item1;
-            //            ipAddress = configParser.GetIPAdress(next);
-            //            portNumber = configParser.GetPort(next);
-            //            ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-            //        }
-            //    }
-
-            //    UpdateAgentsList();
-            //}
-            //catch (AgentNotFoundException anfe)
-            //{
-            //    MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Trimite agent!");
-            //}
-            //catch (NullReferenceException nfe)
-            //{
-            //    MessageBox.Show("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
-            //}
-            //catch (SocketException io)
-            //{
-            //    MessageBox.Show("SocketException ! Mesaj: " + io.Message + " -> Trimite agent!");
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Trimite agent!");
-            //}
-
-            string selected = listAgents.GetItemText(listAgents.SelectedItem);
-            AgentProxy agentDispatched = agency.GetMobileAgentProxy(selected);
-            agency.RunAgent(agentDispatched);
-            
+            try
+            {
+                string selected = listAgents.GetItemText(listAgents.SelectedItem);
+                AgentProxy agentDispatched = agency.GetMobileAgentProxy(selected);
+                if (!agentDispatched.IsBoomerang())
+                {
+                    agency.RunAgent(agentDispatched);
+                }
+                else
+                {
+                    MessageBox.Show("Agentul nu poate fi trimis in retea: nu respecta tipul. Alegeti alt agent.");
+                }
+            }
+            catch(NullReferenceException  nre)
+            {
+                MessageBox.Show("NullReferenceException caught! Mesaj : " + nre.Message + " " + nre.StackTrace + " --> Agency Dispose Agent.");
+            }
+            catch(AgencyNotFoundException anfe)
+            {
+                MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Agency Dispose Agent!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Agency Dispose Agent!");
+            }
 
         }
         private void disposeButton_Click(object sender, EventArgs e)
         {
+            try
+            {
+                string selected = listAgents.GetItemText(listAgents.SelectedItem);
+                AgentProxy agentDisposed = agency.GetMobileAgentProxy(selected);
+                agency.Deactivate(agentDisposed);
 
+            }
+            catch (NullReferenceException nre)
+            {
+                MessageBox.Show("NullReferenceException caught! Mesaj : " + nre.Message + " " + nre.StackTrace + " --> Agency Dispose Agent.");
+            }
+            catch (AgencyNotFoundException anfe)
+            {
+                MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Agency Dispose Agent!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Agency Dispose Agent!");
+            }
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            UpdateAgentsList();
+           // UpdateAgentsList();
         }
 
         private void deactivateButton_Click(object sender, EventArgs e)
@@ -377,5 +385,32 @@ namespace AgentApp
         }
 
         #endregion Controlers        
+
+        private void ShowButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string selected = listAgents.GetItemText(listAgents.SelectedItem);
+                AgentProxy agentInfo = agency.GetMobileAgentProxy(selected);
+                string info = "";
+                info += "Nume: " + agentInfo.GetName() + Environment.NewLine;
+                info += "Informatii: " + agentInfo.GetAgentInfo() + Environment.NewLine;
+                info += "Creat: " + agentInfo.GetCreationTime() + Environment.NewLine;
+
+                MessageBox.Show(info);
+            }
+            catch (NullReferenceException nre)
+            {
+                MessageBox.Show("NullReferenceException caught! Mesaj : " + nre.Message + " " + nre.StackTrace + " --> Agency Dispose Agent.");
+            }
+            catch (AgencyNotFoundException anfe)
+            {
+                MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Agency Dispose Agent!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Agency Dispose Agent!");
+            }
+        }
     }
 }

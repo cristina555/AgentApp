@@ -9,7 +9,7 @@ namespace AgentApp
     {
  
         #region Constructor
-        public AgentPI()
+        public AgentPI() : base()
         {
             SetName("AgentPI");
             SetAgentInfo("Calculate the value of PI");
@@ -85,7 +85,7 @@ namespace AgentApp
             }
             Console.WriteLine("Rezultatul este: "+ result);
             codebase += "Rezultatul este: " + result + "\n";
-            this.SetAgentCodebase(codebase);
+            this.SetAgentStateInfo(codebase);
         }
         #endregion Private Methods
 

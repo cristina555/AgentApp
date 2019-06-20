@@ -8,15 +8,27 @@ namespace MobileAgent.Exceptions
 {
     public class CloneNotSupportedException : Exception
     {
+        #region Fields
+        private string _source = null;
+        private string _message = null;
+        #endregion Fields
+
         #region Constructors
-        public CloneNotSupportedException() : base()
+        public CloneNotSupportedException(string message, string source) : base(message)
         {
-
-        }
-        public CloneNotSupportedException(String message) : base(message)        
-        {
-
+            _source = source;
+            _message = string.Format("{0} Agentul: {1:F2}", message, source);
         }
         #endregion Constructors
+
+        #region Properties
+        public override string Message
+        {
+            get
+            {
+                return _message;
+            }
+        }
+        #endregion Properties
     }
 }

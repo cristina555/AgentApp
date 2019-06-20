@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MobileAgent.AgentManager;
 using System.Net;
 using System.Xml;
+using MobileAgent.EventAgent;
 
 namespace AgentApp.Agents
 {
@@ -15,7 +16,7 @@ namespace AgentApp.Agents
         #endregion Fields
 
         #region Constructors
-        public AgentInfo()
+        public AgentInfo() : base()
         {
             _agenciesVisited = new List<IPEndPoint>();
             this.SetName("AgentInfo");
@@ -23,7 +24,10 @@ namespace AgentApp.Agents
         }
         public AgentInfo(int id) : base(id)
         {
-             _agenciesVisited = new List<IPEndPoint>();
+            this.SetType(Agent.BOOMERANG);
+            this.SetName("AgentInfo");
+            this.SetAgentInfo("Get the list of visited agencies");
+            _agenciesVisited = new List<IPEndPoint>();
         }
         #endregion Constructors
 
@@ -36,7 +40,7 @@ namespace AgentApp.Agents
                 _agenciesVisited.Add(ip);
             }
         }
-        private void ShowAgencies()
+        private void AddInformation()
         {
             AddAgency();
             info = "Agentul a vizitat" + Environment.NewLine;
@@ -46,18 +50,41 @@ namespace AgentApp.Agents
                 info += context;
                 info += Environment.NewLine;
             }
-            this.SetAgentCodebase(info);
+            this.SetAgentStateInfo(info);
+        }
+        private void RunBoomerangAgent(AgencyContext agencyContext)
+        {
+            if (!GetAgencyCreationContext().Equals(agencyContext.GetAgencyIPEndPoint()))
+            {
+                AddInformation();
+
+                MobilityEventArgs args = new MobilityEventArgs();                
+                args.Source = "Agentul " + GetName() + " ruleaza ...";
+                args.Information = GetAgentStateInfo();
+                agencyContext.OnArrival(args);
+
+                RetractAgent();
+
+            }
+            else
+            {
+                MobilityEventArgs args = new MobilityEventArgs();
+                args.Source = "Agentul " + GetName() + " a adunat informatiile...";
+                args.Information = GetAgentStateInfo();
+                agencyContext.OnArrival(args);
+            }
         }
         #endregion Private Methods
 
         #region Public Methods
         public override void Run()
         {
-            ShowAgencies();
+            AgencyContext agencyContext = GetAgentCurrentContext();
+            RunBoomerangAgent(agencyContext);
         }
         public override void GetUI()
         {
-            XmlDocument xmlDoc = new XmlDocument();
+
         }
         #endregion Public Methods
 

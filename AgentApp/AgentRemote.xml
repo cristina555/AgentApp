@@ -2,6 +2,36 @@
 <component>
   <label>
     <autosize>true</autosize>
-    <location></location>>
+    <location>13 25</location>
+    <name>label1</name>
+    <size>65 17</size>
+    <tabIndex>5</tabIndex>
+    <text>Informatii</text>
   </label>
+  <button>
+    <location>301 89</location>
+    <margin>3 2 3 2</margin>
+    <name>label1</name>
+    <size>107 38</size>
+    <tabIndex>4</tabIndex>
+    <text>Trimite</text>
+    <useVisualStyleBackColor>true</useVisualStyleBackColor>
+    <click>buttonSend_Click</click>
+  </button>
+  <checkedListBox>
+    <checkOnClick>true</checkOnClick>
+    <formattingEnabled>true</formattingEnabled>
+    <items>
+      <item>"Sistem de operare"</item>
+      <item>"Arhitectura sistem de operare"</item>
+      <item>"Service Pack sistem de operare"</item>
+      <item>"Informatii procesor"</item>
+      <item>"Informatii placa video"</item>
+    </items>
+    <location>13 58</location>
+    <margin>4</margin>
+    <name>checkedListBox1</name>
+    <size>259 106</size>
+    <tabIndex>6</tabIndex>
+  </checkedListBox>
 </component>

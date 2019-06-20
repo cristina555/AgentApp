@@ -8,14 +8,27 @@ namespace MobileAgent.Exceptions
 {
     public class AgentNotFoundException : AgentException
     {
-        #region Constructors
-        public AgentNotFoundException()
-        {
+        #region Fields
+        private string _source = null;
+        private string _message = null;
+        #endregion Fields
 
-        }
-        public AgentNotFoundException(String m) : base(m)
+        #region Constructors
+        public AgentNotFoundException(string message, string source) : base(message)
         {
+            _source = source;
+            _message = string.Format("{0} Agentul: {1:F2}", message, source);
         }
         #endregion Constructors
+
+        #region Properties
+        public override string Message
+        {
+            get
+            {
+                return _message;
+            }
+        }
+        #endregion Properties
     }
 }

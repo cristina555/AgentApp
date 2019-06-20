@@ -1,42 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MobileAgent.Exceptions
 {
     public class AgentException : Exception
     {
         #region Fields
-        private bool _original = true;
-        private String _message = null;
+        private string _message = null;
         #endregion Fields
 
         #region Constructors
-        public AgentException() : base()
+        public AgentException(string message)         
         {
-
-        }
-        public AgentException(String message) : base(message)        
-        {   
-
+            _message = message;
         }
         #endregion Constructors
 
-        #region Methods
-        public void PrintExceptionMessage()
+        #region Properties
+        public override string Message
         {
-            if (_original)
+            get
             {
-                Console.WriteLine(base.Message);
-            }
-            else
-            {
-                Console.WriteLine(this);
-                Console.WriteLine(_message);
+                return _message;
             }
         }
-        #endregion Methods
+        #endregion Properties
+        
     }
 }

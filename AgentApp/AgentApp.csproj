@@ -58,6 +58,7 @@
     <Compile Include="AditionalClasses\NetworkCollection.cs" />
     <Compile Include="Agents\MobileAgents\AgentInfo.cs" />
     <Compile Include="Agents\MobileAgents\AgentPI.cs" />
+    <Compile Include="Agents\MobileAgents\AgentR.cs" />
     <Compile Include="Agents\MobileAgents\AgentRemote.cs" />
     <Compile Include="AgencyForm.cs">
       <SubType>Form</SubType>
@@ -65,21 +66,17 @@
     <Compile Include="AgencyForm.Designer.cs">
       <DependentUpon>AgencyForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Agents\MobileAgents\AgentSelfRemote.cs" />
     <Compile Include="Agents\StationaryAgents\AgentOS.cs" />
     <Compile Include="Agents\StationaryAgents\AgentOSSP.cs" />
     <Compile Include="Agents\StationaryAgents\AgentP.cs" />
     <Compile Include="Agents\StationaryAgents\AgentsOSA.cs" />
+    <Compile Include="Agents\StationaryAgents\AgentVC.cs" />
     <Compile Include="Interfaces\AgentPiUI.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Interfaces\AgentPiUI.Designer.cs">
       <DependentUpon>AgentPiUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Interfaces\AgentRemoteUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Interfaces\AgentRemoteUI.Designer.cs">
-      <DependentUpon>AgentRemoteUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,9 +85,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Interfaces\AgentPiUI.resx">
       <DependentUpon>AgentPiUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Interfaces\AgentRemoteUI.resx">
-      <DependentUpon>AgentRemoteUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

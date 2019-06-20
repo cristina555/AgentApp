@@ -2,6 +2,10 @@
 using MobileAgent.EventAgent;
 using System.Net.Sockets;
 using System.Net;
+using System.Collections.Generic;
+using System.Xml;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MobileAgent.AgentManager
 {
@@ -19,6 +23,11 @@ namespace MobileAgent.AgentManager
         public readonly static int MOBILE = 1;
         public readonly static int READY = 0;
         public readonly static int DONE = 1;
+        public readonly static int BOOMERANG = 0;
+        public readonly static int WALKER = 1;
+
+        //public delegate void dgEventRaiser();
+        //public event dgEventRaiser UpdateAgency;
         #endregion Public Fields
 
         #region Private Fields
@@ -27,22 +36,28 @@ namespace MobileAgent.AgentManager
         private int _workStatus = DONE;
         private int _state = INACTIVE;
         private int _mobility;
+        private int _type;
         private int _id;
-        private string _codebase;
+        private string _agentStateInfo;
         private string _creationTime;
         private IPEndPoint _agencyCreationContext;
         private string _agentInfo;
         private AgencyContext _currentContext;
+        private List<AgentProxy> _cloneList = null;
+        private DateTime _lifetime;
         #endregion Private Fields
 
         #region Constructors
         public Agent()
         {
-
+            _cloneList = new List<AgentProxy>();
+            SetCreationTime();
+            _state = ACTIVE;
         }
         public Agent(int id)
         {
             _id = id;
+            _cloneList = new List<AgentProxy>();
             SetCreationTime();
             _state = ACTIVE;
         }
@@ -53,17 +68,9 @@ namespace MobileAgent.AgentManager
         {
             return _name;
         }
-        public int GetStatus()
+        public string GetCreationTime()
         {
-            return _status;
-        }
-        public int GetWorkStatus()
-        {
-            return _workStatus;
-        }
-        public int GetMobility()
-        {
-            return _mobility;
+            return _creationTime;
         }
         public IPEndPoint GetAgencyCreationContext()
         {
@@ -77,13 +84,28 @@ namespace MobileAgent.AgentManager
 		{
              return _id;
   		}
-		public String GetAgentCodebase()
+		public String GetAgentStateInfo()
 		{  
-             return _codebase;
+             return _agentStateInfo;
         }
         public String GetAgentInfo()
         {
             return _agentInfo;
+        }
+        public List<AgentProxy> GetCloneList()
+        {
+            return _cloneList;
+        }
+        public AgentProxy GetClone(int id)
+        {
+           foreach(AgentProxy ap in _cloneList)
+           {
+                if(ap.GetAgentId() == id )
+                {
+                    return ap;
+                }
+           }
+            return null;
         }
         public void SetAgentId(int id)
         {
@@ -97,9 +119,9 @@ namespace MobileAgent.AgentManager
         {
             _creationTime = DateTime.Now.ToString();
         }
-        public void SetAgentCodebase(string codebase)
+        public void SetAgentStateInfo(string agentStateInfo)
         {
-            _codebase = codebase;
+            _agentStateInfo = agentStateInfo;
         }
         public void SetAgentInfo(string info)
         {
@@ -125,39 +147,145 @@ namespace MobileAgent.AgentManager
         {
             _mobility = mobility;
         }
+        public void SetType(int type)
+        {
+            _type = type;
+        }
+        public void SetClone(AgentProxy ap)
+        {
+            _cloneList.Add(ap);
+        }
         #endregion Properties
 
         #region Methods
-        public void OnCreation(Object init)
-		{
-            //Not implemented
-            throw new Exception("Aceasta metoda trebuie completata");
+        public void Clone()
+        {
+            //Not implemented yet
         }
-        public void OnDisposing()
-		{
-            //Not implemented
-            throw new Exception("Aceasta metoda trebuie completata");
-        }        
+        public bool Dispatch(IPEndPoint destination)
+        {
+            try
+            {
+                AgencyContext agencyContext = GetAgentCurrentContext();
+
+                IFormatter formatter = new BinaryFormatter();
+                NetworkStream networkStream = null;
+
+                Socket connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                try
+                {
+                    connectSocket.Connect(destination);
+                }
+                catch (Exception)
+                {
+
+                }
+                if (connectSocket.Connected)
+                {
+                    
+                    agencyContext.RemoveAgent(this);
+                    networkStream = new NetworkStream(connectSocket);
+                    SetAgentCurrentContext(null);
+                    formatter.Serialize(networkStream, this);
+                    return true;
+
+                }
+                else
+                {
+                    UnconnectedAgencyArgs args = new UnconnectedAgencyArgs();
+                    args.Date = DateTime.Now;
+                    args.Name = destination;
+                    agencyContext.OnRefuseConnection(args);
+                    Console.WriteLine("Refuse connection");
+
+                }
+                return false;
+            }
+            catch (NullReferenceException nfe)
+            {
+                Console.WriteLine("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
+            }
+            catch (SocketException io)
+            {
+                Console.WriteLine("SocketException caught! Mesaj : " + io.Message + io.StackTrace + " --> Agency Dispach Agent.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
+            }
+            return false;
+        }
+        public void RetractAgent()
+        {
+            try
+            {
+                AgencyContext agencyContext = GetAgentCurrentContext();
+
+
+                NetworkStream networkStream;
+                Socket connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                try
+                {
+                    connectSocket.Connect(GetAgencyCreationContext());
+                }
+                catch (Exception)
+                {
+
+                }
+                if (connectSocket.Connected)
+                {
+                    agencyContext.RemoveAgent(this);
+                    SetAgentCurrentContext(null);
+                    networkStream = new NetworkStream(connectSocket);
+                    IFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(networkStream, this);
+                }
+                else
+                {
+                    UnconnectedAgencyArgs args = new UnconnectedAgencyArgs();
+                    args.Date = DateTime.Now;
+                    args.Name = GetAgencyCreationContext();
+                }
+            }
+            catch (NullReferenceException nfe)
+            {
+                Console.WriteLine("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
+            }
+            catch (SocketException io)
+            {
+                Console.WriteLine("SocketException caught! Mesaj : " + io.Message + io.StackTrace + " --> Agency Dispach Agent.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
+            }
+            //UpdateAgency();
+        }
         public bool IsActive()
         {
-            //Not implemented
             return _state == ACTIVE;
         }
         public bool IsRemote()
         {
             return _state == REMOTE;
         }
+        public bool IsReady()
+        {
+            return _workStatus == READY;
+        }
         public bool IsMobile()
         {
             return _mobility == MOBILE;
         }
-        public void Suspend()
+        public bool IsBoomerang()
         {
-            //Not implemented
-            throw new Exception("Aceasta metoda trebuie completata");
+            return _type == BOOMERANG;
+        }
+        public bool IsStatusOK()
+        {
+            return _status == OK;
         }
         abstract public void Run();
-
         abstract public void GetUI();
         #endregion Methods
 

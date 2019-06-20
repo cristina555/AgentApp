@@ -50,25 +50,10 @@
     <Compile Include="AgentManager\IStationary.cs" />
     <Compile Include="EventAgent\MobilityEventArgs.cs" />
     <Compile Include="EventAgent\UnconnectedAgencyArgs.cs" />
-    <Compile Include="EventAgent\Listeners\AgentEventListener.cs" />
-    <Compile Include="EventAgent\Events\AgentEvent.cs" />
-    <Compile Include="EventAgent\Adapters\CloneAdapter.cs" />
-    <Compile Include="EventAgent\Events\CloneEvent.cs" />
-    <Compile Include="EventAgent\Listeners\CloneListener.cs" />
-    <Compile Include="EventAgent\Adapters\ContextAdapter.cs" />
-    <Compile Include="EventAgent\Events\ContextEvent.cs" />
-    <Compile Include="EventAgent\Listeners\ContextListener.cs" />
-    <Compile Include="EventAgent\Adapters\MobilityAdapter.cs" />
-    <Compile Include="EventAgent\Events\MobilityEvent.cs" />
-    <Compile Include="EventAgent\Listeners\MobilityListener.cs" />
-    <Compile Include="EventAgent\Adapters\PersistencyAdapter.cs" />
-    <Compile Include="EventAgent\Events\PersistencyEvent.cs" />
-    <Compile Include="EventAgent\Listeners\PersistencyListener.cs" />
     <Compile Include="Exceptions\AgencyNotFoundException.cs" />
     <Compile Include="Exceptions\AgentException.cs" />
     <Compile Include="Exceptions\AgentNotFoundException.cs" />
     <Compile Include="Exceptions\CloneNotSupportedException.cs" />
-    <Compile Include="Exceptions\InvalidAgentException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

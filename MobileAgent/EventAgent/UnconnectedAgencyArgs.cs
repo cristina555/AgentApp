@@ -17,7 +17,8 @@ namespace MobileAgent.AgentManager
         #endregion Constructor
 
         #region Properties
-        public String Name { get; set; }
+        public DateTime Date { get; set; }
+        public IPEndPoint Name { get; set; }
         #endregion Properties
     }
 }

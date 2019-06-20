@@ -10,11 +10,10 @@ using System.Windows.Forms;
 namespace AgentApp.Agents
 {
     [Serializable]
-    public class AgentRemote : Agent
+    public class AgentR : Agent
     {
         #region Private Fields
         Queue<string> wayBack = new Queue<string>();
-        Dictionary<string, String> _info = null;
 
         #endregion Private Fields
 
@@ -24,58 +23,22 @@ namespace AgentApp.Agents
         #endregion Public Fields
 
         #region Constructor
-        public AgentRemote() : base()
+        public AgentR() : base()
         {
-            Parameters = new List<string>();
+            Parameters = new List<Tuple<string, string>>();
             SetType(Agent.WALKER);
-            SetName("AgentRemote");
+            SetName("AgentR");
             SetAgentInfo("Collect information from network");
-            _info = new Dictionary<string, String>();
         }
         #endregion Constructor
 
         #region Properties
-        public List<string> Parameters { get; set; }
+        public List<Tuple<string, string>> Parameters { get; set; }
+        public int Threshold { get; set; }
+        public int NumberOfValidAgencies { get; set; } = 0;
         #endregion Properties
 
         #region Private Methods
-        private string GetInfo(string parameter)
-        {
-            string type = "";
-            switch (parameter)
-            {
-                case "Sistem de operare":
-                    {
-                        type = "AgentOS";
-                        break;
-                    }
-                case "Arhitectura sistem de operare":
-                    {
-                        type = "AgentOSA";
-                        break;
-                    }
-                case "Service Pack sistem de operare":
-                    {
-                        type = "AgentOSSP";
-                        break;
-                    }
-                case "Informatii procesor":
-                    {
-                        type = "AgentP";
-                        break;
-                    }
-                case "Informatii placa video":
-                    {
-                        type = "AgentVC";
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
-            return type;
-        }
 
         private void AddNeighbours(AgencyContext agencyContext, Queue<string> agencyQueue)
         {
@@ -111,7 +74,7 @@ namespace AgentApp.Agents
                             int portNumber = AgencyForm.configParser.GetPort(next);
                             destination = new IPEndPoint(ipAddress, portNumber);
 
-                            args.Source = "Punct de plecare: ";
+                            args.Source = "Punct de plecare:  ";
                             args.Information = "Agentul " + GetName() + " se duce catre " + next;
                             agencyContext.OnDispatching(args);
 
@@ -143,7 +106,6 @@ namespace AgentApp.Agents
 
                             break;
                         }
-
                         args.Source = "Punct de plecare: ";
                         args.Information = "Agentul " + GetName() + " se duce catre sursa";
                         agencyContext.OnDispatching(args);
@@ -153,7 +115,6 @@ namespace AgentApp.Agents
                 else
                 {
                     break;
-
                 }
 
             }
@@ -255,8 +216,8 @@ namespace AgentApp.Agents
                     if (IsReady())
                     {
                         agenciesVisited.Clear();
-                        _info.Clear();
                         SetAgentStateInfo("");
+                        NumberOfValidAgencies = 0;
                         agenciesVisited.Add(agencyContext.GetName());
                         AddNeighbours(agencyContext, new Queue<string>());
                         if (queue.Count != 0)
@@ -271,27 +232,25 @@ namespace AgentApp.Agents
                             agencyContext.OnDispatching(args);
 
                             TryDispatch(agencyContext, ipEndPoint);
-
                         }
 
                     }
                     else
                     {
-                        if (!GetAgentStateInfo().Equals(""))
+                        if (NumberOfValidAgencies != 0)
                         {
                             args.Source = "Punct de stop: ";
-                            args.Information = "Agentul  " + GetName() + " a adunat informatiile: " + Environment.NewLine + GetAgentStateInfo();
+                            args.Information = "Agentul  " + GetName() + " a gasit " + NumberOfValidAgencies + " agentii valide!";
                             agencyContext.OnArrival(args);
                             Console.Beep(800, 1000);
                         }
                         else
                         {
                             args.Source = "Punct de stop: ";
-                            args.Information = "Agentul " + GetName() + " nu a adunat nicio informatie !";
+                            args.Information = "Agentul " + GetName() + " nu a vizitat nicio agentie !";
                             agencyContext.OnArrival(args);
                             Console.Beep(800, 1000);
                         }
-
                     }
                 }
                 else
@@ -301,9 +260,14 @@ namespace AgentApp.Agents
                         Tuple<string, Queue<string>> t = queue.Dequeue();
 
                         args.Source = "Punct de rulare: ";
-                        args.Information = "Agentul  " + GetName() + " ruleaza..." + Environment.NewLine + agencyContext.GetName() + ": " + ColectInformation(agencyContext);
+                        args.Information = "Agentul  " + GetName() + " ruleaza..." + Environment.NewLine + agencyContext.GetName() + Environment.NewLine + ShowInformation(agencyContext);
                         agencyContext.OnArrival(args);
                         Console.Beep();
+
+                        if(IsValidAgency(agencyContext))
+                        {
+                            NumberOfValidAgencies++;
+                        }
 
                         AddNeighbours(agencyContext, t.Item2);
                         if (queue.Count != 0)
@@ -315,12 +279,11 @@ namespace AgentApp.Agents
                                 int portNumber = AgencyForm.configParser.GetPort(next);
                                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
-                                args.Source = "Punct de plecare: ";
+                                args.Source = "Agentul se deplaseaza ";
                                 args.Information = "Agentul " + GetName() + " se duce catre " + next;
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);
-                                                               
                             }
                             else
                             {
@@ -331,7 +294,7 @@ namespace AgentApp.Agents
                                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                                 args.Source = "Punct de plecare: ";
-                                args.Information = "Agentul " + GetName() + " se intoarce la " + next;
+                                args.Information = "Agentul " + GetName() + " se duce catre " + next;
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);
@@ -351,25 +314,28 @@ namespace AgentApp.Agents
                 }
             }
         }
-        private string ColectInformation(AgencyContext agencyContext)
+        private bool IsValidAgency(AgencyContext agencyContext)
+        {
+            foreach (Tuple<string, string> par in Parameters)
+            {
+                IStationary agentStatic = agencyContext.GetStationaryAgent(par.Item1);
+                String i = agentStatic.GetInfo();
+                if(!i.Contains(par.Item2))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private string ShowInformation(AgencyContext agencyContext)
         {
             string information = "";
-            foreach (string par in Parameters)
+            foreach (Tuple<string, string> par in Parameters)
             {
-                IStationary agentStatic = agencyContext.GetStationaryAgent(GetInfo(par));
+                IStationary agentStatic = agencyContext.GetStationaryAgent(par.Item1);
                 String i = agentStatic.GetInfo();
-                if (!_info.ContainsKey(agencyContext.GetName()))
-                {
-                    _info.Add(agencyContext.GetName(), i);
-                }
-                else
-                {
-                    _info[agencyContext.GetName()] += i;
-                }
-                information += i;
-
+                information += agentStatic.GetAgentInfo()  + Environment.NewLine + i ;
             }
-            SetAgentStateInfo(GetAgentStateInfo() + agencyContext.GetName() + ": " + _info[agencyContext.GetName()] + Environment.NewLine);
             return information;
         }
         #endregion Private Methods
@@ -384,67 +350,154 @@ namespace AgentApp.Agents
         public override void GetUI()
         {
             Form ui = new Form();
-            
-            Label label1;
-            Button button1;
-            CheckedListBox checkedListBox1;
 
-            label1 = new Label();
+            Button button1;
+            ComboBox comboBox1;
+            Label label1;
+            Label label2;
+            Label label3;
+            Label label4;
+            Label label5;
+            ComboBox comboBox2;
+            ComboBox comboBox3;
+            TextBox textBox1;
+
             button1 = new Button();
-            checkedListBox1 = new CheckedListBox();
+            comboBox1 = new ComboBox();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            label5 = new Label();
+            comboBox2 = new ComboBox();
+            comboBox3 = new ComboBox();
+            textBox1 = new TextBox();
             ui.SuspendLayout();
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(13, 25);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(65, 17);
-            label1.TabIndex = 5;
-            label1.Text = "Informatii";
-            // 
+
             // button1
             // 
-            button1.Location = new System.Drawing.Point(301, 89);
+            button1.Location = new System.Drawing.Point(285, 198);
             button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
             button1.Size = new System.Drawing.Size(107, 38);
             button1.TabIndex = 4;
-            button1.Text = "Trimite";
+            button1.Text = "Trmite";
             button1.UseVisualStyleBackColor = true;
-            
             // 
-            // checkedListBox1
+            // comboBox1
             // 
-            checkedListBox1.CheckOnClick = true;
-            checkedListBox1.FormattingEnabled = true;
-            checkedListBox1.Items.AddRange(new object[] {
-            "Sistem de operare",
-            "Arhitectura sistem de operare",
-            "Service Pack sistem de operare",
-            "Informatii procesor",
-            "Informatii placa video"});
-            checkedListBox1.Location = new System.Drawing.Point(13, 58);
-            checkedListBox1.Margin = new Padding(4);
-            checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new System.Drawing.Size(259, 106);
-            checkedListBox1.TabIndex = 6;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] {
+            "Windows 7",
+            "Windows 8",
+            "Windows 10",
+            "Windows XP"});
+            comboBox1.Location = new System.Drawing.Point(28, 75);
+            comboBox1.Name = "comboBoxOS";
+            comboBox1.Size = new System.Drawing.Size(219, 24);
+            comboBox1.TabIndex = 5;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(25, 55);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(124, 17);
+            label1.TabIndex = 6;
+            label1.Text = "Sistem de operare";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label2.Location = new System.Drawing.Point(24, 9);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(256, 20);
+            label2.TabIndex = 7;
+            label2.Text = "Selecteaza informatiile dorite";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(28, 121);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(65, 17);
+            label3.TabIndex = 8;
+            label3.Text = "Procesor";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(28, 192);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(81, 17);
+            label4.TabIndex = 9;
+            label4.Text = "Placa video";
+            // 
+            // comboBox2
+            // 
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Items.AddRange(new object[] {
+            "AMD",
+            "Intel"});
+            comboBox2.Location = new System.Drawing.Point(28, 141);
+            comboBox2.Name = "comboBoxP";
+            comboBox2.Size = new System.Drawing.Size(219, 24);
+            comboBox2.TabIndex = 10;
+            // 
+            // comboBox3
+            // 
+            comboBox3.FormattingEnabled = true;
+            comboBox3.Items.AddRange(new object[] {
+            "Intel",
+            "NVidia"});
+            comboBox3.Location = new System.Drawing.Point(31, 212);
+            comboBox3.Name = "comboBoxVC";
+            comboBox3.Size = new System.Drawing.Size(216, 24);
+            comboBox3.TabIndex = 11;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new System.Drawing.Point(285, 135);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(61, 30);
+            textBox1.TabIndex = 12;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label5.Location = new System.Drawing.Point(285, 98);
+            label5.Name = "label5";
+            label5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            label5.Size = new System.Drawing.Size(148, 18);
+            label5.TabIndex = 13;
+            label5.Text = "Numarul de agentii";
+            label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // AgentRemoteUI
             // 
             ui.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             ui.AutoScaleMode = AutoScaleMode.Font;
-            ui.ClientSize = new System.Drawing.Size(451, 177);
-            ui.Controls.Add(checkedListBox1);
+            ui.ClientSize = new System.Drawing.Size(465, 259);
+            ui.Controls.Add(textBox1);
+            ui.Controls.Add(comboBox3);
+            ui.Controls.Add(comboBox2);
+            ui.Controls.Add(label4);
+            ui.Controls.Add(label4);
+            ui.Controls.Add(label3);
+            ui.Controls.Add(label2);
             ui.Controls.Add(label1);
+            ui.Controls.Add(comboBox1);
             ui.Controls.Add(button1);
-            ui.Margin = new Padding(3, 2, 3, 2);
+            ui.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             ui.Name = "AgentRemoteUI";
             ui.Text = "Interfata AgentRemote";
             ui.ResumeLayout(false);
             ui.PerformLayout();
 
-            button1.Click += new System.EventHandler((sender, e) => buttonSend_Click(sender, e, ui));
+            button1.Click += new EventHandler((sender, e) => buttonSend_Click(sender, e, ui));
             if (ui.Controls.Count != 0)
             {
                 var thread = new Thread(() =>
@@ -458,19 +511,47 @@ namespace AgentApp.Agents
         {
             try
             {
-                List<string> _parameters = new List<string>();
+                List<Tuple<string, string>> parameters = new List<Tuple<string, string>>();
+                foreach (Control c in ui.Controls)
+                {
+                    if (c is ComboBox)
+                    {
+                        ComboBox control = (ComboBox)c;
+                        switch(control.Name)
+                        {
+                            case "comboBoxOS":
+                                {
+                                    parameters.Add(Tuple.Create("AgentOS", control.GetItemText(control.SelectedItem)));
+                                    break;
+                                }
+                            case "comboBoxP":
+                                {
+                                    parameters.Add(Tuple.Create("AgentP", control.GetItemText(control.SelectedItem)));
+                                    break;
+                                }
+                            case "comboBoxVC":
+                                {
+                                    parameters.Add(Tuple.Create("AgentVC", control.GetItemText(control.SelectedItem)));
+                                    break;
+                                }
+                            default:
+                                {
+                                    break;
+                                }
+                        }                        
+                    }                
+                }
                 foreach(Control c in ui.Controls)
                 {
-                    if(c is CheckedListBox)
+                    if(c is TextBox)
                     {
-                        CheckedListBox control = (CheckedListBox)c;
-                        foreach (object itemchecked in control.CheckedItems)
-                        {
-                            _parameters.Add(itemchecked.ToString());
-                        }
+                        TextBox t = (TextBox)c;
+                        Threshold = int.Parse(t.Text);
+                        break;
                     }
                 }
-                Parameters = _parameters;
+                Parameters = parameters;
+                
                 ui.Close();
             }
             catch (NullReferenceException nre)

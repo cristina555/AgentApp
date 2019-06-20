@@ -13,10 +13,10 @@ namespace AgentApp.Agents
         #endregion Fields
 
         #region Constructors
-        public AgentOSSP()
+        public AgentOSSP() : base()
         {
             this.SetName("AgentOSSP");
-            this.SetAgentInfo("Get Agency Operating System Service Pack Info");
+            this.SetAgentInfo("Informatii legate de pachetul de servicii al sistemului de operare.");
         }
         public AgentOSSP(int id) : base(id)
         {
@@ -27,6 +27,7 @@ namespace AgentApp.Agents
         #region Private Methods
         private void GetOSServicePackInfo()
         {
+            _info = "";
             ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
             foreach (ManagementObject managementObject in mos.Get())
             {
@@ -56,10 +57,10 @@ namespace AgentApp.Agents
 
         public String GetInfo()
         {
-            SetAgentCodebase("");
+            SetAgentStateInfo("");
             GetOSServicePackInfo();
-            this.SetAgentCodebase(_info);
-            return GetAgentCodebase();
+            this.SetAgentStateInfo(_info);
+            return GetAgentStateInfo();
         }
         #endregion Public Methods
     }

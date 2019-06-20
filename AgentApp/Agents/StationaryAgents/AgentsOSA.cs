@@ -13,10 +13,10 @@ namespace AgentApp.Agents
         #endregion Fields
 
         #region Constructors
-        public AgentOSA()
+        public AgentOSA() : base()
         {
             this.SetName("AgentOSA");
-            this.SetAgentInfo("Get Agency Operating System Architecture Info");
+            this.SetAgentInfo("Informatii despre arhitectura sistemului de operare.");
         }
         public AgentOSA(int id) : base(id)
         {
@@ -27,6 +27,7 @@ namespace AgentApp.Agents
         #region Private Methods
         private void GetOSArchitectureInfo()
         {
+            _info = "";
             ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
             foreach (ManagementObject managementObject in mos.Get())
             {
@@ -54,10 +55,10 @@ namespace AgentApp.Agents
 
         public String GetInfo()
         {
-            SetAgentCodebase("");
+            SetAgentStateInfo("");
             GetOSArchitectureInfo();
-            this.SetAgentCodebase(_info);
-            return GetAgentCodebase();
+            this.SetAgentStateInfo(_info);
+            return GetAgentStateInfo();
         }
         #endregion Public Methods
     }

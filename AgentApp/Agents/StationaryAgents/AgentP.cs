@@ -13,10 +13,10 @@ namespace AgentApp.Agents
         #endregion Fields   
 
         #region Constructors
-        public AgentP()
+        public AgentP() : base()
         {
             this.SetName("AgentP");
-            this.SetAgentInfo("Get Agency Processor Info");
+            this.SetAgentInfo("Informatii despre procesor.");
         }
         public AgentP(int id) : base(id)
         {
@@ -27,6 +27,7 @@ namespace AgentApp.Agents
         #region Private Methods
         private void GetProcessorInfo()
         {
+            _info = "";
             RegistryKey processor_name = Registry.LocalMachine.OpenSubKey(@"Hardware\Description\System\CentralProcessor\0", RegistryKeyPermissionCheck.ReadSubTree);
             if (processor_name != null)
             {
@@ -54,10 +55,10 @@ namespace AgentApp.Agents
 
         public String GetInfo()
         {
-            SetAgentCodebase("");
+            SetAgentStateInfo("");
             GetProcessorInfo();
-            this.SetAgentCodebase(_info);
-            return GetAgentCodebase();
+            this.SetAgentStateInfo(_info);
+            return GetAgentStateInfo();
         }
 
         #endregion Public Methods

@@ -69,6 +69,17 @@ namespace AgentApp.AditionalClasses
             }
             return 0;
         }
+        public string GetName(IPEndPoint ipEndPoint)
+        {
+            foreach(IPAddress ipAddress in NetworkHosts.Keys)
+            {
+                if(ipAddress == ipEndPoint.Address && NetworkHosts[ipAddress].Item2 == ipEndPoint.Port )
+                {
+                    return NetworkHosts[ipAddress].Item1;
+                }
+            }
+            return null;
+        }
         #endregion Public Methods
     }
 }

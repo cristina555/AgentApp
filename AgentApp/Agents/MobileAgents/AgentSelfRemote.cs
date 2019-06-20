@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace AgentApp.Agents
 {
     [Serializable]
-    public class AgentRemote : Agent
+    public class AgentSelfRemote : Agent
     {
         #region Private Fields
         Queue<string> wayBack = new Queue<string>();
@@ -24,11 +24,11 @@ namespace AgentApp.Agents
         #endregion Public Fields
 
         #region Constructor
-        public AgentRemote() : base()
+        public AgentSelfRemote() : base()
         {
             Parameters = new List<string>();
             SetType(Agent.WALKER);
-            SetName("AgentRemote");
+            SetName("AgentSelfRemote");
             SetAgentInfo("Collect information from network");
             _info = new Dictionary<string, String>();
         }
@@ -97,7 +97,7 @@ namespace AgentApp.Agents
         private void TryDispatch(AgencyContext agencyContext, IPEndPoint destination)
         {
             MobilityEventArgs args = new MobilityEventArgs();
-            while (!agencyContext.Dispatch(this, destination))
+            while (!Dispatch(destination))
             {
                 if (queue.Count != 0)
                 {
@@ -320,7 +320,7 @@ namespace AgentApp.Agents
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);
-                                                               
+
                             }
                             else
                             {
@@ -384,7 +384,7 @@ namespace AgentApp.Agents
         public override void GetUI()
         {
             Form ui = new Form();
-            
+
             Label label1;
             Button button1;
             CheckedListBox checkedListBox1;
@@ -412,7 +412,7 @@ namespace AgentApp.Agents
             button1.TabIndex = 4;
             button1.Text = "Trimite";
             button1.UseVisualStyleBackColor = true;
-            
+
             // 
             // checkedListBox1
             // 
@@ -459,9 +459,9 @@ namespace AgentApp.Agents
             try
             {
                 List<string> _parameters = new List<string>();
-                foreach(Control c in ui.Controls)
+                foreach (Control c in ui.Controls)
                 {
-                    if(c is CheckedListBox)
+                    if (c is CheckedListBox)
                     {
                         CheckedListBox control = (CheckedListBox)c;
                         foreach (object itemchecked in control.CheckedItems)

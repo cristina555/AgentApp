@@ -2,43 +2,49 @@
 using System;
 using System.Management;
 
+
 namespace AgentApp.Agents.StationaryAgents
 {
     [Serializable]
-    public class AgentOS : Agent , IStationary
+    public class AgentVC : Agent, IStationary
     {
         #region Fields
         static string _info = "";
         #endregion Fields
 
         #region Constructors
-        public AgentOS() : base()
+        public AgentVC() : base()
         {
-            this.SetName("AgentOS");
-            this.SetAgentInfo("Informatii despre sistemul de operare.");
+            this.SetName("AgentVC");
+            this.SetAgentInfo("Informatii despre placa video.");
         }
-        public AgentOS(int id) : base(id)
+        public AgentVC(int id) : base(id)
         {
-            
+
         }
         #endregion Constructors
 
         #region Private Methods
-        private void GetOSInfo()
+        private void GetVCInfo()
         {
             _info = "";
-            ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
-            foreach (ManagementObject managementObject in mos.Get())
+            ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
+            foreach (ManagementObject mo in mos.Get())
             {
-                if (managementObject["Caption"] != null)
+                foreach (PropertyData property in mo.Properties)
                 {
-                    _info += "Sistem de operare: " + managementObject["Caption"].ToString() + Environment.NewLine;
-                }
-                else
-                {
-                    _info += "Nu s-a gasit sistemul de operare!";
+                    if (property.Name == "Description")
+                    {
+                        _info += "Placa video: " + property.Value.ToString();
+                    }
+
                 }
             }
+            if (_info == null)
+            {
+                _info += "Nu s-a gasit descrierea placii video";
+            }
+        
         }
         #endregion Private Methods
 
@@ -56,7 +62,7 @@ namespace AgentApp.Agents.StationaryAgents
         public String GetInfo()
         {
             SetAgentStateInfo("");
-            GetOSInfo();
+            GetVCInfo();
             this.SetAgentStateInfo(_info);
             return GetAgentStateInfo();
         }

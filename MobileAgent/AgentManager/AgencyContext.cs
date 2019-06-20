@@ -1,4 +1,5 @@
 ﻿using MobileAgent.EventAgent;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -8,10 +9,10 @@ namespace MobileAgent.AgentManager
     {
         string GetName();
         List<string> GetNeighbours();
-        AgentProxy GetLastRunnableAgent();
+        AgentProxy GetDispatchedAgent();
         void SetName(string name);
         void SetNeighbours(List<string> neighbours);
-        void SetLastRunnableAgent(AgentProxy agentProxy);
+        void SetDispatchedAgent(AgentProxy agentProxy);
         IPEndPoint GetAgencyIPEndPoint();
         void CreateAgent(AgentProxy agentProxy);
         void Clone(AgentProxy agentCloned);
@@ -20,16 +21,16 @@ namespace MobileAgent.AgentManager
         AgentProxy GetMobileAgentProxy(string name);
         AgentProxy GetMobileAgentProxy(int id);
         IStationary GetStationaryAgent(string name);
-        void RetractAgent(AgentProxy agentProxy, IPEndPoint location);
+        void RetractAgent(AgentProxy agentProxy);
         void ShutDown();
         void Start();
         void Activate();
-        void Deactivate(long duration);
+        void Deactivate(AgentProxy agentProxy);
         void OnRefuseConnection(UnconnectedAgencyArgs e);
-
         void OnArrival(MobilityEventArgs e);
+        void OnDispatching(MobilityEventArgs e);
         void RunAgent(AgentProxy agentProxy);
-
+        void RemoveAgent(AgentProxy agentProxy);
 
         //void DispatchEvent(AgentEvent ev);
 

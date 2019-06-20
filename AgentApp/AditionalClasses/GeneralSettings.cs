@@ -29,6 +29,8 @@ namespace AgentApp.AditionalClasses
             ListofAgentsM.Add("AgentInfo");
             ListofAgentsM.Add("AgentPI");
             ListofAgentsM.Add("AgentRemote");
+            ListofAgentsM.Add("AgentR");
+            ListofAgentsM.Add("AgentSelfRemote");
         }
         private void CreateListofAgentsS()
         {
@@ -44,16 +46,27 @@ namespace AgentApp.AditionalClasses
             AgentP agentP = new AgentP();
             ListofAgentsS.Add(agentP);
 
+            AgentVC agentVC = new AgentVC();
+            ListofAgentsS.Add(agentVC);
+
         }
         #endregion Private Methods
 
         #region Public Methods
-        public AgentProxy GetAgentProxy(String info)
+        public AgentProxy GetAgentProxy(String name)
         {
             try
             {
-                switch (info)
+                switch (name)
                 {
+                    case "AgentSelfRemote":
+                        {
+                            return new AgentSelfRemote();
+                        }
+                    case "AgentR":
+                        {
+                            return new AgentR();
+                        }
                     case "AgentRemote":
                         {
                             return new AgentRemote();
@@ -73,34 +86,6 @@ namespace AgentApp.AditionalClasses
                 }
             }
             catch (Exception ex)
-            {
-                MessageBox.Show("Exception caught! Mesaj: " + ex.Message);
-            }
-            return null;
-        }
-        public Form GetUI(string agentProxy, int id)
-        {
-            try
-            {
-                switch (agentProxy)
-                {
-                    case "AgentPI":
-                        {
-                            return new Interfaces.AgentPiUI( id);
-                        }
-                    case "AgentRemote":
-                        {
-                           return new Interfaces.AgentRemoteUI(id);
-                        }
-                    default:
-                        {
-                            return new Form();
-
-                        }
-                }
-                    
-            }
-            catch(Exception ex)
             {
                 MessageBox.Show("Exception caught! Mesaj: " + ex.Message);
             }

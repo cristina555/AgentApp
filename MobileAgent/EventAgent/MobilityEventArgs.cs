@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MobileAgent.EventAgent
 {
-    public class MobilityEventArgs :EventArgs
+    public class MobilityEventArgs : EventArgs
     {
         #region Constructor
         public MobilityEventArgs()
@@ -16,6 +16,7 @@ namespace MobileAgent.EventAgent
         #endregion Constructor
 
         #region Properties
+        public DateTime Date {get; set;}
         public string Source { get; set; }
         public String Information { get; set; }
         #endregion Properties
