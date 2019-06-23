@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace AgentApp.Agents
 {
     [Serializable]
-    public class AgentR : Agent
+    public class AgentR : Agent, IMobile
     {
         #region Private Fields
         Queue<string> wayBack = new Queue<string>();
@@ -267,6 +267,7 @@ namespace AgentApp.Agents
                         if(IsValidAgency(agencyContext))
                         {
                             NumberOfValidAgencies++;
+                            agencyContext.SetBookedTime(10000);
                         }
 
                         AddNeighbours(agencyContext, t.Item2);
@@ -338,14 +339,19 @@ namespace AgentApp.Agents
             }
             return information;
         }
+        
         #endregion Private Methods
 
         #region Public Methods
         public override void Run()
         {
-
+            ResetLifetime();
             AgencyContext agencyContext = GetAgentCurrentContext();
             RunNetwork(agencyContext);
+        }
+        public override String GetInfo()
+        {
+            throw new NotImplementedException();
         }
         public override void GetUI()
         {

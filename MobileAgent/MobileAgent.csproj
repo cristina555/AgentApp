@@ -47,6 +47,7 @@
     <Compile Include="AgentManager\AgencyContext.cs" />
     <Compile Include="AgentManager\Agent.cs" />
     <Compile Include="AgentManager\AgentProxy.cs" />
+    <Compile Include="AgentManager\IMobile.cs" />
     <Compile Include="AgentManager\IStationary.cs" />
     <Compile Include="EventAgent\MobilityEventArgs.cs" />
     <Compile Include="EventAgent\UnconnectedAgencyArgs.cs" />

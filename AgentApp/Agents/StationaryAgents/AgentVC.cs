@@ -59,8 +59,9 @@ namespace AgentApp.Agents.StationaryAgents
             throw new NotImplementedException();
         }
 
-        public String GetInfo()
+        public override String GetInfo()
         {
+            ResetLifetime();
             SetAgentStateInfo("");
             GetVCInfo();
             this.SetAgentStateInfo(_info);

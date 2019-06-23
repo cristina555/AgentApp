@@ -16,9 +16,7 @@ namespace MobileAgent.AgentManager
         String GetAgentInfo();
         string GetName();
         string GetCreationTime();
-        List<AgentProxy> GetCloneList();
-        AgentProxy GetClone(int id);
-        void SetAgentId(int id);
+         void SetAgentId(int id);
         void SetAgentCurrentContext(AgencyContext currentContext);
         void SetCreationTime();
         void SetAgentStateInfo(String codebase);
@@ -26,19 +24,16 @@ namespace MobileAgent.AgentManager
         void SetAgencyCreationContext(IPEndPoint context);
         void SetName(string name);
         void SetStatus(int status);
+        void SetState(int state);
         void SetWorkStatus(int status);
         void SetMobility(int mobility);
         void SetType(int type);
-        void SetClone(AgentProxy ap);
-        void Clone();
-        bool Dispatch(IPEndPoint destination);
+        void SetClone(IMobile ap);
         bool IsActive();
         bool IsRemote();
         bool IsReady();
         bool IsMobile();
         bool IsBoomerang();
         bool IsStatusOK();
-        void Run();
-        void GetUI();
     }
 }

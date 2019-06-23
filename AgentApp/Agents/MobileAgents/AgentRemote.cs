@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace AgentApp.Agents
 {
     [Serializable]
-    public class AgentRemote : Agent
+    public class AgentRemote : Agent, IMobile
     {
         #region Private Fields
         Queue<string> wayBack = new Queue<string>();
@@ -39,7 +39,7 @@ namespace AgentApp.Agents
         #endregion Properties
 
         #region Private Methods
-        private string GetInfo(string parameter)
+        private string MapAgentName(string parameter)
         {
             string type = "";
             switch (parameter)
@@ -356,7 +356,7 @@ namespace AgentApp.Agents
             string information = "";
             foreach (string par in Parameters)
             {
-                IStationary agentStatic = agencyContext.GetStationaryAgent(GetInfo(par));
+                IStationary agentStatic = agencyContext.GetStationaryAgent(MapAgentName(par));
                 String i = agentStatic.GetInfo();
                 if (!_info.ContainsKey(agencyContext.GetName()))
                 {
@@ -377,7 +377,7 @@ namespace AgentApp.Agents
         #region Public Methods
         public override void Run()
         {
-
+            ResetLifetime();
             AgencyContext agencyContext = GetAgentCurrentContext();
             RunNetwork(agencyContext);
         }
@@ -482,6 +482,10 @@ namespace AgentApp.Agents
             {
                 MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
             }
+        }
+        public override String GetInfo()
+        {
+            throw new NotImplementedException();
         }
         #endregion Public Methods
 

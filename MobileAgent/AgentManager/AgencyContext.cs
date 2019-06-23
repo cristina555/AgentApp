@@ -15,13 +15,13 @@ namespace MobileAgent.AgentManager
         void SetDispatchedAgent(AgentProxy agentProxy);
         IPEndPoint GetAgencyIPEndPoint();
         void CreateAgent(AgentProxy agentProxy);
-        void Clone(AgentProxy agentCloned);
-        bool Dispatch(AgentProxy agentProxy, IPEndPoint destination);
+        void Clone(IMobile agentCloned);
+        bool Dispatch(IMobile agentProxy, IPEndPoint destination);
         void Dispose(AgentProxy agentProxy);
-        AgentProxy GetMobileAgentProxy(string name);
-        AgentProxy GetMobileAgentProxy(int id);
+        IMobile GetMobileAgentProxy(string name);
+        IMobile GetMobileAgentProxy(int id);
         IStationary GetStationaryAgent(string name);
-        void RetractAgent(AgentProxy agentProxy);
+        void RetractAgent(IMobile agentProxy);
         void ShutDown();
         void Start();
         void Activate();
@@ -29,10 +29,9 @@ namespace MobileAgent.AgentManager
         void OnRefuseConnection(UnconnectedAgencyArgs e);
         void OnArrival(MobilityEventArgs e);
         void OnDispatching(MobilityEventArgs e);
-        void RunAgent(AgentProxy agentProxy);
-        void RemoveAgent(AgentProxy agentProxy);
-
-        //void DispatchEvent(AgentEvent ev);
+        void RunAgent(IMobile agentProxy);
+        void RemoveAgent(IMobile agentProxy);
+        void SetBookedTime(int milli);
 
     }
 }

@@ -53,8 +53,9 @@ namespace AgentApp.Agents
             throw new NotImplementedException();
         }
 
-        public String GetInfo()
+        public override String GetInfo()
         {
+            ResetLifetime();
             SetAgentStateInfo("");
             GetOSArchitectureInfo();
             this.SetAgentStateInfo(_info);

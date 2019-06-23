@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace AgentApp.Agents
 {
     [Serializable]
-    public class AgentSelfRemote : Agent
+    public class AgentSelfRemote : Agent, IMobile
     {
         #region Private Fields
         Queue<string> wayBack = new Queue<string>();
@@ -377,7 +377,7 @@ namespace AgentApp.Agents
         #region Public Methods
         public override void Run()
         {
-
+            ResetLifetime();
             AgencyContext agencyContext = GetAgentCurrentContext();
             RunNetwork(agencyContext);
         }
@@ -482,6 +482,10 @@ namespace AgentApp.Agents
             {
                 MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
             }
+        }
+        public override String GetInfo()
+        {
+            throw new NotImplementedException();
         }
         #endregion Public Methods
 

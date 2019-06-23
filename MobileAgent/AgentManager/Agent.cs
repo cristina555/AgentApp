@@ -10,7 +10,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace MobileAgent.AgentManager
 {
     [Serializable]
-    abstract public class Agent : AgentProxy
+    abstract public class Agent : IMobile, IStationary
     {
         #region Public Fields
         public readonly static int ACTIVE = 1;
@@ -25,7 +25,7 @@ namespace MobileAgent.AgentManager
         public readonly static int DONE = 1;
         public readonly static int BOOMERANG = 0;
         public readonly static int WALKER = 1;
-
+        public readonly static int LIFETIME = 1800; //seconds
         //public delegate void dgEventRaiser();
         //public event dgEventRaiser UpdateAgency;
         #endregion Public Fields
@@ -43,23 +43,27 @@ namespace MobileAgent.AgentManager
         private IPEndPoint _agencyCreationContext;
         private string _agentInfo;
         private AgencyContext _currentContext;
-        private List<AgentProxy> _cloneList = null;
-        private DateTime _lifetime;
+        private List<IMobile> _cloneList = null;
+        private int _lifetime = LIFETIME;
         #endregion Private Fields
+
+        private static System.Timers.Timer _timer;
 
         #region Constructors
         public Agent()
         {
-            _cloneList = new List<AgentProxy>();
+            _cloneList = new List<IMobile>();
             SetCreationTime();
             _state = ACTIVE;
+           SetLifetime();
         }
         public Agent(int id)
         {
             _id = id;
-            _cloneList = new List<AgentProxy>();
+            _cloneList = new List<IMobile>();
             SetCreationTime();
             _state = ACTIVE;
+            SetLifetime();
         }
         #endregion Constructors
 
@@ -92,13 +96,13 @@ namespace MobileAgent.AgentManager
         {
             return _agentInfo;
         }
-        public List<AgentProxy> GetCloneList()
+        public List<IMobile> GetCloneList()
         {
             return _cloneList;
         }
-        public AgentProxy GetClone(int id)
+        public IMobile GetClone(int id)
         {
-           foreach(AgentProxy ap in _cloneList)
+           foreach(IMobile ap in _cloneList)
            {
                 if(ap.GetAgentId() == id )
                 {
@@ -151,13 +155,38 @@ namespace MobileAgent.AgentManager
         {
             _type = type;
         }
-        public void SetClone(AgentProxy ap)
+        public void SetClone(IMobile ap)
         {
             _cloneList.Add(ap);
+        }
+        public void ResetLifetime()
+        {
+            _lifetime = LIFETIME;
+        }
+        public void SetState( int state)
+        {
+            _state = state;
         }
         #endregion Properties
 
         #region Methods
+        public void SetLifetime()
+        {
+            Console.WriteLine("Lifetime-ul  a fost setat!");
+            _timer = new System.Timers.Timer(1000);
+            _timer.Elapsed += OnTimedEvent;
+            _timer.Enabled = true;
+        }
+        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            _lifetime -= 1;
+            if (_lifetime == 0)
+            {
+                this.SetState(INACTIVE);
+                _timer.Stop();
+                _timer.Dispose();
+            }
+        }
         public void Clone()
         {
             //Not implemented yet
@@ -259,7 +288,7 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
-            //UpdateAgency();
+            
         }
         public bool IsActive()
         {
@@ -287,6 +316,7 @@ namespace MobileAgent.AgentManager
         }
         abstract public void Run();
         abstract public void GetUI();
+        abstract public String GetInfo();
         #endregion Methods
 
     }

@@ -79,12 +79,17 @@ namespace AgentApp.Agents
         #region Public Methods
         public override void Run()
         {
+            ResetLifetime();
             AgencyContext agencyContext = GetAgentCurrentContext();
             RunBoomerangAgent(agencyContext);
         }
         public override void GetUI()
         {
 
+        }
+        public override String GetInfo()
+        {
+            throw new NotImplementedException();
         }
         #endregion Public Methods
 

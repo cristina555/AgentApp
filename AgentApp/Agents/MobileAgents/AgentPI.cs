@@ -5,7 +5,7 @@ using MobileAgent.AgentManager;
 namespace AgentApp
 {
     [Serializable]
-    public class AgentPI : Agent
+    public class AgentPI : Agent, IMobile
     {
  
         #region Constructor
@@ -92,11 +92,16 @@ namespace AgentApp
         #region Public Methods
         public override void Run()
         {
+            ResetLifetime();
             CalculPi();
         }
         public override void GetUI()
         {
             XmlDocument xmlDoc = new XmlDocument();
+        }
+        public override String GetInfo()
+        {
+            throw new NotImplementedException();
         }
         #endregion Public Methods
     }

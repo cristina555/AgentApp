@@ -16,22 +16,24 @@ namespace MobileAgent.AgentManager
     {
         #region Private Fields
        
-        List<AgentProxy> _agentsMobileList = null;
-        List<AgentProxy> _agentsStatList = null;
+        List<IMobile> _agentsMobileList = null;
+        List<IStationary> _agentsStatList = null;
         Socket _agencySocket = null;
         IPEndPoint _ipEndPoint = null;
         int _agencyID;
         string _name;
         List<string> _neighbours = new List<string>();
         AgentProxy _agentDispatched = null;
+        private static int _rezervationTime;
         #endregion Private Fields
 
         #region Public Fields
-        //public delegate void dgEventRaiser();
-        //public event dgEventRaiser UpdateAgency;
+        public delegate void dgEventRaiser();
+        public event dgEventRaiser UpdateAgency;
         public event EventHandler<UnconnectedAgencyArgs> RefuseConnectionEvent;
         public event EventHandler<MobilityEventArgs> MobilityEventArr;
         public event EventHandler<MobilityEventArgs> MobilityEventDis;
+        public static System.Timers.Timer _timer;
         #endregion  Public Fields
 
         #region Constructors
@@ -45,11 +47,11 @@ namespace MobileAgent.AgentManager
             {
                 Random random = new Random();
                 _agencyID = random.Next(1000, 9999);
-                _agentsMobileList = new List<AgentProxy>();
-                _agentsStatList = new List<AgentProxy>();
+                _agentsMobileList = new List<IMobile>();
+                _agentsStatList = new List<IStationary>();
                 _agencySocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 _ipEndPoint = new IPEndPoint(ipAddress, port);
-                Console.WriteLine("Agentia creata la portul " + port + ".");
+                Console.WriteLine("Agentia creata la portul " + port + "."); 
             }
             catch(SocketException e)
             {
@@ -80,12 +82,26 @@ namespace MobileAgent.AgentManager
         {
             if (type == Agent.MOBILE)
             {
-                return _agentsMobileList;
+                List<AgentProxy> agentsMobileList = new List<AgentProxy>(_agentsMobileList);
+                return agentsMobileList;
             }
             else
             {
-                return _agentsStatList;
+                List<AgentProxy> agentsStatList = new List<AgentProxy>(_agentsStatList);
+                return agentsStatList;
             }
+        }
+        public List<AgentProxy> GetActiveAgentProxies()
+        {
+            List<AgentProxy> activeAP = new List<AgentProxy>();
+            foreach (IMobile ap in _agentsMobileList)
+            {
+                if (ap.IsActive())
+                {
+                    activeAP.Add(ap);
+                }
+            }
+            return activeAP;
         }
         public int GetAgencyID()
         {
@@ -181,7 +197,7 @@ namespace MobileAgent.AgentManager
                 Console.WriteLine(s.AddressFamily);
                 NetworkStream networkStream = new NetworkStream(s);
                 IFormatter formatter = new BinaryFormatter();
-                AgentProxy agentProxy = (AgentProxy)formatter.Deserialize(networkStream);
+                IMobile agentProxy = (IMobile)formatter.Deserialize(networkStream);
 
                 
                 _agentsMobileList.Add(agentProxy);
@@ -216,13 +232,14 @@ namespace MobileAgent.AgentManager
                 agentProxy.SetAgentStateInfo("");
                 if (agentProxy.IsMobile())
                 {
-                    _agentsMobileList.Add(agentProxy);
-                    agentProxy.GetUI();
-                    //UpdateAgency();
+                    IMobile agentProxyM = (IMobile)agentProxy;
+                    _agentsMobileList.Add(agentProxyM);                    
+                    agentProxyM.GetUI();
                 }
                 else
                 {
-                    _agentsStatList.Add(agentProxy);
+                    IStationary agentProxyS = (IStationary)agentProxy;
+                    _agentsStatList.Add(agentProxyS);
                 }
             }
             catch(AgencyNotFoundException anfe)
@@ -236,7 +253,7 @@ namespace MobileAgent.AgentManager
         }
         
         //TODO
-        public void Clone(AgentProxy agentCloned) 
+        public void Clone(IMobile agentCloned) 
         {
             try
             {
@@ -244,9 +261,8 @@ namespace MobileAgent.AgentManager
                 agentCloned.SetAgencyCreationContext(this.GetAgencyIPEndPoint());
                 agentCloned.SetName(agentCloned.GetName() + " cloned");
                 agentCloned.SetAgentInfo(agentCloned.GetAgentInfo() + " cloned");
-                _agentsMobileList.Add(agentCloned);
+                _agentsMobileList.Add(agentCloned);                
                 agentCloned.GetUI();
-                //UpdateAgency();
             }
             catch (CloneNotSupportedException cnse)
             {
@@ -263,7 +279,7 @@ namespace MobileAgent.AgentManager
         }
         
         //More exceptions
-        public bool Dispatch(AgentProxy agentProxy, IPEndPoint destination)
+        public bool Dispatch(IMobile agentProxy, IPEndPoint destination)
         {
             try
             {
@@ -329,19 +345,18 @@ namespace MobileAgent.AgentManager
         }
         public void Dispose(AgentProxy agentProxy) 
 		{
-            agentProxy.SetStatus(Agent.INACTIVE);
-            //UpdateAgency();
+            agentProxy.SetState(Agent.INACTIVE);
         }
-        public void RemoveAgent(AgentProxy agentProxy)
+        public void RemoveAgent(IMobile agentProxy)
         {
             _agentsMobileList.Remove(agentProxy);
         }
        
-        public AgentProxy GetMobileAgentProxy(string name)
+        public IMobile GetMobileAgentProxy(string name)
         {
             int index = name.IndexOf(":");
             string newName = name.Substring(index + 2);
-            foreach (AgentProxy aP in _agentsMobileList)
+            foreach (IMobile aP in _agentsMobileList)
             {
                 if (aP.GetName().Equals(newName)) 
                 {
@@ -350,9 +365,9 @@ namespace MobileAgent.AgentManager
             }
             return null;
         }
-        public AgentProxy GetMobileAgentProxy(int id)
+        public IMobile GetMobileAgentProxy(int id)
         {
-            foreach (AgentProxy aP in _agentsMobileList)
+            foreach (IMobile aP in _agentsMobileList)
             {
                 if (aP.GetAgentId().Equals(id))
                 {
@@ -362,7 +377,7 @@ namespace MobileAgent.AgentManager
             return null;
         }
         //TODO
-        public void RetractAgent(AgentProxy agentProxy) 
+        public void RetractAgent(IMobile agentProxy) 
 		{
             agentProxy.SetAgentCurrentContext(null);
             NetworkStream networkStream;
@@ -391,7 +406,7 @@ namespace MobileAgent.AgentManager
         {
             agentProxy.SetStatus(Agent.INACTIVE);
         }
-        public void RunAgent(AgentProxy agentProxy)
+        public void RunAgent(IMobile agentProxy)
         {
             agentProxy.SetWorkStatus(Agent.READY);
             agentProxy.SetAgentStateInfo(null);
@@ -401,6 +416,27 @@ namespace MobileAgent.AgentManager
             agentThread.Start();
             //UpdateAgency();
         }
+        public void SetBookedTime(int milli)
+        {
+            _rezervationTime = milli;
+            Console.WriteLine("Timer-ul a fost setat!");
+            _timer = new System.Timers.Timer(1000);
+            // Hook up the Elapsed event for the timer. 
+            _timer.Elapsed +=  OnTimedEvent;
+            _timer.Enabled = true;
+        }
+        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            _rezervationTime -= 1000;
+            if (_rezervationTime == 0)
+            {
+                Console.WriteLine("Time is over!!");
+                UpdateAgency();
+                _timer.Stop();
+                _timer.Dispose();
+            }
+        }
+
         
         #endregion Methods
     }

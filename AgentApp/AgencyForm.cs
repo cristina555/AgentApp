@@ -23,13 +23,17 @@ namespace AgentApp
         Random _random;
         #endregion Private Fields
 
-        #region Public Fields
+        #region Private Static Fields
+        static List<AgentProxy> aps = new List<AgentProxy>();
+        static List<AgentProxy> aaps = new List<AgentProxy>();
+        #endregion Private Static Fields
+
+        #region Public Static Fields
         public static Agency agency = null;
         public static ConfigParser configParser = null;
         public static GeneralSettings gs = null;
         public Timer aTimer = new Timer(2000);
-        public List<AgentProxy> aps = new List<AgentProxy>();
-        #endregion Public Fields
+        #endregion Public Static Fields
 
         #region Constructors
         public AgencyForm()
@@ -100,8 +104,8 @@ namespace AgentApp
                 agency.MobilityEventArr += Agent_OnArrival;
                 agency.MobilityEventDis += Agent_OnDispaching;
                 agency.RefuseConnectionEvent += Agency_RefuseConnection;
-                //agency.UpdateAgency += UpdateAgentsList;
-                aTimer.Elapsed += new ElapsedEventHandler(UpdateAgentsList);
+                agency.UpdateAgency += TimerIsUp;
+                aTimer.Elapsed += new ElapsedEventHandler((source, e) => UpdateAgentsList());
                 aTimer.Enabled = true;
             }
             catch (FormatException fe)
@@ -113,6 +117,10 @@ namespace AgentApp
                 MessageBox.Show("Exception !" + ex.Message + " --> Start Agentie!");
             }
 
+        }
+        private void TimerIsUp()
+        {
+            MessageBox.Show("Timpul de rezervare pentru " +agency.GetName() + " a exiprat!");
         }
         private void Agency_RefuseConnection( object sender, UnconnectedAgencyArgs e)
         {
@@ -167,14 +175,16 @@ namespace AgentApp
 
             }
         }
-        private void UpdateAgentsList(object source, ElapsedEventArgs e)
+        private void UpdateAgentsList()
         {
-            this.Invoke((MethodInvoker)delegate
+            Invoke((MethodInvoker)delegate
             {
                 List<AgentProxy> aList = agency.GetAgentProxies(Agent.MOBILE);
-                if (aList.Count != aps.Count)
+                List<AgentProxy> activeAP = agency.GetActiveAgentProxies();
+                if (aList.Count != aps.Count || aList.Count != aaps.Count)
                 {
                     aps = aList;
+                    aaps = activeAP;
                     agentsList.Clear();
                     listAgents.Items.Clear();
                     listAgents.Text = "";
@@ -274,7 +284,7 @@ namespace AgentApp
                 agentToCreate.SetMobility(Agent.MOBILE);
                 agentToCreate.SetAgentId(agentID);
 
-                agency.Clone(agentToCreate);
+                agency.Clone((IMobile)agentToCreate);
             }
             catch (NullReferenceException nre)
             {
@@ -290,7 +300,7 @@ namespace AgentApp
             try
             {
                 string selected = listAgents.GetItemText(listAgents.SelectedItem);
-                AgentProxy agentDispatched = agency.GetMobileAgentProxy(selected);
+                IMobile agentDispatched = agency.GetMobileAgentProxy(selected);
                 if (agentDispatched.IsBoomerang())
                 {
                     string location = comboBoxN.GetItemText(comboBoxN.SelectedItem);
@@ -330,7 +340,7 @@ namespace AgentApp
                 AgentProxy agentDispatched = agency.GetMobileAgentProxy(selected);
                 if (!agentDispatched.IsBoomerang())
                 {
-                    agency.RunAgent(agentDispatched);
+                    agency.RunAgent((IMobile)agentDispatched);
                 }
                 else
                 {
@@ -358,7 +368,7 @@ namespace AgentApp
                 string selected = listAgents.GetItemText(listAgents.SelectedItem);
                 AgentProxy agentDisposed = agency.GetMobileAgentProxy(selected);
                 agency.Deactivate(agentDisposed);
-
+                UpdateAgentsList();
             }
             catch (NullReferenceException nre)
             {

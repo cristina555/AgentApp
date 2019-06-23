@@ -55,8 +55,9 @@ namespace AgentApp.Agents
             throw new NotImplementedException();
         }
 
-        public String GetInfo()
+        public override String GetInfo()
         {
+            ResetLifetime();
             SetAgentStateInfo("");
             GetOSServicePackInfo();
             this.SetAgentStateInfo(_info);
