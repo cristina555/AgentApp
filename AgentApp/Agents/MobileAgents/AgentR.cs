@@ -14,13 +14,9 @@ namespace AgentApp.Agents
     {
         #region Private Fields
         Queue<string> wayBack = new Queue<string>();
-
+        List<string> agenciesVisited = new List<string>();
+        Queue<Tuple<string, Queue<string>>> queue = new Queue<Tuple<string, Queue<string>>>();
         #endregion Private Fields
-
-        #region Public Fields
-        public List<string> agenciesVisited = new List<string>();
-        public Queue<Tuple<string, Queue<string>>> queue = new Queue<Tuple<string, Queue<string>>>();
-        #endregion Public Fields
 
         #region Constructor
         public AgentR() : base()
@@ -339,19 +335,71 @@ namespace AgentApp.Agents
             }
             return information;
         }
-        
+        private void buttonSend_Click(object sender, EventArgs e, Form ui)
+        {
+            try
+            {
+                List<Tuple<string, string>> parameters = new List<Tuple<string, string>>();
+                foreach (Control c in ui.Controls)
+                {
+                    if (c is ComboBox)
+                    {
+                        ComboBox control = (ComboBox)c;
+                        switch (control.Name)
+                        {
+                            case "comboBoxOS":
+                                {
+                                    parameters.Add(Tuple.Create("AgentOS", control.GetItemText(control.SelectedItem)));
+                                    break;
+                                }
+                            case "comboBoxP":
+                                {
+                                    parameters.Add(Tuple.Create("AgentP", control.GetItemText(control.SelectedItem)));
+                                    break;
+                                }
+                            case "comboBoxVC":
+                                {
+                                    parameters.Add(Tuple.Create("AgentVC", control.GetItemText(control.SelectedItem)));
+                                    break;
+                                }
+                            default:
+                                {
+                                    break;
+                                }
+                        }
+                    }
+                }
+                foreach (Control c in ui.Controls)
+                {
+                    if (c is TextBox)
+                    {
+                        TextBox t = (TextBox)c;
+                        Threshold = int.Parse(t.Text);
+                        break;
+                    }
+                }
+                Parameters = parameters;
+
+                ui.Close();
+            }
+            catch (NullReferenceException nre)
+            {
+                MessageBox.Show("NullReferenceException !" + nre.Message + " --> Trimite parametrii agentului!");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
+            }
+        }
         #endregion Private Methods
 
-        #region Public Methods
+        #region Public Override Methods
         public override void Run()
         {
             ResetLifetime();
             AgencyContext agencyContext = GetAgentCurrentContext();
             RunNetwork(agencyContext);
-        }
-        public override String GetInfo()
-        {
-            throw new NotImplementedException();
         }
         public override void GetUI()
         {
@@ -513,64 +561,11 @@ namespace AgentApp.Agents
                 thread.Start();
             }
         }
-        private void buttonSend_Click(object sender, EventArgs e, Form ui)
+        public override String GetInfo()
         {
-            try
-            {
-                List<Tuple<string, string>> parameters = new List<Tuple<string, string>>();
-                foreach (Control c in ui.Controls)
-                {
-                    if (c is ComboBox)
-                    {
-                        ComboBox control = (ComboBox)c;
-                        switch(control.Name)
-                        {
-                            case "comboBoxOS":
-                                {
-                                    parameters.Add(Tuple.Create("AgentOS", control.GetItemText(control.SelectedItem)));
-                                    break;
-                                }
-                            case "comboBoxP":
-                                {
-                                    parameters.Add(Tuple.Create("AgentP", control.GetItemText(control.SelectedItem)));
-                                    break;
-                                }
-                            case "comboBoxVC":
-                                {
-                                    parameters.Add(Tuple.Create("AgentVC", control.GetItemText(control.SelectedItem)));
-                                    break;
-                                }
-                            default:
-                                {
-                                    break;
-                                }
-                        }                        
-                    }                
-                }
-                foreach(Control c in ui.Controls)
-                {
-                    if(c is TextBox)
-                    {
-                        TextBox t = (TextBox)c;
-                        Threshold = int.Parse(t.Text);
-                        break;
-                    }
-                }
-                Parameters = parameters;
-                
-                ui.Close();
-            }
-            catch (NullReferenceException nre)
-            {
-                MessageBox.Show("NullReferenceException !" + nre.Message + " --> Trimite parametrii agentului!");
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
-            }
+            throw new NotImplementedException();
         }
-        #endregion Public Methods
+        #endregion Public Override Methods
 
     }
 

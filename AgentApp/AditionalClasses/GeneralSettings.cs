@@ -17,7 +17,7 @@ namespace AgentApp.AditionalClasses
         }
         #endregion Constructor
 
-        #region 
+        #region Properties
         public List<string> ListofAgentsM { get; } = new List<string>();
         public List<IStationary> ListofAgentsS { get; } = new List<IStationary> ();
 

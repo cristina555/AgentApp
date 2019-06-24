@@ -38,6 +38,7 @@
             this.disposeButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.showButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dispatchButtonNetwork = new System.Windows.Forms.Button();
@@ -49,12 +50,11 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxAgents = new System.Windows.Forms.ComboBox();
             this.deactivateButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.stationaryAgents = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.showButton = new System.Windows.Forms.Button();
+            this.buttonDeactivateA = new System.Windows.Forms.Button();
             this.groupBox.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -154,7 +154,6 @@
             this.groupBox2.Controls.Add(this.groupBox5);
             this.groupBox2.Controls.Add(this.groupBox4);
             this.groupBox2.Controls.Add(this.deactivateButton);
-            this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Location = new System.Drawing.Point(423, 25);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
@@ -165,6 +164,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.buttonDeactivateA);
             this.groupBox5.Controls.Add(this.showButton);
             this.groupBox5.Controls.Add(this.tabControl1);
             this.groupBox5.Controls.Add(this.listAgents);
@@ -172,19 +172,29 @@
             this.groupBox5.Controls.Add(this.disposeButton);
             this.groupBox5.Location = new System.Drawing.Point(12, 137);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(281, 374);
+            this.groupBox5.Size = new System.Drawing.Size(281, 427);
             this.groupBox5.TabIndex = 24;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Alege agent - clonare/trimitere";
+            // 
+            // showButton
+            // 
+            this.showButton.Location = new System.Drawing.Point(11, 134);
+            this.showButton.Name = "showButton";
+            this.showButton.Size = new System.Drawing.Size(133, 30);
+            this.showButton.TabIndex = 17;
+            this.showButton.Text = "Afisare informatii";
+            this.showButton.UseVisualStyleBackColor = true;
+            this.showButton.Click += new System.EventHandler(this.showButton_Click);
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(11, 178);
+            this.tabControl1.Location = new System.Drawing.Point(6, 216);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(264, 178);
+            this.tabControl1.Size = new System.Drawing.Size(269, 205);
             this.tabControl1.TabIndex = 16;
             // 
             // tabPage1
@@ -193,7 +203,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(256, 149);
+            this.tabPage1.Size = new System.Drawing.Size(261, 176);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "In retea";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -282,7 +292,7 @@
             // deactivateButton
             // 
             this.deactivateButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.deactivateButton.Location = new System.Drawing.Point(147, 552);
+            this.deactivateButton.Location = new System.Drawing.Point(147, 569);
             this.deactivateButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.deactivateButton.Name = "deactivateButton";
             this.deactivateButton.Size = new System.Drawing.Size(133, 28);
@@ -290,17 +300,6 @@
             this.deactivateButton.Text = "Iesire";
             this.deactivateButton.UseVisualStyleBackColor = true;
             this.deactivateButton.Click += new System.EventHandler(this.deactivateButton_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 547);
-            this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 33);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Agenti";
-            this.button1.UseVisualStyleBackColor = true;
-            //this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // stationaryAgents
             // 
@@ -344,15 +343,15 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Informatii agentie";
             // 
-            // showButton
+            // buttonDeactivateA
             // 
-            this.showButton.Location = new System.Drawing.Point(15, 131);
-            this.showButton.Name = "showButton";
-            this.showButton.Size = new System.Drawing.Size(161, 30);
-            this.showButton.TabIndex = 17;
-            this.showButton.Text = "Afisare informatii";
-            this.showButton.UseVisualStyleBackColor = true;
-            this.showButton.Click += new System.EventHandler(this.ShowButton_Click);
+            this.buttonDeactivateA.Location = new System.Drawing.Point(11, 170);
+            this.buttonDeactivateA.Name = "buttonDeactivateA";
+            this.buttonDeactivateA.Size = new System.Drawing.Size(133, 30);
+            this.buttonDeactivateA.TabIndex = 18;
+            this.buttonDeactivateA.Text = "Agenti dezactivati";
+            this.buttonDeactivateA.UseVisualStyleBackColor = true;
+            this.buttonDeactivateA.Click += new System.EventHandler(this.buttonDeactivateA_Click);
             // 
             // AgencyForm
             // 
@@ -396,7 +395,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button cloneButton;
         private System.Windows.Forms.ComboBox listAgents;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button deactivateButton;
         private System.Windows.Forms.ComboBox comboBoxAgents;
         private System.Windows.Forms.Button dispatchButtonNetwork;
@@ -412,6 +410,7 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button showButton;
+        private System.Windows.Forms.Button buttonDeactivateA;
     }
 }
 

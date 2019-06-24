@@ -26,8 +26,6 @@ namespace MobileAgent.AgentManager
         public readonly static int BOOMERANG = 0;
         public readonly static int WALKER = 1;
         public readonly static int LIFETIME = 1800; //seconds
-        //public delegate void dgEventRaiser();
-        //public event dgEventRaiser UpdateAgency;
         #endregion Public Fields
 
         #region Private Fields
@@ -43,16 +41,17 @@ namespace MobileAgent.AgentManager
         private IPEndPoint _agencyCreationContext;
         private string _agentInfo;
         private AgencyContext _currentContext;
-        private List<IMobile> _cloneList = null;
+        private List<IMobile> _cloneList = new List<IMobile>();
         private int _lifetime = LIFETIME;
         #endregion Private Fields
 
+        #region Private Static Fields
         private static System.Timers.Timer _timer;
+        #endregion #region Private Static Fields
 
         #region Constructors
         public Agent()
         {
-            _cloneList = new List<IMobile>();
             SetCreationTime();
             _state = ACTIVE;
            SetLifetime();
@@ -60,14 +59,13 @@ namespace MobileAgent.AgentManager
         public Agent(int id)
         {
             _id = id;
-            _cloneList = new List<IMobile>();
             SetCreationTime();
             _state = ACTIVE;
             SetLifetime();
         }
         #endregion Constructors
 
-        #region Properties
+        #region Property Methods
         public string GetName()
         {
             return _name;
@@ -167,16 +165,9 @@ namespace MobileAgent.AgentManager
         {
             _state = state;
         }
-        #endregion Properties
+        #endregion Property Methods
 
-        #region Methods
-        public void SetLifetime()
-        {
-            Console.WriteLine("Lifetime-ul  a fost setat!");
-            _timer = new System.Timers.Timer(1000);
-            _timer.Elapsed += OnTimedEvent;
-            _timer.Enabled = true;
-        }
+        #region Private Methods
         private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
             _lifetime -= 1;
@@ -186,6 +177,16 @@ namespace MobileAgent.AgentManager
                 _timer.Stop();
                 _timer.Dispose();
             }
+        }
+        #endregion Private Methods
+        
+        #region Public Methods
+        public void SetLifetime()
+        {
+            Console.WriteLine("Lifetime-ul  a fost setat!");
+            _timer = new System.Timers.Timer(1000);
+            _timer.Elapsed += OnTimedEvent;
+            _timer.Enabled = true;
         }
         public void Clone()
         {
@@ -314,10 +315,13 @@ namespace MobileAgent.AgentManager
         {
             return _status == OK;
         }
+        #endregion Public Methods
+
+        #region Abstract Public Methods
         abstract public void Run();
         abstract public void GetUI();
         abstract public String GetInfo();
-        #endregion Methods
+        #endregion Abstract Public Methods
 
     }
 }

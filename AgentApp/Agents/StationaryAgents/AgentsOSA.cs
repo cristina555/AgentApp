@@ -8,9 +8,9 @@ namespace AgentApp.Agents
     [Serializable]
     public class AgentOSA : Agent, IStationary
     {
-        #region Fields
-        static string _info = "";
-        #endregion Fields
+        #region Private Static Fields
+        private static string _info = "";
+        #endregion Private Static Fields
 
         #region Constructors
         public AgentOSA() : base()
@@ -20,7 +20,8 @@ namespace AgentApp.Agents
         }
         public AgentOSA(int id) : base(id)
         {
-            
+            this.SetName("AgentOSA");
+            this.SetAgentInfo("Informatii despre arhitectura sistemului de operare.");
         }
         #endregion Constructors
 
@@ -43,16 +44,7 @@ namespace AgentApp.Agents
         }
         #endregion Private Methods
 
-        #region Public Methods
-        public override void Run()
-        {
-            throw new NotImplementedException();
-        }
-        public override void GetUI()
-        {
-            throw new NotImplementedException();
-        }
-
+        #region Public Override Methods
         public override String GetInfo()
         {
             ResetLifetime();
@@ -61,6 +53,14 @@ namespace AgentApp.Agents
             this.SetAgentStateInfo(_info);
             return GetAgentStateInfo();
         }
-        #endregion Public Methods
+        public override void Run()
+        {
+            throw new NotImplementedException();
+        }
+        public override void GetUI()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion Public Override Methods
     }
 }

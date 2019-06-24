@@ -20,7 +20,7 @@ namespace AgentApp
     public partial class AgencyForm : Form
     {
         #region Private Fields
-        Random _random;
+        private Random _random;
         #endregion Private Fields
 
         #region Private Static Fields
@@ -32,7 +32,7 @@ namespace AgentApp
         public static Agency agency = null;
         public static ConfigParser configParser = null;
         public static GeneralSettings gs = null;
-        public Timer aTimer = new Timer(2000);
+        public static Timer aTimer = new Timer(2000);
         #endregion Public Static Fields
 
         #region Constructors
@@ -122,47 +122,7 @@ namespace AgentApp
         {
             MessageBox.Show("Timpul de rezervare pentru " +agency.GetName() + " a exiprat!");
         }
-        private void Agency_RefuseConnection( object sender, UnconnectedAgencyArgs e)
-        {
-            e.Date = DateTime.Now;
-            this.Invoke((MethodInvoker)delegate
-            {
-                console.AppendText( e.Date + Environment.NewLine);
-                string name = configParser.GetName(e.Name);
-                console.AppendText("Nu se poate realiza conexiunea cu " + name + Environment.NewLine);
-                console.AppendText(".................................." + Environment.NewLine);
-            });
-        }
-        private void Agent_OnArrival(object sender, MobilityEventArgs e)
-        {
-            e.Date = DateTime.Now;
-            this.Invoke((MethodInvoker)delegate
-            {
-                if (e.Source != null && e.Information != null)
-                {
-                    console.AppendText(e.Date + Environment.NewLine);
-                    console.AppendText(e.Source + Environment.NewLine);
-                    console.AppendText(e.Information + Environment.NewLine);
-                    console.AppendText(".................................." + Environment.NewLine);
-                }
-                
-            });
-        }
-        private void Agent_OnDispaching(object sender, MobilityEventArgs e)
-        {
-            e.Date = DateTime.Now;
-            this.Invoke((MethodInvoker)delegate
-            {
-                if (e.Source != null && e.Information != null)
-                {
-                    console.AppendText(e.Date + Environment.NewLine);
-                    console.AppendText(e.Source + Environment.NewLine);
-                    console.AppendText(e.Information + Environment.NewLine);
-                    console.AppendText(".................................." + Environment.NewLine);
-                    
-                }
-            });
-        }
+        
         private void CreateStationaryAgent()
         {
             List<IStationary> list = gs.ListofAgentsS;
@@ -181,7 +141,7 @@ namespace AgentApp
             {
                 List<AgentProxy> aList = agency.GetAgentProxies(Agent.MOBILE);
                 List<AgentProxy> activeAP = agency.GetActiveAgentProxies();
-                if (aList.Count != aps.Count || aList.Count != aaps.Count)
+                if (aList.Count != aps.Count || activeAP.Count != aaps.Count)
                 {
                     aps = aList;
                     aaps = activeAP;
@@ -196,11 +156,9 @@ namespace AgentApp
                             {
                                 if (agentProxy.IsActive())
                                 {
-                                    agentsList.Text += agentProxy.GetAgentId() + ": " + agentProxy.GetName() + "-> " + agentProxy.GetAgentInfo() + System.Environment.NewLine;
-
+                                    listAgents.Items.Add(agentProxy.GetAgentId() + ": " + agentProxy.GetName());
                                 }
-                                listAgents.Items.Add(agentProxy.GetAgentId() + ": " + agentProxy.GetName());
-
+                                agentsList.Text += agentProxy.GetAgentId() + ": " + agentProxy.GetName() + "-> " + agentProxy.GetAgentInfo() + System.Environment.NewLine;
                             }
                         }
                     }
@@ -226,7 +184,7 @@ namespace AgentApp
                 stationaryAgents.Text += aproxy.GetAgentId() +": " +aproxy.GetName() + "-> " + aproxy.GetAgentInfo() + Environment.NewLine;
             }
         }
-        public string GetLocalIPAddress()
+        private string GetLocalIPAddress()
         {
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -250,6 +208,50 @@ namespace AgentApp
 
         #endregion Private Methods
 
+        #region Private Methods for Handling Events
+        private void Agency_RefuseConnection(object sender, UnconnectedAgencyArgs e)
+        {
+            e.Date = DateTime.Now;
+            this.Invoke((MethodInvoker)delegate
+            {
+                console.AppendText(e.Date + Environment.NewLine);
+                string name = configParser.GetName(e.Name);
+                console.AppendText("Nu se poate realiza conexiunea cu " + name + Environment.NewLine);
+                console.AppendText(".................................." + Environment.NewLine);
+            });
+        }
+        private void Agent_OnArrival(object sender, MobilityEventArgs e)
+        {
+            e.Date = DateTime.Now;
+            this.Invoke((MethodInvoker)delegate
+            {
+                if (e.Source != null && e.Information != null)
+                {
+                    console.AppendText(e.Date + Environment.NewLine);
+                    console.AppendText(e.Source + Environment.NewLine);
+                    console.AppendText(e.Information + Environment.NewLine);
+                    console.AppendText(".................................." + Environment.NewLine);
+                }
+
+            });
+        }
+        private void Agent_OnDispaching(object sender, MobilityEventArgs e)
+        {
+            e.Date = DateTime.Now;
+            this.Invoke((MethodInvoker)delegate
+            {
+                if (e.Source != null && e.Information != null)
+                {
+                    console.AppendText(e.Date + Environment.NewLine);
+                    console.AppendText(e.Source + Environment.NewLine);
+                    console.AppendText(e.Information + Environment.NewLine);
+                    console.AppendText(".................................." + Environment.NewLine);
+
+                }
+            });
+        }
+        #endregion Private Methods for Handling Events
+        
         #region Controlers
         private void createButton_Click(object sender, EventArgs e)
         {
@@ -383,20 +385,12 @@ namespace AgentApp
                 MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Agency Dispose Agent!");
             }
         }
-        private void button1_Click(object sender, EventArgs e)
-        {
-           // UpdateAgentsList();
-        }
-
         private void deactivateButton_Click(object sender, EventArgs e)
         {
             agency.ShutDown();
             Close();
         }
-
-        #endregion Controlers        
-
-        private void ShowButton_Click(object sender, EventArgs e)
+        private void showButton_Click(object sender, EventArgs e)
         {
             try
             {
@@ -422,5 +416,108 @@ namespace AgentApp
                 MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Agency Dispose Agent!");
             }
         }
+        private void buttonDeactivateA_Click(object sender, EventArgs e)
+        {
+            Form ui = new Form();
+            Label label1 = new Label();
+            Button buttonAdd = new Button();
+            ComboBox comboBox1 = new ComboBox();
+            //
+            //label
+            //
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(37, 36);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(122, 17);
+            label1.TabIndex = 5;
+            label1.Text = "Agentii dezactivati";
+            // 
+            // button1
+            // 
+            buttonAdd.Location = new System.Drawing.Point(296, 67);
+            buttonAdd.Name = "buttonAdd";
+            buttonAdd.Size = new System.Drawing.Size(98, 30);
+            buttonAdd.TabIndex = 4;
+            buttonAdd.Text = "Activeaza";
+            buttonAdd.UseVisualStyleBackColor = true;
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new System.Drawing.Point(40, 71);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new System.Drawing.Size(238, 24);
+            comboBox1.TabIndex = 6;
+            // 
+            // Form1
+            // 
+            ui.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            ui.AutoScaleMode = AutoScaleMode.Font;
+            ui.ClientSize = new System.Drawing.Size(425, 119);
+            ui.Controls.Add(comboBox1);
+            ui.Controls.Add(label1);
+            ui.Controls.Add(buttonAdd);
+            ui.Name = "Form1";
+            ui.Text = "Activare agenti";
+            ui.ResumeLayout(false);
+            ui.PerformLayout();
+
+            foreach (AgentProxy ap in agency.GetAgentProxies(Agent.MOBILE))
+            {
+                if (!ap.IsActive())
+                {
+                    comboBox1.Items.Add(ap.GetAgentId() + ": " + ap.GetName());
+                }
+            }
+            foreach (AgentProxy ap in agency.GetAgentProxies(Agent.STATIC))
+            {
+                if (!ap.IsActive())
+                {
+                    comboBox1.Items.Add(ap.GetAgentId() + ": " + ap.GetName());
+                }
+            }
+            buttonAdd.Click += new EventHandler((senderUI, eUI) => buttonAdd_Click(sender, e, ui));
+
+            var thread = new Thread(() =>
+            {
+                Application.Run(ui);
+            });
+            thread.Start();
+        }
+        private void buttonAdd_Click(object sender, EventArgs e, Form ui)
+        {
+            try
+            {
+                foreach (Control c in ui.Controls)
+                {
+                    if (c is ComboBox)
+                    {
+                        ComboBox comboBox = (ComboBox)c;
+                        string selected = comboBox.GetItemText(comboBox.SelectedItem);
+                        AgentProxy agent = agency.GetMobileAgentProxy(selected);
+                        if (agent == null)
+                        {
+                            agent = agency.GetStatAgentProxy(selected);
+                        }
+                        agency.ActivateAgent(agent);
+                    }
+                }
+                ui.Close();
+            }
+            catch (NullReferenceException nre)
+            {
+                MessageBox.Show("NullReferenceException caught! Mesaj : " + nre.Message + " " + nre.StackTrace + " --> Agency Dispose Agent.");
+            }
+            catch (AgencyNotFoundException anfe)
+            {
+                MessageBox.Show("AgentNotFoundException ! Mesaj: " + anfe.Message + " -> Agency Dispose Agent!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Agency Dispose Agent!");
+            }
+        }
+        #endregion Controlers        
+
     }
 }

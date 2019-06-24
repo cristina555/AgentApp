@@ -8,9 +8,9 @@ namespace AgentApp.Agents
     [Serializable]
     public class AgentOSSP : Agent, IStationary
     {
-        #region Fields
-        static string _info = "";
-        #endregion Fields
+        #region Private Static Fields
+        private static string _info = "";
+        #endregion Private Static Fields
 
         #region Constructors
         public AgentOSSP() : base()
@@ -20,7 +20,8 @@ namespace AgentApp.Agents
         }
         public AgentOSSP(int id) : base(id)
         {
-            
+            this.SetName("AgentOSSP");
+            this.SetAgentInfo("Informatii legate de pachetul de servicii al sistemului de operare.");
         }
         #endregion Constructors
 
@@ -44,7 +45,15 @@ namespace AgentApp.Agents
 
         #endregion Private Methods
 
-        #region Public Methods
+        #region Public Override Methods
+        public override String GetInfo()
+        {
+            ResetLifetime();
+            SetAgentStateInfo("");
+            GetOSServicePackInfo();
+            this.SetAgentStateInfo(_info);
+            return GetAgentStateInfo();
+        }
         public override void Run()
         {
             throw new NotImplementedException();
@@ -54,15 +63,6 @@ namespace AgentApp.Agents
         {
             throw new NotImplementedException();
         }
-
-        public override String GetInfo()
-        {
-            ResetLifetime();
-            SetAgentStateInfo("");
-            GetOSServicePackInfo();
-            this.SetAgentStateInfo(_info);
-            return GetAgentStateInfo();
-        }
-        #endregion Public Methods
+        #endregion Public Override Methods
     }
 }

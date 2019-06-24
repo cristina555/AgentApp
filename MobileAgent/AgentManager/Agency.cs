@@ -15,25 +15,27 @@ namespace MobileAgent.AgentManager
     public class Agency : AgencyContext
     {
         #region Private Fields
-       
-        List<IMobile> _agentsMobileList = null;
-        List<IStationary> _agentsStatList = null;
-        Socket _agencySocket = null;
-        IPEndPoint _ipEndPoint = null;
-        int _agencyID;
-        string _name;
-        List<string> _neighbours = new List<string>();
-        AgentProxy _agentDispatched = null;
-        private static int _rezervationTime;
+        private List<IMobile> _agentsMobileList = null;
+        private List<IStationary> _agentsStatList = null;
+        private Socket _agencySocket = null;
+        private IPEndPoint _ipEndPoint = null;
+        private int _agencyID;
+        private string _name;
+        private List<string> _neighbours = new List<string>();
+        private AgentProxy _agentDispatched = null;
         #endregion Private Fields
+
+        #region Private Static Fields
+        private static int _rezervationTime;
+        private static System.Timers.Timer _timer;
+        #endregion Private Static Fields
 
         #region Public Fields
         public delegate void dgEventRaiser();
         public event dgEventRaiser UpdateAgency;
         public event EventHandler<UnconnectedAgencyArgs> RefuseConnectionEvent;
         public event EventHandler<MobilityEventArgs> MobilityEventArr;
-        public event EventHandler<MobilityEventArgs> MobilityEventDis;
-        public static System.Timers.Timer _timer;
+        public event EventHandler<MobilityEventArgs> MobilityEventDis;       
         #endregion  Public Fields
 
         #region Constructors
@@ -64,8 +66,7 @@ namespace MobileAgent.AgentManager
         }
         #endregion Constructors
 
-        #region Properties
-        
+        #region Property Methods
         public string GetName()
         {
             return _name;
@@ -134,9 +135,72 @@ namespace MobileAgent.AgentManager
         {
             _agentDispatched = agentProxy;
         }
-        #endregion Properties
+        #endregion Property Methods
 
-        #region Methods
+        #region Private Methods
+        private void StartListening()
+        {
+
+            while (true)
+            {
+                Socket mySocket = _agencySocket.Accept();
+                Console.WriteLine(mySocket);
+                Thread newThread = new Thread(new ParameterizedThreadStart(StartAccept))
+                {
+                    Name = GetName() + ": Accept agents",
+                    IsBackground = true
+                };
+                newThread.Start(mySocket);
+            }
+        }
+        private void StartAccept(object obj)
+        {
+            try
+            {
+                Socket s = (Socket)obj;
+                Console.WriteLine(s.AddressFamily);
+                NetworkStream networkStream = new NetworkStream(s);
+                IFormatter formatter = new BinaryFormatter();
+                IMobile agentProxy = (IMobile)formatter.Deserialize(networkStream);
+
+
+                _agentsMobileList.Add(agentProxy);
+                agentProxy.SetAgentCurrentContext(this);
+
+                Thread agentThread = null;
+
+                agentThread = new Thread(new ThreadStart(agentProxy.Run))
+                {
+                    Name = GetName() + ": " + agentProxy.GetName(),
+                    IsBackground = true
+                };
+                agentThread.Start();
+
+
+            }
+            catch (SocketException se)
+            {
+                Console.WriteLine("SocketException caught! Mesaj : " + se.Message + " -->Agency Accept Agents.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + ex.StackTrace + " --> Agency Accept Agents.");
+            }
+        }
+        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            _rezervationTime -= 1000;
+            if (_rezervationTime == 0)
+            {
+                Console.WriteLine("Time is over!!");
+                UpdateAgency();
+                _timer.Stop();
+                _timer.Dispose();
+            }
+        }
+        #endregion Private Methods
+
+        #region Public Methods
         public void Activate()
         {
             try
@@ -174,55 +238,6 @@ namespace MobileAgent.AgentManager
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Start Agency.");
             }
         }
-        private void StartListening()
-        {
-
-            while (true)
-            {
-                Socket mySocket = _agencySocket.Accept();
-                Console.WriteLine(mySocket);
-                Thread newThread = new Thread(new ParameterizedThreadStart(StartAccept))
-                {
-                    Name = GetName() + ": Accept agents",
-                    IsBackground = true
-                };
-                newThread.Start(mySocket);
-            }
-        }
-        private void StartAccept(object obj)
-        {
-            try
-            {
-                Socket s = (Socket)obj;
-                Console.WriteLine(s.AddressFamily);
-                NetworkStream networkStream = new NetworkStream(s);
-                IFormatter formatter = new BinaryFormatter();
-                IMobile agentProxy = (IMobile)formatter.Deserialize(networkStream);
-
-                
-                _agentsMobileList.Add(agentProxy);
-                agentProxy.SetAgentCurrentContext(this);
-
-                Thread agentThread = null;
-
-                agentThread = new Thread(new ThreadStart(agentProxy.Run))
-                {
-                    Name = GetName() + ": " + agentProxy.GetName(),
-                    IsBackground = true
-                };
-                agentThread.Start();
-                
-                
-            }
-            catch (SocketException se)
-            {
-                Console.WriteLine("SocketException caught! Mesaj : " + se.Message +  " -->Agency Accept Agents.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + ex.StackTrace +" --> Agency Accept Agents.");
-            }
-        }
         public void CreateAgent(AgentProxy agentProxy)
         {
             try
@@ -250,8 +265,7 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Create Agent.");
             }
-        }
-        
+        } 
         //TODO
         public void Clone(IMobile agentCloned) 
         {
@@ -277,7 +291,6 @@ namespace MobileAgent.AgentManager
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Clone Agent.");
             }
         }
-        
         //More exceptions
         public bool Dispatch(IMobile agentProxy, IPEndPoint destination)
         {
@@ -331,27 +344,19 @@ namespace MobileAgent.AgentManager
             }
             return false;
         }
-        public void OnRefuseConnection(UnconnectedAgencyArgs e)
-        {
-            RefuseConnectionEvent?.Invoke(this, e);
-        }
-        public void OnArrival(MobilityEventArgs e)
-        {
-            MobilityEventArr?.Invoke(this, e);
-        }
-        public void OnDispatching(MobilityEventArgs e)
-        {
-            MobilityEventDis?.Invoke(this, e);
-        }
-        public void Dispose(AgentProxy agentProxy) 
+        public void Deactivate(AgentProxy agentProxy) 
 		{
             agentProxy.SetState(Agent.INACTIVE);
+        }
+        public void ActivateAgent(AgentProxy agentProxy)
+        {
+            agentProxy.SetState(Agent.ACTIVE);
+            agentProxy.ResetLifetime();
         }
         public void RemoveAgent(IMobile agentProxy)
         {
             _agentsMobileList.Remove(agentProxy);
         }
-       
         public IMobile GetMobileAgentProxy(string name)
         {
             int index = name.IndexOf(":");
@@ -370,6 +375,19 @@ namespace MobileAgent.AgentManager
             foreach (IMobile aP in _agentsMobileList)
             {
                 if (aP.GetAgentId().Equals(id))
+                {
+                    return aP;
+                }
+            }
+            return null;
+        }
+        public IStationary GetStatAgentProxy(string name)
+        {
+            int index = name.IndexOf(":");
+            string newName = name.Substring(index + 2);
+            foreach (IStationary aP in _agentsStatList)
+            {
+                if (aP.GetName().Equals(newName))
                 {
                     return aP;
                 }
@@ -402,10 +420,6 @@ namespace MobileAgent.AgentManager
         {
            
         }
-        public void Deactivate(AgentProxy agentProxy)
-        {
-            agentProxy.SetStatus(Agent.INACTIVE);
-        }
         public void RunAgent(IMobile agentProxy)
         {
             agentProxy.SetWorkStatus(Agent.READY);
@@ -425,19 +439,22 @@ namespace MobileAgent.AgentManager
             _timer.Elapsed +=  OnTimedEvent;
             _timer.Enabled = true;
         }
-        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
-        {
-            _rezervationTime -= 1000;
-            if (_rezervationTime == 0)
-            {
-                Console.WriteLine("Time is over!!");
-                UpdateAgency();
-                _timer.Stop();
-                _timer.Dispose();
-            }
-        }
+        #endregion Public Methods
 
-        
-        #endregion Methods
+        #region Public Event Methods
+        public void OnRefuseConnection(UnconnectedAgencyArgs e)
+        {
+            RefuseConnectionEvent?.Invoke(this, e);
+        }
+        public void OnArrival(MobilityEventArgs e)
+        {
+            MobilityEventArr?.Invoke(this, e);
+        }
+        public void OnDispatching(MobilityEventArgs e)
+        {
+            MobilityEventDis?.Invoke(this, e);
+        }
+        #endregion Public Event Methods
+
     }
 }

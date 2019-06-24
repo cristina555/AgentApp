@@ -15,15 +15,11 @@ namespace AgentApp.Agents
         #region Private Fields
         Queue<string> wayBack = new Queue<string>();
         Dictionary<string, String> _info = null;
-
+        List<string> agenciesVisited = new List<string>();
+        Queue<Tuple<string, Queue<string>>> queue = new Queue<Tuple<string, Queue<string>>>();
         #endregion Private Fields
 
-        #region Public Fields
-        public List<string> agenciesVisited = new List<string>();
-        public Queue<Tuple<string, Queue<string>>> queue = new Queue<Tuple<string, Queue<string>>>();
-        #endregion Public Fields
-
-        #region Constructor
+        #region Constructors
         public AgentSelfRemote() : base()
         {
             Parameters = new List<string>();
@@ -32,7 +28,7 @@ namespace AgentApp.Agents
             SetAgentInfo("Collect information from network");
             _info = new Dictionary<string, String>();
         }
-        #endregion Constructor
+        #endregion Constructors
 
         #region Properties
         public List<string> Parameters { get; set; }
@@ -76,7 +72,6 @@ namespace AgentApp.Agents
             }
             return type;
         }
-
         private void AddNeighbours(AgencyContext agencyContext, Queue<string> agencyQueue)
         {
             foreach (string n in agencyContext.GetNeighbours())
@@ -372,9 +367,38 @@ namespace AgentApp.Agents
             SetAgentStateInfo(GetAgentStateInfo() + agencyContext.GetName() + ": " + _info[agencyContext.GetName()] + Environment.NewLine);
             return information;
         }
+        private void buttonSend_Click(object sender, EventArgs e, Form ui)
+        {
+            try
+            {
+                List<string> _parameters = new List<string>();
+                foreach (Control c in ui.Controls)
+                {
+                    if (c is CheckedListBox)
+                    {
+                        CheckedListBox control = (CheckedListBox)c;
+                        foreach (object itemchecked in control.CheckedItems)
+                        {
+                            _parameters.Add(itemchecked.ToString());
+                        }
+                    }
+                }
+                Parameters = _parameters;
+                ui.Close();
+            }
+            catch (NullReferenceException nre)
+            {
+                MessageBox.Show("NullReferenceException !" + nre.Message + " --> Trimite parametrii agentului!");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
+            }
+        }
         #endregion Private Methods
 
-        #region Public Methods
+        #region Public Override Methods
         public override void Run()
         {
             ResetLifetime();
@@ -454,40 +478,11 @@ namespace AgentApp.Agents
                 thread.Start();
             }
         }
-        private void buttonSend_Click(object sender, EventArgs e, Form ui)
-        {
-            try
-            {
-                List<string> _parameters = new List<string>();
-                foreach (Control c in ui.Controls)
-                {
-                    if (c is CheckedListBox)
-                    {
-                        CheckedListBox control = (CheckedListBox)c;
-                        foreach (object itemchecked in control.CheckedItems)
-                        {
-                            _parameters.Add(itemchecked.ToString());
-                        }
-                    }
-                }
-                Parameters = _parameters;
-                ui.Close();
-            }
-            catch (NullReferenceException nre)
-            {
-                MessageBox.Show("NullReferenceException !" + nre.Message + " --> Trimite parametrii agentului!");
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
-            }
-        }
         public override String GetInfo()
         {
             throw new NotImplementedException();
         }
-        #endregion Public Methods
+        #endregion Public Override Methods
 
     }
 

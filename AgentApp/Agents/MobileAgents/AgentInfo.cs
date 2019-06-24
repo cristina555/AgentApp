@@ -10,10 +10,10 @@ namespace AgentApp.Agents
     [Serializable]
     public class AgentInfo : Agent
     {
-        #region Fields
-        List<IPEndPoint> _agenciesVisited = null;
-        string info = "" ;
-        #endregion Fields
+        #region Private Static Fields
+        private static List<IPEndPoint> _agenciesVisited = null;
+        private static string info = "" ;
+        #endregion Private Static Fields
 
         #region Constructors
         public AgentInfo() : base()
@@ -76,7 +76,7 @@ namespace AgentApp.Agents
         }
         #endregion Private Methods
 
-        #region Public Methods
+        #region Public Override Methods
         public override void Run()
         {
             ResetLifetime();
@@ -85,13 +85,13 @@ namespace AgentApp.Agents
         }
         public override void GetUI()
         {
-
+            //Not need implementation
         }
         public override String GetInfo()
         {
             throw new NotImplementedException();
         }
-        #endregion Public Methods
+        #endregion Public Override Methods
 
     }
 }

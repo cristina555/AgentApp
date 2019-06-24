@@ -35,5 +35,6 @@ namespace MobileAgent.AgentManager
         bool IsMobile();
         bool IsBoomerang();
         bool IsStatusOK();
+        void ResetLifetime();
     }
 }

@@ -17,7 +17,7 @@ namespace MobileAgent.AgentManager
         void CreateAgent(AgentProxy agentProxy);
         void Clone(IMobile agentCloned);
         bool Dispatch(IMobile agentProxy, IPEndPoint destination);
-        void Dispose(AgentProxy agentProxy);
+        void Deactivate(AgentProxy agentProxy);
         IMobile GetMobileAgentProxy(string name);
         IMobile GetMobileAgentProxy(int id);
         IStationary GetStationaryAgent(string name);
@@ -25,7 +25,6 @@ namespace MobileAgent.AgentManager
         void ShutDown();
         void Start();
         void Activate();
-        void Deactivate(AgentProxy agentProxy);
         void OnRefuseConnection(UnconnectedAgencyArgs e);
         void OnArrival(MobilityEventArgs e);
         void OnDispatching(MobilityEventArgs e);

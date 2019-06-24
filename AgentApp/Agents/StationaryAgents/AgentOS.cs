@@ -7,9 +7,9 @@ namespace AgentApp.Agents.StationaryAgents
     [Serializable]
     public class AgentOS : Agent , IStationary
     {
-        #region Fields
-        static string _info = "";
-        #endregion Fields
+        #region Private Static Fields
+        private static string _info = "";
+        #endregion Private Static Fields
 
         #region Constructors
         public AgentOS() : base()
@@ -19,7 +19,8 @@ namespace AgentApp.Agents.StationaryAgents
         }
         public AgentOS(int id) : base(id)
         {
-            
+            this.SetName("AgentOS");
+            this.SetAgentInfo("Informatii despre sistemul de operare.");
         }
         #endregion Constructors
 
@@ -42,7 +43,15 @@ namespace AgentApp.Agents.StationaryAgents
         }
         #endregion Private Methods
 
-        #region Public Methods
+        #region Public Override Methods
+        public override String GetInfo()
+        {
+            ResetLifetime();
+            SetAgentStateInfo("");
+            GetOSInfo();
+            this.SetAgentStateInfo(_info);
+            return GetAgentStateInfo();
+        }
         public override void Run()
         {
             throw new NotImplementedException();
@@ -52,15 +61,6 @@ namespace AgentApp.Agents.StationaryAgents
         {
             throw new NotImplementedException();
         }
-
-        public override String GetInfo()
-        {
-            ResetLifetime();
-            SetAgentStateInfo("");
-            GetOSInfo();
-            this.SetAgentStateInfo(_info);
-            return GetAgentStateInfo();
-        }
-        #endregion Public Methods
+        #endregion Public Override Methods
     }
 }
