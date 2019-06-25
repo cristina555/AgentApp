@@ -9,7 +9,7 @@ namespace AgentApp
     [Serializable]
     public class AgentPI : Agent, IMobile
     {
- 
+
         #region Constructor
         public AgentPI() : base()
         {
@@ -23,14 +23,18 @@ namespace AgentApp
         #endregion Constructor
 
         #region Properties
-        public int Dec { get;  set; }
+        public int i { get; set; } = 0;
+        public int j1 { get; set; } = 0;
+        public int j2 { get; set; } = 0;
+        public int j3 { get; set; } = 0;
+        public int Dec { get; set; }
+        public string result { get; private set; } = "";
         #endregion Properties
 
         #region Private Methods
         private void CalculPi()
         {
-            string codebase="";
-
+            Console.WriteLine("Rezultatul este: " + result);
             Dec++;
 
             uint[] x = new uint[Dec * 10 / 3 + 2];
@@ -38,10 +42,12 @@ namespace AgentApp
 
             uint[] pi = new uint[Dec];
 
-            for (int j = 0; j < x.Length; j++)
-                x[j] = 20;
-
-            for (int i = 0; i < Dec; i++)
+            while (j1 < x.Length)
+            {
+                x[j1] = 20;
+                j1++;
+            }
+            while (i < Dec)
             {
                 uint carry = 0;
                 for (int j = 0; j < x.Length; j++)
@@ -56,31 +62,38 @@ namespace AgentApp
 
                     carry = q * num;
                 }
-
-
+                Thread.Sleep(3000);
                 pi[i] = (x[x.Length - 1] / 10);
-
-
+                if (i == 0)
+                {
+                    result = result + pi[i].ToString() + ",";
+                }
+                else
+                {
+                    result = result + pi[i];
+                }
+                Console.WriteLine("Rezultatul este: " + result);
                 r[x.Length - 1] = x[x.Length - 1] % 10; ;
 
                 for (int j = 0; j < x.Length; j++)
                     x[j] = r[j] * 10;
+
+                i++;
             }
 
-            var result = "";
 
-            uint c = 0;
+            //uint c = 0;
 
-            for (int i = pi.Length - 1; i >= 0; i--)
-            {
-                pi[i] += c;
-                c = pi[i] / 10;
+            //for (int i = pi.Length - 1; i >= 0; i--)
+            //{
+            //    pi[i] += c;
+            //    c = pi[i] / 10;
 
-                result = (pi[i] % 10).ToString() + result;
-            }
-            Console.WriteLine("Rezultatul este: "+ result);
-            codebase += "Rezultatul este: " + result + "\n";
-            this.SetAgentStateInfo(codebase);
+            //    result = (pi[i] % 10).ToString() + result;
+            //}
+            //Console.WriteLine("Rezultatul este: "+ result);
+            this.SetAgentStateInfo("Rezultatul este: " + result + "\n");
+            Console.WriteLine("Rezultatul este " + result);
         }
         private void button1_Click(object sender, EventArgs e, Form ui)
         {
@@ -109,11 +122,21 @@ namespace AgentApp
                 MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
             }
         }
+        private void ResetState()
+        {
+            i = 0;
+            j1 = 0;
+            result = "";
+        }
         #endregion Private Methods
 
         #region Public Override Methods
         public override void Run()
         {
+            if(result.Length-1 == Dec)
+            {
+                ResetState();
+            }
             ResetLifetime();
             CalculPi();
         }

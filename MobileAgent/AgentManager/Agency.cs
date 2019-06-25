@@ -314,7 +314,7 @@ namespace MobileAgent.AgentManager
                     agentProxy.SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
-                    //UpdateAgency();
+                    //Thread.CurrentThread.Abort();
                     return true;
 
                 }
@@ -338,10 +338,15 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("SocketException caught! Mesaj : " + io.Message + io.StackTrace +" --> Agency Dispach Agent.");
             }
+            catch (ThreadAbortException abortException)
+            {
+                Console.WriteLine((string)abortException.ExceptionState);
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
+            
             return false;
         }
         public void Deactivate(AgentProxy agentProxy) 

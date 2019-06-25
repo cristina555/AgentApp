@@ -150,9 +150,10 @@ namespace AgentApp.Agents
                     break;
 
                 }
-
             }
+            //Thread.CurrentThread.Abort();
         }
+
         private void CreateWayBack(Queue<string> b)
         {
             wayBack = b;

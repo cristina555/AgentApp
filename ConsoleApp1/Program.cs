@@ -519,30 +519,170 @@ namespace org.doublecloud
 {
     class XmlParsingDemo
     {
-        static void Main(string[] args)
+        public static int i { get; set; } = 0;
+        public static int j1 { get; set; } = 0;
+        public static int j2 { get; set; } = 0;
+        public static int j3 { get; set; } = 0;
+        public static int Dec { get; set; } = 20;
+        public static string result { get; private set; } = "";
+        private static void CalculPi()
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load("test.xml");
+            Dec++;
 
-            XmlNodeList nodes = doc.DocumentElement.SelectNodes("/catalog/book");
+            uint[] x = new uint[Dec * 10 / 3 + 2];
+            uint[] r = new uint[Dec * 10 / 3 + 2];
 
-            List<Book> books = new List<Book>();
+            uint[] pi = new uint[Dec];
 
-            foreach (XmlNode node in nodes)
+            while (j1 < x.Length)
             {
-                Book book = new Book();
+                x[j1] = 20;
+                j1++;
+            }
+            while (i < Dec)
+            {
+                uint carry = 0;
+                for (int j = 0; j < x.Length; j++)
+                {
+                    uint num = (uint)(x.Length - j - 1);
+                    uint dem = num * 2 + 1;
 
-                book.author = node.SelectSingleNode("author").InnerText;
-                book.title = node.SelectSingleNode("title").InnerText;
-                book.id = node.Attributes["id"].Value;
+                    x[j] += carry;
 
-                books.Add(book);
+                    uint q = x[j] / dem;
+                    r[j] = x[j] % dem;
+
+                    carry = q * num;
+                }
+
+                pi[i] = (x[x.Length - 1] / 10);
+                if(i==0)
+                {
+                    result = result + pi[i].ToString() + ",";
+                }
+                else
+                {
+                    result = result + pi[i];
+                }
+                Console.WriteLine("Rezultatul este: " + result);
+                r[x.Length - 1] = x[x.Length - 1] % 10; ;
+
+                for (int j = 0; j < x.Length; j++)
+                    x[j] = r[j] * 10;
+
+                i++;
             }
 
-            System.Console.WriteLine("Total books: " + books.Count);
+            
+
+            //uint c = 0;
+
+            //for (int i = pi.Length - 1; i >= 0; i--)
+            //{
+            //    pi[i] += c;
+            //    c = pi[i] / 10;
+
+            //    result = (pi[i] % 10).ToString() + result;
+            //}
+            Console.WriteLine("Rezultatul este: " + result);
+
+        }
+       
+
+        private static void CalculPi2()
+        {
+            Console.WriteLine("Rezultatul este " + result);
+            string codebase = "";
+            Dec++;
+
+            uint[] x = new uint[Dec * 10 / 3 + 2];
+            uint[] r = new uint[Dec * 10 / 3 + 2];
+
+            uint[] pi = new uint[Dec];
+
+            while (j1 < x.Length)
+            {
+                x[j1] = 20;
+                j1++;
+            }
+            while (i < Dec)
+            {
+                uint carry = 0;
+                while (j2 < x.Length)
+                {
+                    uint num = (uint)(x.Length - j2 - 1);
+                    uint dem = num * 2 + 1;
+
+                    x[j2] += carry;
+
+                    uint q = x[j2] / dem;
+                    r[j2] = x[j2] % dem;
+
+                    carry = q * num;
+
+                    j2++;
+                }
+
+                pi[i] = (x[x.Length - 1] / 10);
+                if (i == 0)
+                {
+                    result += pi[i].ToString() + ",";
+                }
+                else
+                {
+                    result += pi[i].ToString();
+                }
+                Console.WriteLine("Rezultatul este " + result);
+                r[x.Length - 1] = x[x.Length - 1] % 10; ;
+
+                while (j3 < x.Length)
+                {
+                    x[j3] = r[j3] * 10;
+                    j3++;
+                }
+                i++;
+            }
+
+
+            //uint c = 0;
+
+            //for (int i = pi.Length - 1; i >= 0; i--)
+            //{
+            //    pi[i] += c;
+            //    c = pi[i] / 10;
+
+            //    result = (pi[i] % 10).ToString() + result;
+            //}
+            //Console.WriteLine("Rezultatul este: "+ result);
+            codebase += "Rezultatul este: " + result + "\n";
+            Console.WriteLine("Rezultatul este " + result);
+        }
+        static void Main(string[] args)
+        {
+            //XmlDocument doc = new XmlDocument();
+            //doc.Load("test.xml");
+
+            //XmlNodeList nodes = doc.DocumentElement.SelectNodes("/catalog/book");
+
+            //List<Book> books = new List<Book>();
+
+            //foreach (XmlNode node in nodes)
+            //{
+            //    Book book = new Book();
+
+            //    book.author = node.SelectSingleNode("author").InnerText;
+            //    book.title = node.SelectSingleNode("title").InnerText;
+            //    book.id = node.Attributes["id"].Value;
+
+            //    books.Add(book);
+            //}
+
+            //System.Console.WriteLine("Total books: " + books.Count);
+
+            CalculPi();
         }
     }
-
+    
     class Book
     {
         public string id;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace MobileAgent.AgentManager
 {
@@ -192,6 +193,24 @@ namespace MobileAgent.AgentManager
         {
             //Not implemented yet
         }
+        //public bool GetConnection(IPEndPoint destination)
+        //{
+        //    _connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        //    try
+        //    {
+        //        _connectSocket.Connect(destination);
+        //        if(_connectSocket.Connected)
+        //        {
+        //            return true;
+        //        }
+        //        return false;
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //    }
+        //    return false;
+        //}
         public bool Dispatch(IPEndPoint destination)
         {
             try
@@ -202,6 +221,7 @@ namespace MobileAgent.AgentManager
                 NetworkStream networkStream = null;
 
                 Socket connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
                 try
                 {
                     connectSocket.Connect(destination);
@@ -210,15 +230,15 @@ namespace MobileAgent.AgentManager
                 {
 
                 }
+
                 if (connectSocket.Connected)
                 {
-                    
                     agencyContext.RemoveAgent(this);
                     networkStream = new NetworkStream(connectSocket);
                     SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, this);
+                    //Thread.CurrentThread.Abort();
                     return true;
-
                 }
                 else
                 {
