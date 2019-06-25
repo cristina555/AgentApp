@@ -26,8 +26,10 @@ namespace MobileAgent.AgentManager
         #endregion Private Fields
 
         #region Private Static Fields
-        private static int _rezervationTime;
+        private int _rezervationTime;
         private static System.Timers.Timer _timer;
+        //private static Dictionary<IPEndPoint, NetworkStream> _connectionaMap = new Dictionary<IPEndPoint, NetworkStream>();
+        private NetworkStream networkStream = null;
         #endregion Private Static Fields
 
         #region Public Fields
@@ -292,30 +294,47 @@ namespace MobileAgent.AgentManager
             }
         }
         //More exceptions
-        public bool Dispatch(IMobile agentProxy, IPEndPoint destination)
+        public bool GetConnection(IPEndPoint destination)
+        {
+            Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                connectSocket.Connect(destination);
+                if(connectSocket.Connected)
+                {
+                    //if(!_connectionaMap.ContainsKey(destination))
+                    //{
+                    networkStream = new NetworkStream(connectSocket);
+                    //    _connectionaMap.Add(destination, networkStream);
+                    //}
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
+        }
+        public void Dispatch(IMobile agentProxy, IPEndPoint destination)
         {
             try
             {
                 IFormatter formatter = new BinaryFormatter();
-                NetworkStream networkStream =  null;
+                //NetworkStream networkStream =  null;
                
-                Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                try
+                if (GetConnection( destination))                   
                 {
-                    connectSocket.Connect(destination);
-                }
-                catch (Exception)
-                {
-                    
-                }
-                if (connectSocket.Connected)                   
-                {
-                    networkStream = new NetworkStream(connectSocket);
+                   // networkStream = _connectionaMap[destination];
                     agentProxy.SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
-                    //Thread.CurrentThread.Abort();
-                    return true;
+                    if(agentProxy.GetAgentType() == Agent.ONEWAY)
+                    {
+                        agentProxy.SetWorkStatus(Agent.DONE);
+                    }
+                    //return true;
 
                 }
                 else
@@ -327,8 +346,7 @@ namespace MobileAgent.AgentManager
                     Console.WriteLine("Refuse connection");
                     
                 }
-                //UpdateAgency();
-                return false;
+               // return false;
             }
             catch (NullReferenceException nfe)
             {
@@ -347,7 +365,7 @@ namespace MobileAgent.AgentManager
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
             
-            return false;
+            //return false;
         }
         public void Deactivate(AgentProxy agentProxy) 
 		{
@@ -443,6 +461,10 @@ namespace MobileAgent.AgentManager
             // Hook up the Elapsed event for the timer. 
             _timer.Elapsed +=  OnTimedEvent;
             _timer.Enabled = true;
+        }
+        public bool IsBooked()
+        {
+            return _rezervationTime > 0;
         }
         #endregion Public Methods
 

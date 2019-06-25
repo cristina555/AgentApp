@@ -11,14 +11,14 @@ namespace AgentApp.Agents
     public class AgentInfo : Agent
     {
         #region Private Static Fields
-        private static List<IPEndPoint> _agenciesVisited = null;
+        private static List<IPEndPoint> _agenciesVisited = new List<IPEndPoint>();
         private static string info = "" ;
         #endregion Private Static Fields
 
         #region Constructors
         public AgentInfo() : base()
         {
-            _agenciesVisited = new List<IPEndPoint>();
+            this.SetType(Agent.BOOMERANG);
             this.SetName("AgentInfo");
             this.SetAgentInfo("Get the list of visited agencies");
         }
@@ -27,7 +27,6 @@ namespace AgentApp.Agents
             this.SetType(Agent.BOOMERANG);
             this.SetName("AgentInfo");
             this.SetAgentInfo("Get the list of visited agencies");
-            _agenciesVisited = new List<IPEndPoint>();
         }
         #endregion Constructors
 

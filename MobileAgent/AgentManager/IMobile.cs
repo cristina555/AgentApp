@@ -11,7 +11,8 @@ namespace MobileAgent.AgentManager
     {
         List<IMobile> GetCloneList();
         IMobile GetClone(int id);
-        void Clone();
+        int GetAgentType();
+        void Clone(IMobile agent);
         //bool GetConnection(IPEndPoint destination);
         bool Dispatch(IPEndPoint destination);
         void Run();

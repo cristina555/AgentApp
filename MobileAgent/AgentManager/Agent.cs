@@ -7,6 +7,7 @@ using System.Xml;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using MobileAgent.Exceptions;
 
 namespace MobileAgent.AgentManager
 {
@@ -26,6 +27,7 @@ namespace MobileAgent.AgentManager
         public readonly static int DONE = 1;
         public readonly static int BOOMERANG = 0;
         public readonly static int WALKER = 1;
+        public readonly static int ONEWAY = 2;
         public readonly static int LIFETIME = 1800; //seconds
         #endregion Public Fields
 
@@ -94,6 +96,10 @@ namespace MobileAgent.AgentManager
         public String GetAgentInfo()
         {
             return _agentInfo;
+        }
+        public int GetAgentType()
+        {
+            return _type;
         }
         public List<IMobile> GetCloneList()
         {
@@ -189,9 +195,29 @@ namespace MobileAgent.AgentManager
             _timer.Elapsed += OnTimedEvent;
             _timer.Enabled = true;
         }
-        public void Clone()
+        public void Clone(IMobile agentCloned)
         {
-            //Not implemented yet
+            try
+            {
+                //agentCloned.SetAgentCurrentContext(this);
+                //agentCloned.SetAgencyCreationContext(this.GetAgencyIPEndPoint());
+                agentCloned.SetName(agentCloned.GetName() + " cloned");
+                agentCloned.SetAgentInfo(agentCloned.GetAgentInfo() + " cloned");
+                //_agentsMobileList.Add(agentCloned);
+                agentCloned.GetUI();
+            }
+            catch (CloneNotSupportedException cnse)
+            {
+                Console.WriteLine("CloneNotSupportedException caught! Mesaj : " + cnse.Message + " --> Agency Clone Agent.");
+            }
+            catch (AgencyNotFoundException anfe)
+            {
+                Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Clone Agent.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Clone Agent.");
+            }
         }
         //public bool GetConnection(IPEndPoint destination)
         //{

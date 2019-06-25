@@ -70,9 +70,13 @@ namespace AgentApp
             //    info.Text = "Agentia: " + name + " se afla la " + ipAddress + ", portul " + port;
             //    agency.Activate();
             //    agency.Start();
+
             //    agency.MobilityEventArr += Agent_OnArrival;
             //    agency.MobilityEventDis += Agent_OnDispaching;
             //    agency.RefuseConnectionEvent += Agency_RefuseConnection;
+            //    agency.UpdateAgency += TimerIsUp;
+            //    aTimer.Elapsed += new ElapsedEventHandler((source, e) => UpdateAgentsList());
+            //    aTimer.Enabled = true;
             //}
             //catch (FormatException e)
             //{
@@ -303,7 +307,7 @@ namespace AgentApp
             {
                 string selected = listAgents.GetItemText(listAgents.SelectedItem);
                 IMobile agentDispatched = agency.GetMobileAgentProxy(selected);
-                if (agentDispatched.IsBoomerang())
+                if (agentDispatched.GetAgentType() != Agent.WALKER)
                 {
                     string location = comboBoxN.GetItemText(comboBoxN.SelectedItem);
                     IPAddress ipAddress = configParser.GetIPAdress(location);

@@ -16,7 +16,8 @@ namespace MobileAgent.AgentManager
         IPEndPoint GetAgencyIPEndPoint();
         void CreateAgent(AgentProxy agentProxy);
         void Clone(IMobile agentCloned);
-        bool Dispatch(IMobile agentProxy, IPEndPoint destination);
+        bool GetConnection(IPEndPoint destination);
+        void Dispatch(IMobile agentProxy, IPEndPoint destination);
         void Deactivate(AgentProxy agentProxy);
         IMobile GetMobileAgentProxy(string name);
         IMobile GetMobileAgentProxy(int id);
@@ -31,6 +32,6 @@ namespace MobileAgent.AgentManager
         void RunAgent(IMobile agentProxy);
         void RemoveAgent(IMobile agentProxy);
         void SetBookedTime(int milli);
-
+        bool IsBooked();
     }
 }
