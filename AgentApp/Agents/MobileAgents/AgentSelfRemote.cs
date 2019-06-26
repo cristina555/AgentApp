@@ -35,7 +35,7 @@ namespace AgentApp.Agents
         #endregion Properties
 
         #region Private Methods
-        private string GetInfo(string parameter)
+        private string GetAgent(string parameter)
         {
             string type = "";
             switch (parameter)
@@ -352,7 +352,7 @@ namespace AgentApp.Agents
             string information = "";
             foreach (string par in Parameters)
             {
-                IStationary agentStatic = agencyContext.GetStationaryAgent(GetInfo(par));
+                IStationary agentStatic = agencyContext.GetStationaryAgent(GetAgent(par));
                 String i = agentStatic.GetInfo();
                 if (!_info.ContainsKey(agencyContext.GetName()))
                 {

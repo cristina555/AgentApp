@@ -195,16 +195,12 @@ namespace MobileAgent.AgentManager
             _timer.Elapsed += OnTimedEvent;
             _timer.Enabled = true;
         }
-        public void Clone(IMobile agentCloned)
+        public IMobile Clone()
         {
+            IMobile agentCloned = null;
             try
             {
-                //agentCloned.SetAgentCurrentContext(this);
-                //agentCloned.SetAgencyCreationContext(this.GetAgencyIPEndPoint());
-                agentCloned.SetName(agentCloned.GetName() + " cloned");
-                agentCloned.SetAgentInfo(agentCloned.GetAgentInfo() + " cloned");
-                //_agentsMobileList.Add(agentCloned);
-                agentCloned.GetUI();
+                agentCloned = this;
             }
             catch (CloneNotSupportedException cnse)
             {
@@ -218,6 +214,7 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Clone Agent.");
             }
+            return agentCloned;
         }
         //public bool GetConnection(IPEndPoint destination)
         //{

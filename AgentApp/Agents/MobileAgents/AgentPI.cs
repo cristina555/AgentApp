@@ -29,26 +29,38 @@ namespace AgentApp
         public int Index { get; set; } = 0;
         public int Step { get; set; } = 0;
         public int Dec { get; set; }
+
+        public int State { get; set; } = 0;
+
+
+
+        uint[] x;
+        uint[] r;
+
+        uint[] pi;
+
+
         public string Result { get; private set; } = "";
         #endregion Properties
 
         #region Private Methods
-        private void CalculPi()
+        private void CalculPi(AgencyContext agencyContext)
         {
             Console.WriteLine("Rezultatul este: " + Result);
             Dec++;
-
-            uint[] x = new uint[Dec * 10 / 3 + 2];
-            uint[] r = new uint[Dec * 10 / 3 + 2];
-
-            uint[] pi = new uint[Dec];
-
-            while (Step < x.Length && IsReady())
+            if (State == 1)
             {
-                x[Step] = 20;
-                Step++;
+                x = new uint[Dec * 10 / 3 + 2];
+                r = new uint[Dec * 10 / 3 + 2];
+
+                pi = new uint[Dec];
+                while (Step < x.Length)
+                {
+                    x[Step] = 20;
+                    Step++;
+                }
             }
-            while (Index < Dec && IsReady())
+            while (Index < Dec )
             {
                 uint carry = 0;
                 for (int j = 0; j < x.Length; j++)
@@ -64,6 +76,7 @@ namespace AgentApp
                     carry = q * num;
                 }
                 Thread.Sleep(3000);
+                
                 pi[Index] = (x[x.Length - 1] / 10);
                 if (Index == 0)
                 {
@@ -79,7 +92,13 @@ namespace AgentApp
                 for (int j = 0; j < x.Length; j++)
                     x[j] = r[j] * 10;
 
+
                 Index++;
+
+                if (!IsReady())
+                {
+                    break;
+                }
             }
 
             this.SetAgentStateInfo("Rezultatul este: " + Result + "\n");
@@ -129,7 +148,9 @@ namespace AgentApp
             }
             ResetLifetime();
             SetWorkStatus(Agent.READY);
-            CalculPi();
+            State++;
+            AgencyContext agencyContext = GetAgentCurrentContext();
+            CalculPi(agencyContext);
         }
         public override void GetUI()
         {
@@ -190,7 +211,7 @@ namespace AgentApp
             });
             thread.Start();
         }
-        public override String GetInfo()
+        public override  String GetInfo()
         {
             throw new NotImplementedException();
         }  

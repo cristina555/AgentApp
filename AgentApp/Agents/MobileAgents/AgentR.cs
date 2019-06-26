@@ -60,7 +60,7 @@ namespace AgentApp.Agents
         private void TryDispatch(AgencyContext agencyContext, IPEndPoint destination)
         {
             MobilityEventArgs args = new MobilityEventArgs();
-            if (agencyContext.GetConnection(destination))
+            if (!agencyContext.GetConnection(destination))
             {
                 while (!agencyContext.GetConnection(destination))
                 {
@@ -293,7 +293,7 @@ namespace AgentApp.Agents
                                 NumberOfValidAgencies++;
                             }
                         }
-                        else
+                        else if(state == SECOND)
                         {
                             TryDispatch(agencyContext, GetAgencyCreationContext());
                             return;
@@ -324,7 +324,7 @@ namespace AgentApp.Agents
                                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                                 args.Source = "Punct de plecare: ";
-                                args.Information = "Agentul " + GetName() + " se duce catre " + next;
+                                args.Information = "Agentul " + GetName() + " se duce catre " + back;
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);

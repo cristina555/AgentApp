@@ -90,7 +90,8 @@ namespace AgentApp
             Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = configParser.NetworkHosts;
             try
             {
-                int hostIndex = _random.Next(_hosts.Count);
+                int hostIndex = int.Parse(Console.ReadLine());
+                //int hostIndex = _random.Next(_hosts.Count);
                 IPAddress ipAddress = _hosts.ElementAt(hostIndex).Key;
                 Tuple<string, int, string[]> t = _hosts[ipAddress];
                 int port = t.Item2;
@@ -124,9 +125,25 @@ namespace AgentApp
         }
         private void TimerIsUp()
         {
-            MessageBox.Show("Timpul de rezervare pentru " +agency.GetName() + " a exiprat!");
+
+            var parts = new List<string>();
+            Action<int, string> add = (val, unit) => { if (val > 0) parts.Add(val + unit); };
+            var t = TimeSpan.FromMilliseconds(agency.GetRezervationTime());
+
+            add(t.Days, "d");
+            add(t.Hours, "h");
+            add(t.Minutes, "m");
+            add(t.Seconds, "s");
+            add(t.Milliseconds, "ms");
+
+            string text= "Timpul de rezervare pentru " + agency.GetName() + ":" + string.Join(" ", parts);
+            labelShowClock.Text = text;
         }
         
+        private void buttonShow_Click(object source, EventArgs e, Form ui)
+        {
+            ui.Close();
+        }
         private void CreateStationaryAgent()
         {
             List<IStationary> list = gs.ListofAgentsS;
@@ -166,6 +183,10 @@ namespace AgentApp
                             }
                         }
                     }
+                }
+                if(!agency.IsBooked())
+                {
+                    labelShowClock.Text = "";
                 }
             });
         }
@@ -218,10 +239,13 @@ namespace AgentApp
             e.Date = DateTime.Now;
             this.Invoke((MethodInvoker)delegate
             {
-                console.AppendText(e.Date + Environment.NewLine);
-                string name = configParser.GetName(e.Name);
-                console.AppendText("Nu se poate realiza conexiunea cu " + name + Environment.NewLine);
-                console.AppendText(".................................." + Environment.NewLine);
+                if (e.Name!=null)
+                {
+                    console.AppendText(e.Date + Environment.NewLine);
+                    string name = configParser.GetName(e.Name);
+                    console.AppendText("Nu se poate realiza conexiunea cu " + name + Environment.NewLine);
+                    console.AppendText(".................................." + Environment.NewLine);
+                }
             });
         }
         private void Agent_OnArrival(object sender, MobilityEventArgs e)
@@ -309,11 +333,17 @@ namespace AgentApp
                 IMobile agentDispatched = agency.GetMobileAgentProxy(selected);
                 if (agentDispatched.GetAgentType() != Agent.WALKER)
                 {
+                  
                     string location = comboBoxN.GetItemText(comboBoxN.SelectedItem);
                     IPAddress ipAddress = configParser.GetIPAdress(location);
                     int portNumber = configParser.GetPort(location);
                     IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                    agency.Dispatch(agentDispatched, ipEndPoint);
+                    agency.Dispatch(agentDispatched,ipEndPoint);
+                    
+                    if(agentDispatched.GetAgentType() != Agent.ONEWAY)
+                    {
+                        agency.RunAgent(agentDispatched);
+                    }
 
                 }
                 else
@@ -523,5 +553,52 @@ namespace AgentApp
         }
         #endregion Controlers        
 
+        private void ButtonShowClock_Click(object sender, EventArgs e)
+        {
+            Label label1 = new Label();
+            Button button1 = new Button();
+            Form ui = new Form();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(37, 33);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(351, 17);
+            label1.TabIndex = 5;
+            label1.Text = "";
+            // 
+            // button1
+            // 
+            button1.Location = new System.Drawing.Point(151, 77);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(98, 30);
+            button1.TabIndex = 4;
+            button1.Text = "OK";
+            button1.UseVisualStyleBackColor = true;
+            // 
+            // Form1
+            // 
+            ui.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            ui.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ui.ClientSize = new System.Drawing.Size(404, 119);
+            ui.Controls.Add(label1);
+            ui.Controls.Add(button1);
+            ui.Name = "Rezrvare Agentie - timp ramas";
+            ui.Text = "Activare agenti";
+            ui.ResumeLayout(false);
+            ui.PerformLayout();
+
+            button1.Click += new System.EventHandler((source, eee) => this.buttonShow_Click(source, eee, ui));
+
+            var thread = new Thread(() =>
+            {
+                Application.Run(ui);
+            });
+            thread.Start();
+        }
+
+       
     }
 }

@@ -49,7 +49,9 @@
     <Compile Include="AgentManager\AgentProxy.cs" />
     <Compile Include="AgentManager\IMobile.cs" />
     <Compile Include="AgentManager\IStationary.cs" />
+    <Compile Include="EventAgent\CloneEventArgs.cs" />
     <Compile Include="EventAgent\MobilityEventArgs.cs" />
+    <Compile Include="EventAgent\PersistencyEventArgs.cs" />
     <Compile Include="EventAgent\UnconnectedAgencyArgs.cs" />
     <Compile Include="Exceptions\AgencyNotFoundException.cs" />
     <Compile Include="Exceptions\AgentException.cs" />

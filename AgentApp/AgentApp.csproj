@@ -56,6 +56,7 @@
     <Compile Include="AditionalClasses\GeneralSettings.cs" />
     <Compile Include="AditionalClasses\HostElement.cs" />
     <Compile Include="AditionalClasses\NetworkCollection.cs" />
+    <Compile Include="Agents\MobileAgents\AgentClone.cs" />
     <Compile Include="Agents\MobileAgents\AgentInfo.cs" />
     <Compile Include="Agents\MobileAgents\AgentPI.cs" />
     <Compile Include="Agents\MobileAgents\AgentR.cs" />

@@ -12,7 +12,7 @@ namespace MobileAgent.AgentManager
         List<IMobile> GetCloneList();
         IMobile GetClone(int id);
         int GetAgentType();
-        void Clone(IMobile agent);
+        IMobile Clone();
         //bool GetConnection(IPEndPoint destination);
         bool Dispatch(IPEndPoint destination);
         void Run();

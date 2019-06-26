@@ -1,4 +1,5 @@
 ﻿using AgentApp.Agents;
+using AgentApp.Agents.MobileAgents;
 using AgentApp.Agents.StationaryAgents;
 using MobileAgent.AgentManager;
 using System;
@@ -31,6 +32,7 @@ namespace AgentApp.AditionalClasses
             ListofAgentsM.Add("AgentRemote");
             ListofAgentsM.Add("AgentR");
             ListofAgentsM.Add("AgentSelfRemote");
+            ListofAgentsM.Add("AgentClone");
         }
         private void CreateListofAgentsS()
         {
@@ -59,6 +61,10 @@ namespace AgentApp.AditionalClasses
             {
                 switch (name)
                 {
+                    case "AgentClone":
+                        {
+                            return new AgentClone();
+                        }
                     case "AgentSelfRemote":
                         {
                             return new AgentSelfRemote();

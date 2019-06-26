@@ -8,7 +8,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using MobileAgent.EventAgent;
-using System.Net.NetworkInformation;
 
 namespace MobileAgent.AgentManager
 {   
@@ -125,6 +124,10 @@ namespace MobileAgent.AgentManager
             }
             return null;
         }
+        public int GetRezervationTime()
+        {
+            return _rezervationTime;
+        }
         public void SetName(string name)
         {
             _name = name;
@@ -192,10 +195,14 @@ namespace MobileAgent.AgentManager
         private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
             _rezervationTime -= 1000;
+            if (_rezervationTime >= 0)
+            {
+                UpdateAgency();
+            }
             if (_rezervationTime == 0)
             {
                 Console.WriteLine("Time is over!!");
-                UpdateAgency();
+                //UpdateAgency();
                 _timer.Stop();
                 _timer.Dispose();
             }
@@ -296,10 +303,17 @@ namespace MobileAgent.AgentManager
         //More exceptions
         public bool GetConnection(IPEndPoint destination)
         {
-            Socket connectSocket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try
             {
-                connectSocket.Connect(destination);
+                Socket connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                try
+                {
+                    connectSocket.Connect(destination);
+                }
+                catch(Exception)
+                {
+
+                }
                 if(connectSocket.Connected)
                 {
                     //if(!_connectionaMap.ContainsKey(destination))
@@ -309,11 +323,27 @@ namespace MobileAgent.AgentManager
                     //}
                     return true;
                 }
+                else
+                {
+                    UnconnectedAgencyArgs args = new UnconnectedAgencyArgs();
+                    args.Date = DateTime.Now;
+                    args.Name = destination;
+                    OnRefuseConnection(args);
+                    Console.WriteLine("Refuse connection");
+                }
                 return false;
             }
-            catch (Exception)
+            catch (NullReferenceException nfe)
             {
-
+                Console.WriteLine("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
+            }
+            catch (SocketException io)
+            {
+                Console.WriteLine("SocketException caught! Mesaj : " + io.Message + io.StackTrace + " --> Agency Dispach Agent.");
+            }
+             catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
             return false;
         }
@@ -330,22 +360,10 @@ namespace MobileAgent.AgentManager
                     agentProxy.SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
-                    if(agentProxy.GetAgentType() == Agent.ONEWAY)
-                    {
-                        agentProxy.SetWorkStatus(Agent.DONE);
-                    }
                     //return true;
 
                 }
-                else
-                {
-                    UnconnectedAgencyArgs args = new UnconnectedAgencyArgs();
-                    args.Date = DateTime.Now;
-                    args.Name = destination;
-                    OnRefuseConnection(args);
-                    Console.WriteLine("Refuse connection");
-                    
-                }
+                
                // return false;
             }
             catch (NullReferenceException nfe)
@@ -445,12 +463,29 @@ namespace MobileAgent.AgentManager
         }
         public void RunAgent(IMobile agentProxy)
         {
-            agentProxy.SetWorkStatus(Agent.READY);
-            agentProxy.SetAgentStateInfo(null);
-            Thread agentThread = new Thread(new ThreadStart(agentProxy.Run));
-            agentThread.Name = GetName() + ": " +agentProxy.GetName();
-            agentThread.IsBackground = true;
-            agentThread.Start();
+            if (agentProxy.GetAgentType() == Agent.WALKER)
+            {
+                agentProxy.SetWorkStatus(Agent.READY);
+                agentProxy.SetAgentStateInfo(null);
+                Thread agentThread = new Thread(new ThreadStart(agentProxy.Run))
+                {
+                    Name = GetName() + ": " + agentProxy.GetName(),
+                    IsBackground = true
+                };
+                agentThread.Start();
+            }
+            else if(agentProxy.GetAgentType() == Agent.ONEWAY)
+            {
+                Thread agentThread = new Thread(new ThreadStart(agentProxy.Run))
+                {
+                    Name = GetName() + ": " + agentProxy.GetName(),
+                    IsBackground = true
+                };
+                agentThread.Start();
+                agentProxy.SetWorkStatus(Agent.DONE);
+
+            }
+
             //UpdateAgency();
         }
         public void SetBookedTime(int milli)

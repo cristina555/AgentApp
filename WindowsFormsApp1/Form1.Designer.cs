@@ -30,21 +30,20 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(37, 36);
+            this.label1.Location = new System.Drawing.Point(37, 33);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(122, 17);
+            this.label1.Size = new System.Drawing.Size(351, 17);
             this.label1.TabIndex = 5;
-            this.label1.Text = "Agentii dezactivati";
+            this.label1.Text = "Timpul ramas pentru nodul 1: 30 minute si 20 secunde";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(296, 67);
+            this.button1.Location = new System.Drawing.Point(151, 77);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(98, 30);
             this.button1.TabIndex = 4;
@@ -52,20 +51,11 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(40, 71);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(238, 24);
-            this.comboBox1.TabIndex = 6;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(425, 119);
-            this.Controls.Add(this.comboBox1);
+            this.ClientSize = new System.Drawing.Size(404, 119);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
@@ -79,7 +69,6 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

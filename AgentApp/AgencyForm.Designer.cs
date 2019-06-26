@@ -38,6 +38,8 @@
             this.disposeButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.labelShowClock = new System.Windows.Forms.Label();
+            this.buttonDeactivateA = new System.Windows.Forms.Button();
             this.showButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -54,7 +56,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.buttonDeactivateA = new System.Windows.Forms.Button();
             this.groupBox.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -129,7 +130,7 @@
             // 
             // dispatchButton
             // 
-            this.dispatchButton.Location = new System.Drawing.Point(135, 63);
+            this.dispatchButton.Location = new System.Drawing.Point(134, 53);
             this.dispatchButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dispatchButton.Name = "dispatchButton";
             this.dispatchButton.Size = new System.Drawing.Size(105, 34);
@@ -164,6 +165,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.labelShowClock);
             this.groupBox5.Controls.Add(this.buttonDeactivateA);
             this.groupBox5.Controls.Add(this.showButton);
             this.groupBox5.Controls.Add(this.tabControl1);
@@ -176,6 +178,26 @@
             this.groupBox5.TabIndex = 24;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Alege agent - clonare/trimitere";
+            // 
+            // labelShowClock
+            // 
+            this.labelShowClock.AllowDrop = true;
+            this.labelShowClock.AutoSize = true;
+            this.labelShowClock.Location = new System.Drawing.Point(12, 374);
+            this.labelShowClock.Name = "labelShowClock";
+            this.labelShowClock.Size = new System.Drawing.Size(0, 17);
+            this.labelShowClock.TabIndex = 19;
+            this.labelShowClock.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // buttonDeactivateA
+            // 
+            this.buttonDeactivateA.Location = new System.Drawing.Point(11, 170);
+            this.buttonDeactivateA.Name = "buttonDeactivateA";
+            this.buttonDeactivateA.Size = new System.Drawing.Size(133, 30);
+            this.buttonDeactivateA.TabIndex = 18;
+            this.buttonDeactivateA.Text = "Agenti dezactivati";
+            this.buttonDeactivateA.UseVisualStyleBackColor = true;
+            this.buttonDeactivateA.Click += new System.EventHandler(this.buttonDeactivateA_Click);
             // 
             // showButton
             // 
@@ -191,10 +213,10 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(6, 216);
+            this.tabControl1.Location = new System.Drawing.Point(11, 216);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(269, 205);
+            this.tabControl1.Size = new System.Drawing.Size(264, 142);
             this.tabControl1.TabIndex = 16;
             // 
             // tabPage1
@@ -203,14 +225,14 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(261, 176);
+            this.tabPage1.Size = new System.Drawing.Size(256, 113);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "In retea";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // dispatchButtonNetwork
             // 
-            this.dispatchButtonNetwork.Location = new System.Drawing.Point(57, 51);
+            this.dispatchButtonNetwork.Location = new System.Drawing.Point(71, 32);
             this.dispatchButtonNetwork.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dispatchButtonNetwork.Name = "dispatchButtonNetwork";
             this.dispatchButtonNetwork.Size = new System.Drawing.Size(104, 47);
@@ -227,7 +249,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(256, 149);
+            this.tabPage2.Size = new System.Drawing.Size(256, 113);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "La o adresa specificata";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -235,7 +257,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 35);
+            this.label3.Location = new System.Drawing.Point(10, 28);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(95, 17);
             this.label3.TabIndex = 22;
@@ -244,7 +266,7 @@
             // comboBoxN
             // 
             this.comboBoxN.FormattingEnabled = true;
-            this.comboBoxN.Location = new System.Drawing.Point(13, 73);
+            this.comboBoxN.Location = new System.Drawing.Point(13, 63);
             this.comboBoxN.Name = "comboBoxN";
             this.comboBoxN.Size = new System.Drawing.Size(105, 24);
             this.comboBoxN.TabIndex = 21;
@@ -343,16 +365,6 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Informatii agentie";
             // 
-            // buttonDeactivateA
-            // 
-            this.buttonDeactivateA.Location = new System.Drawing.Point(11, 170);
-            this.buttonDeactivateA.Name = "buttonDeactivateA";
-            this.buttonDeactivateA.Size = new System.Drawing.Size(133, 30);
-            this.buttonDeactivateA.TabIndex = 18;
-            this.buttonDeactivateA.Text = "Agenti dezactivati";
-            this.buttonDeactivateA.UseVisualStyleBackColor = true;
-            this.buttonDeactivateA.Click += new System.EventHandler(this.buttonDeactivateA_Click);
-            // 
             // AgencyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -369,6 +381,7 @@
             this.groupBox.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
@@ -411,6 +424,7 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button showButton;
         private System.Windows.Forms.Button buttonDeactivateA;
+        private System.Windows.Forms.Label labelShowClock;
     }
 }
 
