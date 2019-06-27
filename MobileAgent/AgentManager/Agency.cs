@@ -14,6 +14,8 @@ namespace MobileAgent.AgentManager
     public class Agency : AgencyContext
     {
         #region Private Fields
+        public readonly static int POZITIVE = 1;
+        public readonly static int NEGATIVE = 0;
         private List<IMobile> _agentsMobileList = null;
         private List<IStationary> _agentsStatList = null;
         private Socket _agencySocket = null;
@@ -22,6 +24,7 @@ namespace MobileAgent.AgentManager
         private string _name;
         private List<string> _neighbours = new List<string>();
         private AgentProxy _agentDispatched = null;
+        private int _feedback = NEGATIVE;
         #endregion Private Fields
 
         #region Private Static Fields
@@ -127,6 +130,14 @@ namespace MobileAgent.AgentManager
         public int GetRezervationTime()
         {
             return _rezervationTime;
+        }
+        public void SetAgencyFeedback()
+        {
+            _feedback = POZITIVE;
+        }
+        public void ResetAgencyFeedback()
+        {
+            _feedback = NEGATIVE;
         }
         public void SetName(string name)
         {
@@ -356,12 +367,21 @@ namespace MobileAgent.AgentManager
                
                 if (GetConnection( destination))                   
                 {
-                   // networkStream = _connectionaMap[destination];
+                    if (agentProxy.GetAgentType() == Agent.ONEWAY)
+                    {
+                        if (!agentProxy.GetAgencyCreationContext().Equals(_ipEndPoint))
+                        {
+                            agentProxy.SetWorkStatus(Agent.DONE);
+
+                            while (_feedback != POZITIVE) ;
+                            ResetAgencyFeedback();
+                        }
+                    }
                     agentProxy.SetAgentCurrentContext(null);
                     formatter.Serialize(networkStream, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
-                    //return true;
 
+                               
                 }
                 
                // return false;
@@ -474,17 +494,17 @@ namespace MobileAgent.AgentManager
                 };
                 agentThread.Start();
             }
-            else if(agentProxy.GetAgentType() == Agent.ONEWAY)
-            {
-                Thread agentThread = new Thread(new ThreadStart(agentProxy.Run))
-                {
-                    Name = GetName() + ": " + agentProxy.GetName(),
-                    IsBackground = true
-                };
-                agentThread.Start();
-                agentProxy.SetWorkStatus(Agent.DONE);
+            //else if(agentProxy.GetAgentType() == Agent.ONEWAY)
+            //{
+            //    Thread agentThread = new Thread(new ThreadStart(agentProxy.Run))
+            //    {
+            //        Name = GetName() + ": " + agentProxy.GetName(),
+            //        IsBackground = true
+            //    };
+            //    agentThread.Start();
+            //    agentProxy.SetWorkStatus(Agent.DONE);
 
-            }
+            //}
 
             //UpdateAgency();
         }

@@ -13,6 +13,8 @@ namespace MobileAgent.AgentManager
         void SetName(string name);
         void SetNeighbours(List<string> neighbours);
         void SetDispatchedAgent(AgentProxy agentProxy);
+        void SetAgencyFeedback();
+        void ResetAgencyFeedback();
         IPEndPoint GetAgencyIPEndPoint();
         void CreateAgent(AgentProxy agentProxy);
         void Clone(IMobile agentCloned);

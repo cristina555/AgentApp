@@ -340,10 +340,10 @@ namespace AgentApp
                     IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
                     agency.Dispatch(agentDispatched,ipEndPoint);
                     
-                    if(agentDispatched.GetAgentType() != Agent.ONEWAY)
-                    {
-                        agency.RunAgent(agentDispatched);
-                    }
+                    //if(agentDispatched.GetAgentType() != Agent.ONEWAY)
+                    //{
+                    //    agency.RunAgent(agentDispatched);
+                    //}
 
                 }
                 else

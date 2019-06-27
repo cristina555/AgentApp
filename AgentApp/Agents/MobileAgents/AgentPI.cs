@@ -97,6 +97,7 @@ namespace AgentApp
 
                 if (!IsReady())
                 {
+                    agencyContext.SetAgencyFeedback();
                     break;
                 }
             }
