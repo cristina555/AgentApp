@@ -28,6 +28,8 @@ namespace MobileAgent.AgentManager
         public readonly static int BOOMERANG = 0;
         public readonly static int WALKER = 1;
         public readonly static int ONEWAY = 2;
+        public readonly static int MASTER = 3;
+        public readonly static int SLAVE = 4;
         public readonly static int LIFETIME = 1800; //seconds
         #endregion Public Fields
 
@@ -38,6 +40,7 @@ namespace MobileAgent.AgentManager
         private int _state = INACTIVE;
         private int _mobility;
         private int _type;
+        private int _workType;
         private int _id;
         private string _agentStateInfo;
         private string _creationTime;
@@ -46,6 +49,7 @@ namespace MobileAgent.AgentManager
         private AgencyContext _currentContext;
         private List<IMobile> _cloneList = new List<IMobile>();
         private int _lifetime = LIFETIME;
+        private IMobile _parent;
         #endregion Private Fields
 
         #region Private Static Fields
@@ -101,6 +105,14 @@ namespace MobileAgent.AgentManager
         {
             return _type;
         }
+        public int GetWorkType()
+        {
+            return _workType;
+        }
+        public IMobile GetParent()
+        {
+            return _parent;
+        }
         public List<IMobile> GetCloneList()
         {
             return _cloneList;
@@ -136,6 +148,7 @@ namespace MobileAgent.AgentManager
         {
             _agentInfo = info;
         }
+        
         public void SetAgentCurrentContext(AgencyContext currentContext)
         {
             _currentContext = currentContext;
@@ -152,6 +165,10 @@ namespace MobileAgent.AgentManager
         {
             _workStatus = status;
         }
+        public void SetWorkType(int status)
+        {
+            _workType = status;
+        }
         public void SetMobility(int mobility)
         {
             _mobility = mobility;
@@ -163,6 +180,10 @@ namespace MobileAgent.AgentManager
         public void SetClone(IMobile ap)
         {
             _cloneList.Add(ap);
+        }
+        public void SetParent(IMobile ap)
+        {
+            _parent = ap;
         }
         public void ResetLifetime()
         {
@@ -357,6 +378,10 @@ namespace MobileAgent.AgentManager
         public bool IsStatusOK()
         {
             return _status == OK;
+        }
+        public bool IsMaster()
+        {
+            return _type == MASTER;
         }
         #endregion Public Methods
 

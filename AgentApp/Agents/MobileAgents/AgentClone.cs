@@ -22,79 +22,60 @@ namespace AgentApp.Agents.MobileAgents
             SetAgentInfo("Colecteaza informatii din retea.");
         }
         public List<string> Parameters { get; set; } = new List<string>();
-        public int NumberOfClones { get; set; } = 0;
+        public int NumberOfSlaves { get; set; } = 0;
+        private static readonly Object obj = new Object();
         public void RunNetwork(AgencyContext agencyContext)
         {
             MobilityEventArgs args = new MobilityEventArgs();
             if (agencyContext.GetAgencyIPEndPoint().Equals(GetAgencyCreationContext()))
             {
-                if (IsReady())
+                if (IsMaster())
                 {
-                    agenciesVisited.Clear();
+                    //agenciesVisited.Clear();
                     SetAgentStateInfo("");
-                    agenciesVisited.Add(agencyContext.GetName());
+                    //agenciesVisited.Add(agencyContext.GetName());
                     foreach (String n  in agencyContext.GetNeighbours())
                     {
-                        if(!agenciesVisited.Contains(n))
-                        {
-                            agenciesVisited.Add(n);
+                        //if(!agenciesVisited.Contains(n))
+                        //{
+                           // agenciesVisited.Add(n);
                             IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(n);
                             int portNumber = AgencyForm.configParser.GetPort(n);
                             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
                             if(agencyContext.GetConnection(ipEndPoint))
                             {
                                 IMobile agentCloned = Clone();
-                                NumberOfClones++;
+                                agentCloned.SetParent(this);
+                                agentCloned.SetWorkType(SLAVE);
+                                NumberOfSlaves++;
                                 agencyContext.Dispatch(agentCloned, ipEndPoint);
                             }
-                        }
+                        //}
                     }
+                    while (GetCloneList().Count() <= NumberOfSlaves) ;
+
                 }
                 else
                 {
-                    if (!GetAgentStateInfo().Equals(""))
+                    IMobile parent = agencyContext.GetMobileAgentProxy(GetParent().GetName());
+                    lock (obj)
                     {
-                        args.Source = "Punct de stop: ";
-                        args.Information = "Agentul  " + GetName() + " a adunat informatiile: " + Environment.NewLine + GetAgentStateInfo();
-                        agencyContext.OnArrival(args);
-                        Console.Beep(800, 1000);
+                        parent.SetAgentStateInfo(GetAgentStateInfo() + Environment.NewLine);
+                        parent.SetClone(this);
                     }
-                    else
-                    {
-                        args.Source = "Punct de stop: ";
-                        args.Information = "Agentul " + GetName() + " nu a adunat nicio informatie !";
-                        agencyContext.OnArrival(args);
-                        Console.Beep(800, 1000);
-                    }
-
                 }
             }
             else
             {
-                foreach (String n in agencyContext.GetNeighbours())
-                {
-                    if (!agenciesVisited.Contains(n))
-                    {
-                        IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(n);
-                        int portNumber = AgencyForm.configParser.GetPort(n);
-                        IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
-                        if (agencyContext.GetConnection(ipEndPoint))
-                        {
-                            IMobile agentCloned = Clone();
-                            NumberOfClones++;
-                            agencyContext.Dispatch(agentCloned, ipEndPoint);
-                        }
-                    }
-                }
+               
                 args.Source = "Punct de rulare: ";
                 args.Information = "Agentul  " + GetName() + " ruleaza..." + Environment.NewLine + agencyContext.GetName() + ": " + ColectInformation(agencyContext);
                 agencyContext.OnArrival(args);
                 Console.Beep();
+                
+                agencyContext.Dispatch(this, GetAgencyCreationContext());
             }
-            while(NumberOfClones<0)
-            {
-
-            }
+            
         }
         private string ColectInformation(AgencyContext agencyContext)
         {

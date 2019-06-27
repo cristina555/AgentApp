@@ -486,6 +486,7 @@ namespace MobileAgent.AgentManager
             if (agentProxy.GetAgentType() == Agent.WALKER)
             {
                 agentProxy.SetWorkStatus(Agent.READY);
+                agentProxy.SetWorkType(Agent.MASTER);
                 agentProxy.SetAgentStateInfo(null);
                 Thread agentThread = new Thread(new ThreadStart(agentProxy.Run))
                 {
