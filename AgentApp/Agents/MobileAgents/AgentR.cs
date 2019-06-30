@@ -28,7 +28,7 @@ namespace AgentApp.Agents
             state = FIRST;
             SetType(Agent.WALKER);
             SetName("AgentR");
-            SetAgentInfo("Collect information from network");
+            SetAgentInfo("Rezervă agențiile pentru o anumită perioadă");
         }
         #endregion Constructor
 
@@ -62,65 +62,66 @@ namespace AgentApp.Agents
             MobilityEventArgs args = new MobilityEventArgs();
             if (!agencyContext.GetConnection(destination))
             {
-                while (!agencyContext.GetConnection(destination))
+
+                if (queue.Count != 0)
                 {
+                    Tuple<string, Queue<string>> t = queue.Dequeue();
                     if (queue.Count != 0)
                     {
-                        Tuple<string, Queue<string>> t = queue.Dequeue();
-                        if (queue.Count != 0)
+                        string next = queue.Peek().Item1;
+                        if (agencyContext.GetNeighbours().Contains(next))
                         {
-                            string next = queue.Peek().Item1;
-                            if (agencyContext.GetNeighbours().Contains(next))
-                            {
-                                IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(next);
-                                int portNumber = AgencyForm.configParser.GetPort(next);
-                                destination = new IPEndPoint(ipAddress, portNumber);
+                            IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(next);
+                            int portNumber = AgencyForm.configParser.GetPort(next);
+                            destination = new IPEndPoint(ipAddress, portNumber);
 
-                                args.Source = "Punct de plecare:  ";
-                                args.Information = "Agentul " + GetName() + " se duce catre " + next;
-                                agencyContext.OnDispatching(args);
+                            args.Source = "Punct de plecare: ";
+                            args.Information = "Agentul " + GetName() + " se duce către " + next;
+                            agencyContext.OnDispatching(args);
 
-                            }
-                            else
-                            {
-                                CreateWayBack(t.Item2);
-                                wayBack.Dequeue();
-                                string back = wayBack.Peek();
-                                IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
-                                int portNumber = AgencyForm.configParser.GetPort(back);
-                                destination = new IPEndPoint(ipAddress, portNumber);
-
-                                args.Source = "Punct de plecare: ";
-                                args.Information = "Agentul " + GetName() + " se duce catre " + back;
-                                agencyContext.OnDispatching(args);
-                            }
                         }
                         else
                         {
-                            t.Item2.Dequeue();
-                            destination = RetractAgent(agencyContext, t.Item2);
-                            if (destination == null)
-                            {
-                                args.Source = "Punct de stop: ";
-                                args.Information = "Agentul " + GetName() + " nu a adunat nicio informatie !";
-                                agencyContext.OnArrival(args);
-                                Console.Beep(800, 1000);
+                            CreateWayBack(t.Item2); // ceva probleme, trebuie sa depistez in ce caz
+                            wayBack.Dequeue();
+                            string back = wayBack.Peek();
+                            IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
+                            int portNumber = AgencyForm.configParser.GetPort(back);
+                            destination = new IPEndPoint(ipAddress, portNumber);
 
-                                break;
-                            }
                             args.Source = "Punct de plecare: ";
-                            args.Information = "Agentul " + GetName() + " se duce catre sursa";
+                            args.Information = "Agentul " + GetName() + " se duce către " + back;
                             agencyContext.OnDispatching(args);
                         }
-
                     }
                     else
                     {
-                        break;
+                        t.Item2.Dequeue();
+                        destination = RetractAgent(agencyContext, t.Item2);
+                        if (destination == null)
+                        {
+                            args.Source = "Punct de stop: ";
+                            args.Information = "Agentul " + GetName() + " nu a adunat nicio informație !";
+                            agencyContext.OnArrival(args);
+                            Console.Beep(800, 1000);
+
+                            return;
+                        }
+
+                        args.Source = "Punct de plecare: ";
+                        args.Information = "Agentul " + GetName() + " se duce către sursă";
+                        agencyContext.OnDispatching(args);
                     }
 
                 }
-                agencyContext.Dispatch(this, destination);
+                else
+                {
+                    return;
+
+                }
+
+
+                TryDispatch(agencyContext, destination);
             }
             else
             {
@@ -168,13 +169,13 @@ namespace AgentApp.Agents
                 if (queue.Count != 0)
                 {
                     args.Source = "Punct de sosire: ";
-                    args.Information = "Agentul " + GetName() + " se intoarce pentru a se duce la " + queue.Peek().Item1;
+                    args.Information = "Agentul " + GetName() + " se întoarce pentru a se duce la " + queue.Peek().Item1;
                     agencyContext.OnArrival(args);
                 }
                 else
                 {
                     args.Source = "Punct de sosire: ";
-                    args.Information = "Agentul " + GetName() + " se intoarce la sursa";
+                    args.Information = "Agentul " + GetName() + " se întoarce la sursă";
                     agencyContext.OnArrival(args);
                 }
                 wayBack.Dequeue();
@@ -201,7 +202,7 @@ namespace AgentApp.Agents
                         IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                         args.Source = "Punct de plecare: ";
-                        args.Information = "Agentul " + GetName() + " se duce catre " + cont;
+                        args.Information = "Agentul " + GetName() + " se duce către " + cont;
                         agencyContext.OnDispatching(args);
 
                         TryDispatch(agencyContext, ipEndPoint);
@@ -209,7 +210,7 @@ namespace AgentApp.Agents
                     else
                     {
                         args.Source = "Punct de plecare: ";
-                        args.Information = "Agentul " + GetName() + " se duce catre sursa";
+                        args.Information = "Agentul " + GetName() + " se duce către sursă";
                         agencyContext.OnDispatching(args);
 
                         TryDispatch(agencyContext, GetAgencyCreationContext());
@@ -225,7 +226,6 @@ namespace AgentApp.Agents
                     {
                         agenciesVisited.Clear();
                         SetAgentStateInfo("");
-                        NumberOfValidAgencies = 0;
                         agenciesVisited.Add(agencyContext.GetName());
                         AddNeighbours(agencyContext, new Queue<string>());
                         if (queue.Count != 0)
@@ -236,7 +236,7 @@ namespace AgentApp.Agents
                             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                             args.Source = "Punct de plecare: ";
-                            args.Information = "Agentul " + GetName() + " se duce catre " + next;
+                            args.Information = "Agentul " + GetName() + " se duce către " + next;
                             agencyContext.OnDispatching(args);
 
                             TryDispatch(agencyContext, ipEndPoint);
@@ -247,20 +247,28 @@ namespace AgentApp.Agents
                     {
                         if (NumberOfValidAgencies != 0)
                         {
-                            args.Source = "Punct de stop: ";
-                            args.Information = "Agentul  " + GetName() + " a gasit " + NumberOfValidAgencies + " agentii valide!";
-                            agencyContext.OnArrival(args);
-                            if (NumberOfValidAgencies >= Threshold)
+                            if (state == FIRST)
                             {
-                                state = SECOND;
-                                NumberOfValidAgencies = 0;
+                                args.Source = "Punct de stop: ";
+                                args.Information = "Agentul  " + GetName() + " a găsit " + NumberOfValidAgencies + " agentii valide!";
+                                agencyContext.OnArrival(args);
+                                if (NumberOfValidAgencies >= Threshold)
+                                {
+                                    state = SECOND;
+                                }
+                                Console.Beep(800, 1000);
                             }
-                            Console.Beep(800, 1000);
+                            else
+                            {
+                                args.Source = "Punct de stop: ";
+                                args.Information = "Agentul  a rezervat agențiile valide";
+                                agencyContext.OnArrival(args);
+                            }
                         }
                         else
                         {
                             args.Source = "Punct de stop: ";
-                            args.Information = "Agentul " + GetName() + " nu a vizitat nicio agentie !";
+                            args.Information = "Agentul " + GetName() + " nu a vizitat nicio agenție !";
                             agencyContext.OnArrival(args);
                             Console.Beep(800, 1000);
                         }
@@ -273,7 +281,7 @@ namespace AgentApp.Agents
                         Tuple<string, Queue<string>> t = queue.Dequeue();
 
                         args.Source = "Punct de rulare: ";
-                        args.Information = "Agentul  " + GetName() + " ruleaza..." + Environment.NewLine + agencyContext.GetName() + Environment.NewLine + ShowInformation(agencyContext);
+                        args.Information = "Agentul  " + GetName() + " rulează..." + Environment.NewLine + agencyContext.GetName() + Environment.NewLine + ShowInformation(agencyContext);
                         agencyContext.OnArrival(args);
                         Console.Beep();
                         if (state == FIRST)
@@ -289,7 +297,7 @@ namespace AgentApp.Agents
                         {
                             if (IsValidAgency(agencyContext))
                             {
-                                agencyContext.SetBookedTime(1000000000);
+                                agencyContext.SetBookedTime(10000000);
                                 NumberOfValidAgencies++;
                             }
                         }
@@ -309,8 +317,8 @@ namespace AgentApp.Agents
                                 int portNumber = AgencyForm.configParser.GetPort(next);
                                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
-                                args.Source = "Agentul se deplaseaza ";
-                                args.Information = "Agentul " + GetName() + " se duce catre " + next;
+                                args.Source = "Agentul se deplasează ";
+                                args.Information = "Agentul " + GetName() + " se duce către " + next;
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);
@@ -324,7 +332,7 @@ namespace AgentApp.Agents
                                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                                 args.Source = "Punct de plecare: ";
-                                args.Information = "Agentul " + GetName() + " se duce catre " + back;
+                                args.Information = "Agentul " + GetName() + " se duce către " + back;
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);
@@ -335,7 +343,7 @@ namespace AgentApp.Agents
                             SetWorkStatus(Agent.DONE);
 
                             args.Source = "Punct de plecare: ";
-                            args.Information = "Agentul " + GetName() + " se intoarce la sursa .";
+                            args.Information = "Agentul " + GetName() + " se întoarce la sursă.";
                             agencyContext.OnDispatching(args);
 
                             TryDispatch(agencyContext, GetAgencyCreationContext());
@@ -434,9 +442,25 @@ namespace AgentApp.Agents
         #region Public Override Methods
         public override void Run()
         {
-            ResetLifetime();
             AgencyContext agencyContext = GetAgentCurrentContext();
-            RunNetwork(agencyContext);
+            if (state ==  FIRST)
+            {
+                ResetLifetime();
+                RunNetwork(agencyContext);
+            }
+            else if (state == SECOND && NumberOfValidAgencies >= Threshold)
+            {
+                ResetLifetime();
+                NumberOfValidAgencies = 0;
+                RunNetwork(agencyContext);
+            }
+            else
+            {
+                MobilityEventArgs args = new MobilityEventArgs();
+                args.Source = "Punct de stop: ";
+                args.Information = "Agentul nu poate fi trimis în rețea, nu sunt suficiente agenții valide!";
+                agencyContext.OnArrival(args);
+            }
         }
         public override void GetUI()
         {
@@ -505,7 +529,7 @@ namespace AgentApp.Agents
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(256, 20);
             label2.TabIndex = 7;
-            label2.Text = "Selecteaza informatiile dorite";
+            label2.Text = "Selectează informațiile dorite";
             // 
             // label3
             // 
@@ -523,7 +547,7 @@ namespace AgentApp.Agents
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(81, 17);
             label4.TabIndex = 9;
-            label4.Text = "Placa video";
+            label4.Text = "Placă video";
             // 
             // comboBox2
             // 
@@ -564,7 +588,7 @@ namespace AgentApp.Agents
             label5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             label5.Size = new System.Drawing.Size(148, 18);
             label5.TabIndex = 13;
-            label5.Text = "Numarul de agentii";
+            label5.Text = "Numărul de agenții";
             label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // AgentRemoteUI
@@ -584,7 +608,7 @@ namespace AgentApp.Agents
             ui.Controls.Add(button1);
             ui.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             ui.Name = "AgentRemoteUI";
-            ui.Text = "Interfata AgentRemote";
+            ui.Text = "Interfață AgentRemote";
             ui.ResumeLayout(false);
             ui.PerformLayout();
 

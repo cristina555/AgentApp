@@ -67,7 +67,6 @@
     <Compile Include="AgencyForm.Designer.cs">
       <DependentUpon>AgencyForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Agents\MobileAgents\AgentSelfRemote.cs" />
     <Compile Include="Agents\StationaryAgents\AgentOS.cs" />
     <Compile Include="Agents\StationaryAgents\AgentOSSP.cs" />
     <Compile Include="Agents\StationaryAgents\AgentP.cs" />

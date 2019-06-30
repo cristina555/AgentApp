@@ -54,7 +54,6 @@
     <Compile Include="EventAgent\PersistencyEventArgs.cs" />
     <Compile Include="EventAgent\UnconnectedAgencyArgs.cs" />
     <Compile Include="Exceptions\AgencyNotFoundException.cs" />
-    <Compile Include="Exceptions\AgentException.cs" />
     <Compile Include="Exceptions\AgentNotFoundException.cs" />
     <Compile Include="Exceptions\CloneNotSupportedException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -137,7 +137,10 @@ namespace AgentApp
             add(t.Milliseconds, "ms");
 
             string text= "Timpul de rezervare pentru " + agency.GetName() + ":" + string.Join(" ", parts);
-            labelShowClock.Text = text;
+            this.Invoke((MethodInvoker)delegate
+            {
+                labelShowClock.Text = text;
+            });
         }
         
         private void buttonShow_Click(object source, EventArgs e, Form ui)
@@ -599,6 +602,6 @@ namespace AgentApp
             thread.Start();
         }
 
-       
+        
     }
 }

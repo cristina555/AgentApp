@@ -1,21 +1,14 @@
-﻿using System;
+﻿using MobileAgent.AgentManager;
+using System;
 
 namespace MobileAgent.Exceptions
 {
-    public class AgencyNotFoundException : AgentException
+    public class AgencyNotFoundException : Exception
     {
         #region Fields
-        private string _source;
-        private string _message = null;
+        private string _message;
+        private Agency _agency = null;
         #endregion Fields
-
-        #region Constructors
-        public AgencyNotFoundException(string message, string source) : base(message)
-        {
-            _source = source;
-            _message = string.Format("{0} Agentia: {1:F2}", message, source);
-        }
-        #endregion Constructors
 
         #region Properties
         public override string Message
@@ -26,5 +19,14 @@ namespace MobileAgent.Exceptions
             }
         }
         #endregion Properties
+        #region Constructors
+        public AgencyNotFoundException(string message, Agency agency) :base()
+        {
+            _agency = agency;
+            _message = string.Format("{0} : Agentia  {1:F2}", message, agency.GetName());
+        }
+        #endregion Constructors
+
+        
     }
 }

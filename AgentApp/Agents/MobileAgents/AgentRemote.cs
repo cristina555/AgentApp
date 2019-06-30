@@ -25,7 +25,7 @@ namespace AgentApp.Agents
             Parameters = new List<string>();
             SetType(Agent.WALKER);
             SetName("AgentRemote");
-            SetAgentInfo("olecteaza informatii din retea.");
+            SetAgentInfo("Colectează informații din rețea.");
             _info = new Dictionary<string, String>();
         }
         #endregion Constructors
@@ -45,7 +45,7 @@ namespace AgentApp.Agents
                         type = "AgentOS";
                         break;
                     }
-                case "Arhitectura sistem de operare":
+                case "Arhitectură sistem de operare":
                     {
                         type = "AgentOSA";
                         break;
@@ -55,12 +55,12 @@ namespace AgentApp.Agents
                         type = "AgentOSSP";
                         break;
                     }
-                case "Informatii procesor":
+                case "Informații procesor":
                     {
                         type = "AgentP";
                         break;
                     }
-                case "Informatii placa video":
+                case "Informații placă video":
                     {
                         type = "AgentVC";
                         break;
@@ -108,7 +108,7 @@ namespace AgentApp.Agents
                             destination = new IPEndPoint(ipAddress, portNumber);
 
                             args.Source = "Punct de plecare: ";
-                            args.Information = "Agentul " + GetName() + " se duce catre " + next;
+                            args.Information = "Agentul " + GetName() + " se duce către " + next;
                             agencyContext.OnDispatching(args);
 
                         }
@@ -122,7 +122,7 @@ namespace AgentApp.Agents
                             destination = new IPEndPoint(ipAddress, portNumber);
 
                             args.Source = "Punct de plecare: ";
-                            args.Information = "Agentul " + GetName() + " se duce catre " + back;
+                            args.Information = "Agentul " + GetName() + " se duce către " + back;
                             agencyContext.OnDispatching(args);
                         }
                     }
@@ -133,7 +133,7 @@ namespace AgentApp.Agents
                         if (destination == null)
                         {
                             args.Source = "Punct de stop: ";
-                            args.Information = "Agentul " + GetName() + " nu a adunat nicio informatie !";
+                            args.Information = "Agentul " + GetName() + " nu a adunat nicio informație !";
                             agencyContext.OnArrival(args);
                             Console.Beep(800, 1000);
 
@@ -141,7 +141,7 @@ namespace AgentApp.Agents
                         }
 
                         args.Source = "Punct de plecare: ";
-                        args.Information = "Agentul " + GetName() + " se duce catre sursa";
+                        args.Information = "Agentul " + GetName() + " se duce către sursă";
                         agencyContext.OnDispatching(args);
                     }
 
@@ -203,13 +203,13 @@ namespace AgentApp.Agents
                 if (queue.Count != 0)
                 {
                     args.Source = "Punct de sosire: ";
-                    args.Information = "Agentul " + GetName() + " se intoarce pentru a se duce la " + queue.Peek().Item1; 
+                    args.Information = "Agentul " + GetName() + " se întoarce pentru a se duce la " + queue.Peek().Item1; 
                     agencyContext.OnArrival(args);
                 }
                 else
                 {
                     args.Source = "Punct de sosire: ";
-                    args.Information = "Agentul " + GetName() + " se intoarce la sursa";
+                    args.Information = "Agentul " + GetName() + " se întoarce la sursa";
                     agencyContext.OnArrival(args);
                 }
                 if (wayBack.Count != 0)
@@ -220,7 +220,7 @@ namespace AgentApp.Agents
                     IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                     args.Source = "Punct de plecare: ";
-                    args.Information = "Agentul " + GetName() + " se duce catre " + back;
+                    args.Information = "Agentul " + GetName() + " se duce către " + back;
                     agencyContext.OnDispatching(args);
 
                     TryDispatch(agencyContext, ipEndPoint);
@@ -235,7 +235,7 @@ namespace AgentApp.Agents
                         IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                         args.Source = "Punct de plecare: ";
-                        args.Information = "Agentul " + GetName() + " se duce catre " + cont;
+                        args.Information = "Agentul " + GetName() + " se duce către " + cont;
                         agencyContext.OnDispatching(args);
 
                         TryDispatch(agencyContext, ipEndPoint);
@@ -243,7 +243,7 @@ namespace AgentApp.Agents
                     else
                     {
                         args.Source = "Punct de plecare: ";
-                        args.Information = "Agentul " + GetName() + " se duce catre sursa";
+                        args.Information = "Agentul " + GetName() + " se duce către sursă";
                         agencyContext.OnDispatching(args);
 
                         TryDispatch(agencyContext, GetAgencyCreationContext());
@@ -270,7 +270,7 @@ namespace AgentApp.Agents
                             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                             args.Source = "Punct de plecare: ";
-                            args.Information = "Agentul " + GetName() + " se duce catre " + next;
+                            args.Information = "Agentul " + GetName() + " se duce către " + next;
                             agencyContext.OnDispatching(args);
 
                             TryDispatch(agencyContext, ipEndPoint);
@@ -283,14 +283,14 @@ namespace AgentApp.Agents
                         if (!GetAgentStateInfo().Equals(""))
                         {
                             args.Source = "Punct de stop: ";
-                            args.Information = "Agentul  " + GetName() + " a adunat informatiile: " + Environment.NewLine + GetAgentStateInfo();
+                            args.Information = "Agentul  " + GetName() + " a adunat informațiile: " + Environment.NewLine + GetAgentStateInfo();
                             agencyContext.OnArrival(args);
                             Console.Beep(800, 1000);
                         }
                         else
                         {
                             args.Source = "Punct de stop: ";
-                            args.Information = "Agentul " + GetName() + " nu a adunat nicio informatie !";
+                            args.Information = "Agentul " + GetName() + " nu a adunat nicio informație !";
                             agencyContext.OnArrival(args);
                             Console.Beep(800, 1000);
                         }
@@ -304,7 +304,7 @@ namespace AgentApp.Agents
                         Tuple<string, Queue<string>> t = queue.Dequeue();
 
                         args.Source = "Punct de rulare: ";
-                        args.Information = "Agentul  " + GetName() + " ruleaza..." + Environment.NewLine + agencyContext.GetName() + ": " + ColectInformation(agencyContext);
+                        args.Information = "Agentul  " + GetName() + " rulează..." + Environment.NewLine + agencyContext.GetName() + ": " + ColectInformation(agencyContext);
                         agencyContext.OnArrival(args);
                         Console.Beep();
 
@@ -319,7 +319,7 @@ namespace AgentApp.Agents
                                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                                 args.Source = "Punct de plecare: ";
-                                args.Information = "Agentul " + GetName() + " se duce catre " + next;
+                                args.Information = "Agentul " + GetName() + " se duce către " + next;
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);
@@ -334,7 +334,7 @@ namespace AgentApp.Agents
                                 IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
 
                                 args.Source = "Punct de plecare: ";
-                                args.Information = "Agentul " + GetName() + " se intoarce la " + back;
+                                args.Information = "Agentul " + GetName() + " se întoarce la " + back;
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);
@@ -345,7 +345,7 @@ namespace AgentApp.Agents
                             SetWorkStatus(Agent.DONE);
 
                             args.Source = "Punct de plecare: ";
-                            args.Information = "Agentul " + GetName() + " se intoarce la sursa .";
+                            args.Information = "Agentul " + GetName() + " se întoarce la sursă.";
                             agencyContext.OnDispatching(args);
 
                             TryDispatch(agencyContext, GetAgencyCreationContext());
@@ -435,7 +435,7 @@ namespace AgentApp.Agents
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(65, 17);
             label1.TabIndex = 5;
-            label1.Text = "Informatii";
+            label1.Text = "Informații";
             // 
             // button1
             // 
@@ -454,10 +454,10 @@ namespace AgentApp.Agents
             checkedListBox1.FormattingEnabled = true;
             checkedListBox1.Items.AddRange(new object[] {
             "Sistem de operare",
-            "Arhitectura sistem de operare",
+            "Arhitectură sistem de operare",
             "Service Pack sistem de operare",
-            "Informatii procesor",
-            "Informatii placa video"});
+            "Informații procesor",
+            "Informații placă video"});
             checkedListBox1.Location = new System.Drawing.Point(13, 58);
             checkedListBox1.Margin = new Padding(4);
             checkedListBox1.Name = "checkedListBox1";
@@ -474,11 +474,11 @@ namespace AgentApp.Agents
             ui.Controls.Add(button1);
             ui.Margin = new Padding(3, 2, 3, 2);
             ui.Name = "AgentRemoteUI";
-            ui.Text = "Interfata AgentRemote";
+            ui.Text = "Interfață AgentRemote";
             ui.ResumeLayout(false);
             ui.PerformLayout();
 
-            button1.Click += new System.EventHandler((sender, e) => buttonSend_Click(sender, e, ui));
+            button1.Click += new EventHandler((sender, e) => buttonSend_Click(sender, e, ui));
             if (ui.Controls.Count != 0)
             {
                 var thread = new Thread(() =>

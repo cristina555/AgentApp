@@ -15,13 +15,13 @@ namespace AgentApp
         {
             SetType(Agent.ONEWAY);
             SetName("AgentPI");
-            SetAgentInfo("Calculeaza valoarea lui PI");
+            SetAgentInfo("Calculează valoarea lui PI");
         }
         public AgentPI(int id) : base(id)
         {
             SetType(Agent.ONEWAY);
             SetName("AgentPI");
-            SetAgentInfo("Calculeaza valoarea lui PI");
+            SetAgentInfo("Calculează valoarea lui PI");
         }
         #endregion Constructor
 
@@ -169,7 +169,7 @@ namespace AgentApp
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(105, 13);
             label1.TabIndex = 5;
-            label1.Text = "Numarul de zecimale";
+            label1.Text = "Numărul de zecimale";
             //
             //button1
             //
@@ -201,7 +201,7 @@ namespace AgentApp
             ui.Controls.Add(textBox1);
             ui.Margin = new Padding(2, 2, 2, 2);
             ui.Name = "AgentPiUI";
-            ui.Text = "Interfata AgentRemote";
+            ui.Text = "Interfață AgentRemote";
             ui.ResumeLayout(false);
             ui.PerformLayout();
 

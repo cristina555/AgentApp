@@ -20,13 +20,13 @@ namespace AgentApp.Agents
         {
             this.SetType(Agent.BOOMERANG);
             this.SetName("AgentInfo");
-            this.SetAgentInfo("Get the list of visited agencies");
+            this.SetAgentInfo("Preia lista agențiilor vizitate");
         }
         public AgentInfo(int id) : base(id)
         {
             this.SetType(Agent.BOOMERANG);
             this.SetName("AgentInfo");
-            this.SetAgentInfo("Get the list of visited agencies");
+            this.SetAgentInfo("Preia lista agențiilor vizitate");
         }
         #endregion Constructors
 

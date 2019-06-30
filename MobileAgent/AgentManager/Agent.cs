@@ -49,7 +49,7 @@ namespace MobileAgent.AgentManager
         private AgencyContext _currentContext;
         private List<IMobile> _cloneList = new List<IMobile>();
         private int _lifetime = LIFETIME;
-        private IMobile _parent;
+        private IMobile _parent = null;
         #endregion Private Fields
 
         #region Private Static Fields
@@ -69,6 +69,10 @@ namespace MobileAgent.AgentManager
             SetCreationTime();
             _state = ACTIVE;
             SetLifetime();
+        }
+        public IMobile Clone()
+        {
+            return (IMobile)this.MemberwiseClone();
         }
         #endregion Constructors
 
@@ -216,45 +220,47 @@ namespace MobileAgent.AgentManager
             _timer.Elapsed += OnTimedEvent;
             _timer.Enabled = true;
         }
-        public IMobile Clone()
-        {
-            IMobile agentCloned = null;
-            try
-            {
-                agentCloned = this;
-            }
-            catch (CloneNotSupportedException cnse)
-            {
-                Console.WriteLine("CloneNotSupportedException caught! Mesaj : " + cnse.Message + " --> Agency Clone Agent.");
-            }
-            catch (AgencyNotFoundException anfe)
-            {
-                Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Clone Agent.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Clone Agent.");
-            }
-            return agentCloned;
-        }
-        //public bool GetConnection(IPEndPoint destination)
+        //public IMobile Clone()
         //{
-        //    _connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        //    IMobile agentCloned = null;
         //    try
         //    {
-        //        _connectSocket.Connect(destination);
-        //        if(_connectSocket.Connected)
-        //        {
-        //            return true;
-        //        }
-        //        return false;
+        //        agentCloned = this.Ge;
+        //        agentCloned.SetAgentId(GetAgentId() + _cloneList.Count + 1);
+        //        //agentCloned.SetName(GetName() + "_cloned_"+_cloneList.Count + 1);
         //    }
-        //    catch (Exception)
+        //    catch (CloneNotSupportedException cnse)
         //    {
-
+        //        Console.WriteLine("CloneNotSupportedException caught! Mesaj : " + cnse.Message + " --> Agency Clone Agent.");
         //    }
-        //    return false;
+        //    catch (AgencyNotFoundException anfe)
+        //    {
+        //        Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Clone Agent.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Clone Agent.");
+        //    }
+        //    return agentCloned;
         //}
+        public bool GetConnection(IPEndPoint destination)
+        {
+            Socket _connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                _connectSocket.Connect(destination);
+                if (_connectSocket.Connected)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
+        }
         public bool Dispatch(IPEndPoint destination)
         {
             try
@@ -381,7 +387,7 @@ namespace MobileAgent.AgentManager
         }
         public bool IsMaster()
         {
-            return _type == MASTER;
+            return _workType == MASTER;
         }
         #endregion Public Methods
 
