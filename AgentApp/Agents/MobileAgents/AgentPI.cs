@@ -3,6 +3,7 @@ using System.Xml;
 using MobileAgent.AgentManager;
 using System.Windows.Forms;
 using System.Threading;
+using MobileAgent.EventAgent;
 
 namespace AgentApp
 {
@@ -46,10 +47,26 @@ namespace AgentApp
         #region Private Methods
         private void CalculPi(AgencyContext agencyContext)
         {
+            MobilityEventArgs args = new MobilityEventArgs();
+            if (Index == 0)
+            {
+                
+                args.Source = "Agentul " + this.GetName() + " rulează!";
+                args.Information = "Rezultatul este: " + Result;
+                agencyContext.OnArrival(args);
+            }
+            else
+            {
+                args.Source = "Agentul " + this.GetName() + " a sosit!";
+                args.Information = "Rezultatul este: " + Result;
+                agencyContext.OnArrival(args);
+            }
+
             Console.WriteLine("Rezultatul este: " + Result);
-            Dec++;
+            
             if (State == 1)
             {
+                Dec++;
                 x = new uint[Dec * 10 / 3 + 2];
                 r = new uint[Dec * 10 / 3 + 2];
 
@@ -86,6 +103,7 @@ namespace AgentApp
                 {
                     Result = Result + pi[Index];
                 }
+                
                 Console.WriteLine("Rezultatul este: " + Result);
                 r[x.Length - 1] = x[x.Length - 1] % 10; ;
 
@@ -100,10 +118,32 @@ namespace AgentApp
                     agencyContext.SetAgencyFeedback();
                     break;
                 }
+                if (Result.Length - 1 == Dec)
+                {
+                    args.Source = "Agentul " + this.GetName() + " a terminat!";
+                    args.Information = "Rezultatul este: " + Result;
+                    agencyContext.OnArrival(args);
+                }
             }
+            if (Index < Dec)
+            {
+                this.SetAgentStateInfo("Rezultatul este: " + Result + "\n");
 
-            this.SetAgentStateInfo("Rezultatul este: " + Result + "\n");
-            Console.WriteLine("Rezultatul este " + Result);
+                args.Source = "Agentul " + this.GetName() + " pleacă!";
+                args.Information = "Rezultatul este: " + Result;
+                agencyContext.OnDispatching(args);
+
+                Console.WriteLine("Rezultatul este " + Result);
+            }
+            else
+            {
+                SetWorkStatus(Agent.DONE);
+                this.SetAgentStateInfo("Rezultatul este: " + Result + "\n");
+
+                args.Source = "Agentul " + this.GetName() + " a terminat!";
+                args.Information = "Rezultatul este: " + Result;
+                agencyContext.OnArrival(args);
+            }
         }
         private void button1_Click(object sender, EventArgs e, Form ui)
         {
@@ -120,6 +160,12 @@ namespace AgentApp
                     }
                 }
                 Dec = dec;
+                Thread agentThread = new Thread(new ThreadStart(Run))
+                {
+                    Name = GetName() + ": " + GetName(),
+                    IsBackground = true
+                };
+                agentThread.Start();
                 ui.Close();
             }
             catch (NullReferenceException nre)
@@ -137,6 +183,8 @@ namespace AgentApp
             Index = 0;
             Step = 0;
             Result = "";
+            State = 0;
+            Dec -= 1;
         }
         #endregion Private Methods
 

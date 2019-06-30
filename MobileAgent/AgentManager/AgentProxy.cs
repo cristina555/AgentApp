@@ -16,7 +16,8 @@ namespace MobileAgent.AgentManager
         String GetAgentInfo();
         string GetName();
         string GetCreationTime();
-         void SetAgentId(int id);
+        
+        void SetAgentId(int id);
         void SetAgentCurrentContext(AgencyContext currentContext);
         void SetCreationTime();
         void SetAgentStateInfo(String codebase);

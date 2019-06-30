@@ -9,10 +9,10 @@ namespace AgentApp.AditionalClasses
     {
 
         #region Constructor
-        public ConfigParser()
+        public ConfigParser(int topologyNumber)
         {
             NetworkHosts = new Dictionary<IPAddress, Tuple<string, int, string[]>>();
-            FormNetworkHosts();
+            FormNetworkHosts(topologyNumber);
         }
         #endregion Constructor
 
@@ -21,16 +21,56 @@ namespace AgentApp.AditionalClasses
         #endregion Properties
 
         #region Private Methods
-        private void FormNetworkHosts()
+        private void FormNetworkHosts(int topologyNumber)
         {
             var _config = (CustomConfig)ConfigurationManager.GetSection("networkConfig");
 
-            foreach (HostElement instance in _config.Instances)
+            switch (topologyNumber)
             {
-                IPAddress ip = IPAddress.Parse(instance.Ip);
-                string[] n = instance.Neighbours.Split(' ');
-                int port = Convert.ToInt16(instance.Port);
-                NetworkHosts.Add(ip, Tuple.Create(instance.Name, port, n));
+                case 1:
+                    {
+                        foreach (HostElement instance in _config.Instances)
+                        {
+                            IPAddress ip = IPAddress.Parse(instance.Ip);
+                            string[] n = instance.Neighbours.Split(' ');
+                            int port = Convert.ToInt16(instance.Port);
+                            NetworkHosts.Add(ip, Tuple.Create(instance.Name, port, n));
+                        }
+                        break;
+                    }
+                case 2:
+                    {
+                        foreach (HostElement instance in _config.Instances2)
+                        {
+                            IPAddress ip = IPAddress.Parse(instance.Ip);
+                            string[] n = instance.Neighbours.Split(' ');
+                            int port = Convert.ToInt16(instance.Port);
+                            NetworkHosts.Add(ip, Tuple.Create(instance.Name, port, n));
+                        }
+                        break;
+                    }
+                case 3:
+                    {
+                        foreach (HostElement instance in _config.Instances3)
+                        {
+                            IPAddress ip = IPAddress.Parse(instance.Ip);
+                            string[] n = instance.Neighbours.Split(' ');
+                            int port = Convert.ToInt16(instance.Port);
+                            NetworkHosts.Add(ip, Tuple.Create(instance.Name, port, n));
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        foreach (HostElement instance in _config.Instances)
+                        {
+                            IPAddress ip = IPAddress.Parse(instance.Ip);
+                            string[] n = instance.Neighbours.Split(' ');
+                            int port = Convert.ToInt16(instance.Port);
+                            NetworkHosts.Add(ip, Tuple.Create(instance.Name, port, n));
+                        }
+                        break;
+                    }
             }
         }
         #endregion Private Methods

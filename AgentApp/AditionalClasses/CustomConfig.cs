@@ -14,6 +14,24 @@ namespace AgentApp.AditionalClasses
                 return (NetworkCollection)this["instances"];
             }
         }
+        [ConfigurationProperty("instances2")]
+        [ConfigurationCollection(typeof(NetworkCollection))]
+        public NetworkCollection Instances2
+        {
+            get
+            {
+                return (NetworkCollection)this["instances2"];
+            }
+        }
+        [ConfigurationProperty("instances3")]
+        [ConfigurationCollection(typeof(NetworkCollection))]
+        public NetworkCollection Instances3
+        {
+            get
+            {
+                return (NetworkCollection)this["instances3"];
+            }
+        }
         #endregion Properties
     }
 }

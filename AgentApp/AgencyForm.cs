@@ -40,7 +40,7 @@ namespace AgentApp
         {
             
             InitializeComponent();
-            configParser = new ConfigParser();
+            configParser = new ConfigParser(0);
             gs = new GeneralSettings();
             _random = new Random();
             StartAgency();
@@ -351,7 +351,7 @@ namespace AgentApp
                 }
                 else
                 {
-                    MessageBox.Show("Agentul nu poate fi trimis in retea: nu respecta tipul. Alegeti alt agent.");
+                    MessageBox.Show("Agentul nu poate fi trimis în rețea: nu respectă tipul. Alegeți alt agent.");
                 }
             }
             catch (AgentNotFoundException anfe)
@@ -360,7 +360,8 @@ namespace AgentApp
             }
             catch (NullReferenceException nfe)
             {
-                MessageBox.Show("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
+                MessageBox.Show("Alege destinatia!");
+                //MessageBox.Show("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
             }
             catch (SocketException io)
             {
@@ -588,8 +589,8 @@ namespace AgentApp
             ui.ClientSize = new System.Drawing.Size(404, 119);
             ui.Controls.Add(label1);
             ui.Controls.Add(button1);
-            ui.Name = "Rezrvare Agentie - timp ramas";
-            ui.Text = "Activare agenti";
+            ui.Name = "Rezervare Agenție - timp rămas";
+            ui.Text = "Activare agenți";
             ui.ResumeLayout(false);
             ui.PerformLayout();
 
@@ -602,6 +603,26 @@ namespace AgentApp
             thread.Start();
         }
 
-        
+        private void buttonTopology_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int i = int.Parse(comboBoxTop.GetItemText(comboBoxTop.SelectedIndex));
+                configParser = new ConfigParser(i + 1);
+                comboBoxN.Items.Clear();
+                comboBoxN.ResetText();
+                FillIPAddressAndPortsList();
+            }
+            catch(NullReferenceException)
+            {
+                MessageBox.Show("Alege topologia!");
+            }
+            catch(Exception)
+            {
+                MessageBox.Show("Alege topologia!");
+            }
+        }
+
+       
     }
 }

@@ -160,7 +160,6 @@ namespace MobileAgent.AgentManager
             while (true)
             {
                 Socket mySocket = _agencySocket.Accept();
-                Console.WriteLine(mySocket);
                 Thread newThread = new Thread(new ParameterizedThreadStart(StartAccept))
                 {
                     Name = GetName() + ": Accept agents",
@@ -270,12 +269,14 @@ namespace MobileAgent.AgentManager
                     IMobile agentProxyM = (IMobile)agentProxy;
                     _agentsMobileList.Add(agentProxyM);                    
                     agentProxyM.GetUI();
+                    
                 }
                 else
                 {
                     IStationary agentProxyS = (IStationary)agentProxy;
                     _agentsStatList.Add(agentProxyS);
                 }
+                
             }
             catch(AgencyNotFoundException anfe)
             {
@@ -369,11 +370,12 @@ namespace MobileAgent.AgentManager
                 {
                     if (agentProxy.GetAgentType() == Agent.ONEWAY)
                     {
-                        if (!agentProxy.GetAgencyCreationContext().Equals(_ipEndPoint))
+                        if (agentProxy.IsReady())
                         {
                             agentProxy.SetWorkStatus(Agent.DONE);
 
                             while (_feedback != POZITIVE) ;
+
                             ResetAgencyFeedback();
                         }
                     }
@@ -479,7 +481,7 @@ namespace MobileAgent.AgentManager
         }
         public void ShutDown()
         {
-           
+            //_agencySocket.Dispose();
         }
         public void RunAgent(IMobile agentProxy)
         {
@@ -511,6 +513,12 @@ namespace MobileAgent.AgentManager
         }
         public void SetBookedTime(int milli)
         {
+            if(_rezervationTime!=0)
+            {
+                _timer.Stop();
+                _timer.Dispose();
+
+            }
             _rezervationTime = milli;
             Console.WriteLine("Timer-ul a fost setat!");
             _timer = new System.Timers.Timer(1000);
