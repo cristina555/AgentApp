@@ -1,5 +1,4 @@
-﻿using MobileAgent.AgentManager;
-using System;
+﻿using System;
 
 namespace MobileAgent.Exceptions
 {
@@ -7,7 +6,7 @@ namespace MobileAgent.Exceptions
     {
         #region Fields
         private string _message;
-        private Agency _agency = null;
+        private string _agencyName;
         #endregion Fields
 
         #region Properties
@@ -19,11 +18,12 @@ namespace MobileAgent.Exceptions
             }
         }
         #endregion Properties
+
         #region Constructors
-        public AgencyNotFoundException(string message, Agency agency) :base()
+        public AgencyNotFoundException(string message, string agencyName) :base()
         {
-            _agency = agency;
-            _message = string.Format("{0} : Agentia  {1:F2}", message, agency.GetName());
+            _agencyName = agencyName;
+            _message = string.Format("{0}: Agentia {1:F1}", message, _agencyName);
         }
         #endregion Constructors
 

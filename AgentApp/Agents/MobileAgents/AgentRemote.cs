@@ -72,7 +72,7 @@ namespace AgentApp.Agents
             }
             return type;
         }
-        private void AddNeighbours(AgencyContext agencyContext, Queue<string> agencyQueue)
+        private void AddNeighbours(IAgencyContext agencyContext, Queue<string> agencyQueue)
         {
             foreach (string n in agencyContext.GetNeighbours())
             {
@@ -89,7 +89,7 @@ namespace AgentApp.Agents
                 }
             }
         }
-        private void TryDispatch(AgencyContext agencyContext, IPEndPoint destination)
+        private void TryDispatch(IAgencyContext agencyContext, IPEndPoint destination)
         {
             MobilityEventArgs args = new MobilityEventArgs();
             if (!agencyContext.GetConnection(destination))
@@ -171,7 +171,7 @@ namespace AgentApp.Agents
                 wayBack.Enqueue(el);
             }
         }
-        private IPEndPoint RetractAgent(AgencyContext agencyContext, Queue<string> t)
+        private IPEndPoint RetractAgent(IAgencyContext agencyContext, Queue<string> t)
         {
             IPEndPoint destination = null;
             SetWorkStatus(Agent.DONE);
@@ -193,7 +193,7 @@ namespace AgentApp.Agents
             }
             return destination;
         }
-        private void RunNetwork(AgencyContext agencyContext)
+        private void RunNetwork(IAgencyContext agencyContext)
         {
             MobilityEventArgs args = new MobilityEventArgs();
             if (wayBack.Count != 0)
@@ -302,11 +302,20 @@ namespace AgentApp.Agents
                     if (queue.Count != 0)
                     {
                         Tuple<string, Queue<string>> t = queue.Dequeue();
-
-                        args.Source = "Punct de rulare: ";
-                        args.Information = "Agentul  " + GetName() + " rulează..." + Environment.NewLine + agencyContext.GetName() + ": " + ColectInformation(agencyContext);
-                        agencyContext.OnArrival(args);
-                        Console.Beep();
+                        if (!agencyContext.IsBooked())
+                        {
+                            args.Source = "Punct de rulare: ";
+                            args.Information = "Agentul  " + GetName() + " rulează..." + Environment.NewLine + agencyContext.GetName() + ": " + ColectInformation(agencyContext);
+                            agencyContext.OnArrival(args);
+                            Console.Beep();
+                        }
+                        else
+                        {
+                            args.Source = "Punct de rulare: ";
+                            args.Information = "Agentul  " + GetName() + " nu poate rula: Agenție rezervată";
+                            agencyContext.OnArrival(args);
+                            Console.Beep();
+                        }
 
                         AddNeighbours(agencyContext, t.Item2);
                         if (queue.Count != 0)
@@ -354,7 +363,7 @@ namespace AgentApp.Agents
                 }
             }
         }
-        private string ColectInformation(AgencyContext agencyContext)
+        private string ColectInformation(IAgencyContext agencyContext)
         {
             string information = "";
             foreach (string par in Parameters)
@@ -412,7 +421,7 @@ namespace AgentApp.Agents
         public override void Run()
         {
             ResetLifetime();
-            AgencyContext agencyContext = GetAgentCurrentContext();
+            IAgencyContext agencyContext = GetAgentCurrentContext();
             RunNetwork(agencyContext);
         }
         public override void GetUI()

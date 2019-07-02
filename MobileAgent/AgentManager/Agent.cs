@@ -46,7 +46,7 @@ namespace MobileAgent.AgentManager
         private string _creationTime;
         private IPEndPoint _agencyCreationContext;
         private string _agentInfo;
-        private AgencyContext _currentContext;
+        private IAgencyContext _currentContext;
         private List<IMobile> _cloneList = new List<IMobile>();
         private int _lifetime = LIFETIME;
         private IMobile _parent = null;
@@ -89,7 +89,7 @@ namespace MobileAgent.AgentManager
         {
             return _agencyCreationContext;
         }
-        public AgencyContext GetAgentCurrentContext()
+        public IAgencyContext GetAgentCurrentContext()
         {
             return _currentContext;
         }
@@ -153,7 +153,7 @@ namespace MobileAgent.AgentManager
             _agentInfo = info;
         }
         
-        public void SetAgentCurrentContext(AgencyContext currentContext)
+        public void SetAgentCurrentContext(IAgencyContext currentContext)
         {
             _currentContext = currentContext;
         }
@@ -203,6 +203,14 @@ namespace MobileAgent.AgentManager
         private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
             _lifetime -= 1;
+            if(_lifetime == 60)
+            {
+                PersistencyEventArgs args = new PersistencyEventArgs();
+                args.Source = "Agentul " + GetName();
+                args.Information = "Mai are " + _lifetime + " secunde până să fie dezactivat";
+                GetAgentCurrentContext().OnDeactivating(args);
+            }
+
             if (_lifetime == 0)
             {
                 this.SetState(INACTIVE);
@@ -265,7 +273,7 @@ namespace MobileAgent.AgentManager
         {
             try
             {
-                AgencyContext agencyContext = GetAgentCurrentContext();
+                IAgencyContext agencyContext = GetAgentCurrentContext();
 
                 IFormatter formatter = new BinaryFormatter();
                 NetworkStream networkStream = null;
@@ -319,7 +327,7 @@ namespace MobileAgent.AgentManager
         {
             try
             {
-                AgencyContext agencyContext = GetAgentCurrentContext();
+                IAgencyContext agencyContext = GetAgentCurrentContext();
 
 
                 NetworkStream networkStream;

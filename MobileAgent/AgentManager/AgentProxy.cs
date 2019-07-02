@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace MobileAgent.AgentManager
 {
-    public interface AgentProxy
+    public interface IAgentProxy
     {
 		int GetAgentId();
         IPEndPoint GetAgencyCreationContext();
-        AgencyContext GetAgentCurrentContext();
+        IAgencyContext GetAgentCurrentContext();
         String GetAgentStateInfo();
         String GetAgentInfo();
         string GetName();
         string GetCreationTime();
         
         void SetAgentId(int id);
-        void SetAgentCurrentContext(AgencyContext currentContext);
+        void SetAgentCurrentContext(IAgencyContext currentContext);
         void SetCreationTime();
         void SetAgentStateInfo(String codebase);
         void SetAgentInfo(String info);

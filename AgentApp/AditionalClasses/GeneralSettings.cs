@@ -2,6 +2,7 @@
 using AgentApp.Agents.MobileAgents;
 using AgentApp.Agents.StationaryAgents;
 using MobileAgent.AgentManager;
+using MobileAgent.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -54,7 +55,7 @@ namespace AgentApp.AditionalClasses
         #endregion Private Methods
 
         #region Public Methods
-        public AgentProxy GetAgentProxy(String name)
+        public IAgentProxy GetAgentProxy(String name)
         {
             try
             {
@@ -82,7 +83,7 @@ namespace AgentApp.AditionalClasses
                         }
                     default:
                         {
-                            return null;
+                            throw new AgentNotFoundException("Agentul nu există:", name);
                         }
                 }
             }

@@ -1,9 +1,4 @@
-﻿using MobileAgent.AgentManager;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace MobileAgent.Exceptions
 {
@@ -11,7 +6,7 @@ namespace MobileAgent.Exceptions
     {
         #region Fields
         private string _message;
-        private AgentProxy _agentProxy = null;
+        private string _agentProxyName = null;
         #endregion Fields
 
         #region Properties
@@ -23,11 +18,12 @@ namespace MobileAgent.Exceptions
             }
         }
         #endregion Properties
+
         #region Constructors
-        public AgentNotFoundException(string message, AgentProxy agentProxy) : base()
+        public AgentNotFoundException(string message, string agentProxy) : base()
         {
-            _agentProxy = agentProxy;
-            _message = string.Format("{0} : Agentia  {1:F2}", message, agentProxy.GetName());
+            _agentProxyName = agentProxy;
+            _message = string.Format("{0} : Agentia  {1:F2}", message, _agentProxyName);
         }
         #endregion Constructors
     }

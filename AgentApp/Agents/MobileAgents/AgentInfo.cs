@@ -51,17 +51,29 @@ namespace AgentApp.Agents
             }
             this.SetAgentStateInfo(info);
         }
-        private void RunBoomerangAgent(AgencyContext agencyContext)
+        private void RunBoomerangAgent(IAgencyContext agencyContext)
         {
             if (!GetAgencyCreationContext().Equals(agencyContext.GetAgencyIPEndPoint()))
             {
                 AddInformation();
-
-                MobilityEventArgs args = new MobilityEventArgs();                
-                args.Source = "Agentul " + GetName() + " ruleaza ...";
-                args.Information = GetAgentStateInfo();
-                agencyContext.OnArrival(args);
-
+                if (!agencyContext.IsBooked())
+                {
+                    MobilityEventArgs args = new MobilityEventArgs
+                    {
+                        Source = "Agentul " + GetName() + " ruleaza ...",
+                        Information = GetAgentStateInfo()
+                    };
+                    agencyContext.OnArrival(args);
+                }
+                else
+                {
+                    MobilityEventArgs args = new MobilityEventArgs
+                    {
+                        Source = "Agentul " + GetName() + "nu poate rula!",
+                        Information = "Agenția este rezervată"
+                    };
+                    agencyContext.OnArrival(args);
+                }
                 RetractAgent();
 
             }
@@ -79,7 +91,7 @@ namespace AgentApp.Agents
         public override void Run()
         {
             ResetLifetime();
-            AgencyContext agencyContext = GetAgentCurrentContext();
+            IAgencyContext agencyContext = GetAgentCurrentContext();
             RunBoomerangAgent(agencyContext);
         }
         public override void GetUI()

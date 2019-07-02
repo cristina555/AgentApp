@@ -13,14 +13,17 @@ namespace AgentApp.Agents
     public class AgentR : Agent, IMobile
     {
         #region Private Fields
-        Queue<string> wayBack = new Queue<string>();
-        List<string> agenciesValid = new List<string>();
-        List<string> agenciesVisited = new List<string>();
-        Queue<Tuple<string, Queue<string>>> queue = new Queue<Tuple<string, Queue<string>>>();
+        private Queue<string> wayBack = new Queue<string>();
+        private List<string> agenciesValid = new List<string>();
+        private List<string> agenciesVisited = new List<string>();
+        private Queue<Tuple<string, Queue<string>>> queue = new Queue<Tuple<string, Queue<string>>>();
+        private int state;
+        #endregion Private Fields
+
+        #region Public Readonly Fields
         public readonly static int FIRST = 1;
         public readonly static int SECOND = 0;
-        public int state;
-        #endregion Private Fields
+        #endregion Public Readonly Fields
 
         #region Constructor
         public AgentR() : base()
@@ -40,8 +43,7 @@ namespace AgentApp.Agents
         #endregion Properties
 
         #region Private Methods
-
-        private void AddNeighbours(AgencyContext agencyContext, Queue<string> agencyQueue)
+        private void AddNeighbours(IAgencyContext agencyContext, Queue<string> agencyQueue)
         {
             foreach (string n in agencyContext.GetNeighbours())
             {
@@ -58,7 +60,7 @@ namespace AgentApp.Agents
                 }
             }
         }
-        private void TryDispatch(AgencyContext agencyContext, IPEndPoint destination)
+        private void TryDispatch(IAgencyContext agencyContext, IPEndPoint destination)
         {
             MobilityEventArgs args = new MobilityEventArgs();
             if (!agencyContext.GetConnection(destination))
@@ -143,7 +145,7 @@ namespace AgentApp.Agents
                 }
             }
         }
-        private IPEndPoint RetractAgent(AgencyContext agencyContext, Queue<string> t)
+        private IPEndPoint RetractAgent(IAgencyContext agencyContext, Queue<string> t)
         {
             IPEndPoint destination = null;
             SetWorkStatus(Agent.DONE);
@@ -165,7 +167,7 @@ namespace AgentApp.Agents
             }
             return destination;
         }
-        private void RunNetwork(AgencyContext agencyContext)
+        private void RunNetwork(IAgencyContext agencyContext)
         {
             MobilityEventArgs args = new MobilityEventArgs();
             if (wayBack.Count != 0)
@@ -256,10 +258,10 @@ namespace AgentApp.Agents
                                 args.Source = "Punct de stop: ";
                                 args.Information = "Agentul  " + GetName() + " a găsit " + agenciesValid.Count + " agentii valide!";
                                 agencyContext.OnArrival(args);
-                                if (agenciesValid.Count >= Threshold)
-                                {
-                                    state = SECOND;
-                                }
+                                //if (agenciesValid.Count >= Threshold)
+                                //{
+                                state = SECOND;
+                               // }
                                 Console.Beep(800, 1000);
                             }
                             else
@@ -267,8 +269,9 @@ namespace AgentApp.Agents
                                 args.Source = "Punct de stop: ";
                                 args.Information = "Agentul  a rezervat agențiile valide";
                                 agencyContext.OnArrival(args);
-                                state = FIRST;
-                                agenciesValid.Clear();
+
+                                ResetState();
+
                                 Console.Beep(800, 1000);
                             }
                         }
@@ -286,20 +289,19 @@ namespace AgentApp.Agents
                     if (queue.Count != 0)
                     {
                         Tuple<string, Queue<string>> t = queue.Dequeue();
-                        if (!agencyContext.IsBooked())
+                        if (!agencyContext.IsBooked() && state == FIRST)
                         {
                             args.Source = "Punct de rulare: ";
                             args.Information = "Agentul  " + GetName() + " rulează..." + Environment.NewLine + agencyContext.GetName() + Environment.NewLine + ShowInformation(agencyContext);
                             agencyContext.OnArrival(args);
                             Console.Beep();
-                            if (state == FIRST)
+                           
+                            if (IsValidAgency(agencyContext))
                             {
-                                if (IsValidAgency(agencyContext))
-                                {
-                                    agencyContext.SetBookedTime(30000);
-                                    agenciesValid.Add(agencyContext.GetName());
-                                }
+                                agencyContext.SetBookedTime(30000);
+                                agenciesValid.Add(agencyContext.GetName());
                             }
+                            
                         }
                         
                         
@@ -312,6 +314,9 @@ namespace AgentApp.Agents
                             }
                             if(NumberOfBookedAgencies == Threshold)
                             {
+                                SetWorkStatus(Agent.DONE);
+                                queue.Clear();
+
                                 wayBack = new Queue<string>(new List<string>(t.Item2));
 
                                
@@ -325,6 +330,7 @@ namespace AgentApp.Agents
                                 agencyContext.OnDispatching(args);
 
                                 TryDispatch(agencyContext, ipEndPoint);
+                                return;
 
                             }
                         }
@@ -383,7 +389,13 @@ namespace AgentApp.Agents
                 }
             }
         }
-        private bool IsValidAgency(AgencyContext agencyContext)
+        private void ResetState()
+        {
+            state = FIRST;
+            agenciesValid.Clear();
+            NumberOfBookedAgencies = 0;
+        }
+        private bool IsValidAgency(IAgencyContext agencyContext)
         {
             foreach (Tuple<string, string> par in Parameters)
             {
@@ -396,7 +408,7 @@ namespace AgentApp.Agents
             }
             return true;
         }
-        private string ShowInformation(AgencyContext agencyContext)
+        private string ShowInformation(IAgencyContext agencyContext)
         {
             string information = "";
             foreach (Tuple<string, string> par in Parameters)
@@ -469,23 +481,21 @@ namespace AgentApp.Agents
         #region Public Override Methods
         public override void Run()
         {
-            AgencyContext agencyContext = GetAgentCurrentContext();
-            if (state ==  FIRST)
-            {
-                ResetLifetime();
-                RunNetwork(agencyContext);
-            }
-            else if (state == SECOND && agenciesValid.Count >= Threshold)
-            {
-                ResetLifetime();
-                RunNetwork(agencyContext);
-            }
-            else if(agenciesValid.Count < Threshold)
+            IAgencyContext agencyContext = GetAgentCurrentContext();
+            if(state ==SECOND && agenciesValid.Count < Threshold)
             {
                 MobilityEventArgs args = new MobilityEventArgs();
                 args.Source = "Punct de stop: ";
                 args.Information = "Agentul nu poate fi trimis în rețea, nu sunt suficiente agenții valide!";
                 agencyContext.OnArrival(args);
+                ResetLifetime();
+                ResetState();
+
+            }
+            else
+            {
+                ResetLifetime();
+                RunNetwork(agencyContext);
             }
         }
         public override void GetUI()
@@ -522,7 +532,7 @@ namespace AgentApp.Agents
             button1.Name = "button1";
             button1.Size = new System.Drawing.Size(107, 38);
             button1.TabIndex = 4;
-            button1.Text = "Trmite";
+            button1.Text = "Trimite";
             button1.UseVisualStyleBackColor = true;
             // 
             // comboBox1

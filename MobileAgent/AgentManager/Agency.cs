@@ -11,7 +11,7 @@ using MobileAgent.EventAgent;
 
 namespace MobileAgent.AgentManager
 {   
-    public class Agency : AgencyContext
+    public class Agency : IAgencyContext
     {
         #region Private Fields
         public readonly static int POZITIVE = 1;
@@ -23,15 +23,14 @@ namespace MobileAgent.AgentManager
         private int _agencyID;
         private string _name;
         private List<string> _neighbours = new List<string>();
-        private AgentProxy _agentDispatched = null;
+        private IAgentProxy _agentDispatched = null;
         private int _feedback = NEGATIVE;
         #endregion Private Fields
 
         #region Private Static Fields
         private int _rezervationTime;
         private static System.Timers.Timer _timer;
-        //private static Dictionary<IPEndPoint, NetworkStream> _connectionaMap = new Dictionary<IPEndPoint, NetworkStream>();
-        private NetworkStream networkStream = null;
+        private NetworkStream _networkStream = null;
         #endregion Private Static Fields
 
         #region Public Fields
@@ -39,7 +38,10 @@ namespace MobileAgent.AgentManager
         public event dgEventRaiser UpdateAgency;
         public event EventHandler<UnconnectedAgencyArgs> RefuseConnectionEvent;
         public event EventHandler<MobilityEventArgs> MobilityEventArr;
-        public event EventHandler<MobilityEventArgs> MobilityEventDis;       
+        public event EventHandler<MobilityEventArgs> MobilityEventDis;
+        public event EventHandler<PersistencyEventArgs> PersistencyEventA;
+        public event EventHandler<PersistencyEventArgs> PersistencyEventD;
+        public event EventHandler<CloneEventArgs> CloneEvent;
         #endregion  Public Fields
 
         #region Constructors
@@ -79,26 +81,26 @@ namespace MobileAgent.AgentManager
         {
             return _neighbours;
         }
-        public AgentProxy GetDispatchedAgent()
+        public IAgentProxy GetDispatchedAgent()
         {
             return _agentDispatched;
         }
-        public List<AgentProxy> GetAgentProxies( int type)
+        public List<IAgentProxy> GetAgentProxies( int type)
         {
             if (type == Agent.MOBILE)
             {
-                List<AgentProxy> agentsMobileList = new List<AgentProxy>(_agentsMobileList);
+                List<IAgentProxy> agentsMobileList = new List<IAgentProxy>(_agentsMobileList);
                 return agentsMobileList;
             }
             else
             {
-                List<AgentProxy> agentsStatList = new List<AgentProxy>(_agentsStatList);
+                List<IAgentProxy> agentsStatList = new List<IAgentProxy>(_agentsStatList);
                 return agentsStatList;
             }
         }
-        public List<AgentProxy> GetActiveAgentProxies()
+        public List<IAgentProxy> GetActiveAgentProxies()
         {
-            List<AgentProxy> activeAP = new List<AgentProxy>();
+            List<IAgentProxy> activeAP = new List<IAgentProxy>();
             foreach (IMobile ap in _agentsMobileList)
             {
                 if (ap.IsActive())
@@ -147,7 +149,7 @@ namespace MobileAgent.AgentManager
         {
              _neighbours =  neighbours;
         }
-        public void SetDispatchedAgent(AgentProxy agentProxy)
+        public void SetDispatchedAgent(IAgentProxy agentProxy)
         {
             _agentDispatched = agentProxy;
         }
@@ -156,7 +158,7 @@ namespace MobileAgent.AgentManager
         #region Private Methods
         private void StartListening()
         {
-
+            System.Net.ServicePointManager.Expect100Continue = false;
             while (true)
             {
                 Socket mySocket = _agencySocket.Accept();
@@ -170,12 +172,14 @@ namespace MobileAgent.AgentManager
         }
         private void StartAccept(object obj)
         {
+            Socket s = null;
+            NetworkStream networkStream = null;
+            IFormatter formatter = null;
             try
             {
-                Socket s = (Socket)obj;
-                Console.WriteLine(s.AddressFamily);
-                NetworkStream networkStream = new NetworkStream(s);
-                IFormatter formatter = new BinaryFormatter();
+                s = (Socket)obj;
+                networkStream = new NetworkStream(s);
+                formatter = new BinaryFormatter();
                 IMobile agentProxy = (IMobile)formatter.Deserialize(networkStream);
 
 
@@ -191,7 +195,7 @@ namespace MobileAgent.AgentManager
                 };
                 agentThread.Start();
 
-
+                networkStream.Close();
             }
             catch (SocketException se)
             {
@@ -201,6 +205,7 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + ex.StackTrace + " --> Agency Accept Agents.");
             }
+            
         }
         private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
@@ -257,7 +262,7 @@ namespace MobileAgent.AgentManager
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Start Agency.");
             }
         }
-        public void CreateAgent(AgentProxy agentProxy)
+        public void CreateAgent(IAgentProxy agentProxy)
         {
             try
             {
@@ -278,10 +283,6 @@ namespace MobileAgent.AgentManager
                 }
                 
             }
-            catch(AgencyNotFoundException anfe)
-            {
-                Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Create Agent.");
-            }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Create Agent.");
@@ -292,20 +293,16 @@ namespace MobileAgent.AgentManager
         {
             try
             {
+                if(!agentCloned.IsMobile())
+                {
+                    throw new CloneNotSupportedException("Agentul nu suportă clone:", agentCloned);
+                }
                 agentCloned.SetAgentCurrentContext(this);
                 agentCloned.SetAgencyCreationContext(this.GetAgencyIPEndPoint());
                 agentCloned.SetName(agentCloned.GetName() + " cloned");
                 agentCloned.SetAgentInfo(agentCloned.GetAgentInfo() + " cloned");
                 _agentsMobileList.Add(agentCloned);                
                 agentCloned.GetUI();
-            }
-            catch (CloneNotSupportedException cnse)
-            {
-                Console.WriteLine("CloneNotSupportedException caught! Mesaj : " + cnse.Message + " --> Agency Clone Agent.");
-            }
-            catch (AgencyNotFoundException anfe)
-            {
-                Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Clone Agent.");
             }
             catch (Exception ex)
             {
@@ -330,7 +327,7 @@ namespace MobileAgent.AgentManager
                 {
                     //if(!_connectionaMap.ContainsKey(destination))
                     //{
-                    networkStream = new NetworkStream(connectSocket);
+                    _networkStream = new NetworkStream(connectSocket);
                     //    _connectionaMap.Add(destination, networkStream);
                     //}
                     return true;
@@ -380,7 +377,7 @@ namespace MobileAgent.AgentManager
                         }
                     }
                     agentProxy.SetAgentCurrentContext(null);
-                    formatter.Serialize(networkStream, agentProxy);
+                    formatter.Serialize(_networkStream, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
 
                                
@@ -404,16 +401,28 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
+            finally
+            {
+                _networkStream.Close();
+            }
             
             //return false;
         }
-        public void Deactivate(AgentProxy agentProxy) 
+        public void Deactivate(IAgentProxy agentProxy) 
 		{
             agentProxy.SetState(Agent.INACTIVE);
+            PersistencyEventArgs args = new PersistencyEventArgs();
+            args.Source = "Agentul " + agentProxy.GetName();
+            args.Information = "Este dezactivat!";
+            OnDeactivating(args);
         }
-        public void ActivateAgent(AgentProxy agentProxy)
+        public void ActivateAgent(IAgentProxy agentProxy)
         {
             agentProxy.SetState(Agent.ACTIVE);
+            PersistencyEventArgs args = new PersistencyEventArgs();
+            args.Source = "Agentul " + agentProxy.GetName();
+            args.Information = "Este reactivat!";
+            OnActivating(args);
             agentProxy.ResetLifetime();
         }
         public void RemoveAgent(IMobile agentProxy)
@@ -544,6 +553,18 @@ namespace MobileAgent.AgentManager
         public void OnDispatching(MobilityEventArgs e)
         {
             MobilityEventDis?.Invoke(this, e);
+        }
+        public void OnDeactivating(PersistencyEventArgs e)
+        {
+            PersistencyEventD?.Invoke(this, e);
+        }
+        public void OnActivating(PersistencyEventArgs e)
+        {
+            PersistencyEventA?.Invoke(this, e);
+        }
+        public void OnCloning(CloneEventArgs e)
+        {
+            CloneEvent?.Invoke(this, e);
         }
         #endregion Public Event Methods
 

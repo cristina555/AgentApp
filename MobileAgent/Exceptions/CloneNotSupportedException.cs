@@ -1,9 +1,5 @@
 ﻿using MobileAgent.AgentManager;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MobileAgent.Exceptions
 {
@@ -11,7 +7,7 @@ namespace MobileAgent.Exceptions
     {
         #region Fields
         private string _message;
-        private AgentProxy _agentProxy = null;
+        private IAgentProxy _agentProxy = null;
         #endregion Fields
 
         #region Properties
@@ -23,8 +19,9 @@ namespace MobileAgent.Exceptions
             }
         }
         #endregion Properties
+
         #region Constructors
-        public CloneNotSupportedException(string message, AgentProxy agentProxy) : base()
+        public CloneNotSupportedException(string message, IAgentProxy agentProxy) : base()
         {
             _agentProxy = agentProxy;
             _message = string.Format("{0} : Agentia  {1:F2}", message, agentProxy.GetName());

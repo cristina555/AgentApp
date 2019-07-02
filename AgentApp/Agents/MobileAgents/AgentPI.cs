@@ -11,6 +11,12 @@ namespace AgentApp
     public class AgentPI : Agent, IMobile
     {
 
+        #region Private Fields
+        private uint[] x;
+        private uint[] r;
+        private uint[] pi;
+        #endregion Private Fields
+
         #region Constructor
         public AgentPI() : base()
         {
@@ -30,22 +36,12 @@ namespace AgentApp
         public int Index { get; set; } = 0;
         public int Step { get; set; } = 0;
         public int Dec { get; set; }
-
         public int State { get; set; } = 0;
-
-
-
-        uint[] x;
-        uint[] r;
-
-        uint[] pi;
-
-
         public string Result { get; private set; } = "";
         #endregion Properties
 
         #region Private Methods
-        private void CalculPi(AgencyContext agencyContext)
+        private void CalculPi(IAgencyContext agencyContext)
         {
             MobilityEventArgs args = new MobilityEventArgs();
             if (Index == 0)
@@ -198,7 +194,7 @@ namespace AgentApp
             ResetLifetime();
             SetWorkStatus(Agent.READY);
             State++;
-            AgencyContext agencyContext = GetAgentCurrentContext();
+            IAgencyContext agencyContext = GetAgentCurrentContext();
             CalculPi(agencyContext);
         }
         public override void GetUI()
