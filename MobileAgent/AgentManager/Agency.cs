@@ -182,7 +182,9 @@ namespace MobileAgent.AgentManager
                 formatter = new BinaryFormatter();
                 IMobile agentProxy = (IMobile)formatter.Deserialize(networkStream);
 
-
+                s.Dispose();
+                s.Close();
+                networkStream.Close();
                 _agentsMobileList.Add(agentProxy);
                 agentProxy.SetAgentCurrentContext(this);
 
@@ -195,7 +197,7 @@ namespace MobileAgent.AgentManager
                 };
                 agentThread.Start();
 
-                networkStream.Close();
+                //
             }
             catch (SocketException se)
             {

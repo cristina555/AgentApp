@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AgentApp.Agents.MobileAgents
@@ -19,6 +18,9 @@ namespace AgentApp.Agents.MobileAgents
         #endregion Private Fields
 
         #region Constructor
+        /// <summary>
+        /// Constructorul care setează datele specifice ale agentului
+        /// </summary>
         public AgentClone():base()
         {
             SetType(WALKER);
@@ -27,12 +29,19 @@ namespace AgentApp.Agents.MobileAgents
         }
         #endregion Constructor
 
+        /// <summary>
+        /// Datele de stare ale agentului
+        /// </summary>
         #region Properties
         public List<string> Parameters { get; set; } = new List<string>();
         public int NumberOfSlaves { get; set; } = 0;
         #endregion Properties
 
         #region Private Methods
+        /// <summary>
+        /// Metoda care lanseaza clone in retea si aduna informatiile
+        /// </summary>
+        /// <param name="agencyContext">contextul agentiei</param>
         private void RunNetwork(IAgencyContext agencyContext)
         {
             MobilityEventArgs args = new MobilityEventArgs();
@@ -41,14 +50,9 @@ namespace AgentApp.Agents.MobileAgents
             {
                 if (IsMaster())
                 {
-                    //agenciesVisited.Clear();
                     SetAgentStateInfo("");
-                    //agenciesVisited.Add(agencyContext.GetName());
                     foreach (String n in agencyContext.GetNeighbours())
                     {
-                        //if(!agenciesVisited.Contains(n))
-                        //{
-                        // agenciesVisited.Add(n);
                         IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(n);
                         int portNumber = AgencyForm.configParser.GetPort(n);
                         IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
@@ -70,7 +74,6 @@ namespace AgentApp.Agents.MobileAgents
 
                             agencyContext.Dispatch(agentCloned, ipEndPoint);
                         }
-                        //}
                     }
                     while (GetCloneList().Count() < NumberOfSlaves) ;
 
@@ -124,6 +127,11 @@ namespace AgentApp.Agents.MobileAgents
             }
             
         }
+        /// <summary>
+        /// Metoda care colecteaza informatiile de la agentii stationari
+        /// </summary>
+        /// <param name="agencyContext">contextul agentiei</param>
+        /// <returns></returns>
         private string ColectInformation(IAgencyContext agencyContext)
         {
             string information = "";
@@ -137,6 +145,11 @@ namespace AgentApp.Agents.MobileAgents
             SetAgentStateInfo(GetAgentStateInfo() + agencyContext.GetName() + ": " + information + Environment.NewLine);
             return information;
         }
+        /// <summary>
+        /// Metoda care face conversia intre parametrii de intrare si agentul stationar necesar
+        /// </summary>
+        /// <param name="parameter">resursa indicata</param>
+        /// <returns>agentul stationar care detine resursa</returns>
         private string MapAgentName(string parameter)
         {
             string type = "";
@@ -174,6 +187,12 @@ namespace AgentApp.Agents.MobileAgents
             }
             return type;
         }
+        /// <summary>
+        /// Controlerul care seteaza parametrii agentului din interfata grafica
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="ui"></param>
         private void buttonSend_Click(object sender, EventArgs e, Form ui)
         {
             try
@@ -208,11 +227,17 @@ namespace AgentApp.Agents.MobileAgents
         #endregion Private Methods
 
         #region Public Override Methods
+        /// <summary>
+        /// Metoda Run() specifica agentului
+        /// </summary>
         public override void Run()
         {
             IAgencyContext agencyContext = GetAgentCurrentContext();
             RunNetwork(agencyContext);
         }
+        /// <summary>
+        /// Metoda de afisare a interfetei grafice specifica agentului
+        /// </summary>
         public override void GetUI()
         {
             Form ui = new Form();

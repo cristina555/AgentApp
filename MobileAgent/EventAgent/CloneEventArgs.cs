@@ -2,7 +2,7 @@
 
 namespace MobileAgent.EventAgent
 {
-    public class CloneEventArgs
+    public class CloneEventArgs : EventArgs
     {
         #region Constructor
         public CloneEventArgs()

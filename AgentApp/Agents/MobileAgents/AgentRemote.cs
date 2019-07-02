@@ -13,6 +13,9 @@ namespace AgentApp.Agents
     public class AgentRemote : Agent, IMobile
     {
         #region Private Fields
+        /// <summary>
+        /// Variabile de stare pentru agent
+        /// </summary>
         Queue<string> wayBack = new Queue<string>();
         Dictionary<string, String> _info = null;
         List<string> agenciesVisited = new List<string>();
@@ -20,6 +23,9 @@ namespace AgentApp.Agents
         #endregion Private Fields
 
         #region Constructors
+        /// <summary>
+        /// Constructorul care setează datele specifice ale agentului
+        /// </summary>
         public AgentRemote() : base()
         {
             Parameters = new List<string>();
@@ -35,6 +41,11 @@ namespace AgentApp.Agents
         #endregion Properties
 
         #region Private Methods
+        /// <summary>
+        /// Metoda care face conversia intre datele interfetei grafice si numele agentului stationar
+        /// </summary>
+        /// <param name="parameter">resursa ceruta</param>
+        /// <returns>numele agentului stationar care detine resursa</returns>
         private string MapAgentName(string parameter)
         {
             string type = "";
@@ -72,6 +83,11 @@ namespace AgentApp.Agents
             }
             return type;
         }
+        /// <summary>
+        /// Metoda care adaugă vecinii nevizitati in coada
+        /// </summary>
+        /// <param name="agencyContext">contextul agentiei</param>
+        /// <param name="agencyQueue">coada care contine nodurile agentiei</param>
         private void AddNeighbours(IAgencyContext agencyContext, Queue<string> agencyQueue)
         {
             foreach (string n in agencyContext.GetNeighbours())
@@ -89,6 +105,11 @@ namespace AgentApp.Agents
                 }
             }
         }
+        /// <summary>
+        /// Metoda de expediere a agentului
+        /// </summary>
+        /// <param name="agencyContext">contextul agentiei</param>
+        /// <param name="destination">punctul destinatie</param>
         private void TryDispatch(IAgencyContext agencyContext, IPEndPoint destination)
         {
             MobilityEventArgs args = new MobilityEventArgs();
@@ -160,6 +181,10 @@ namespace AgentApp.Agents
                 agencyContext.Dispatch(this, destination);
             }
         }
+        /// <summary>
+        /// Metoda care creaza drumul de intorcere in retea
+        /// </summary>
+        /// <param name="b">coada care contine nodurile drumului de intoarcere</param>
         private void CreateWayBack(Queue<string> b)
         {
             wayBack = b;
@@ -171,6 +196,12 @@ namespace AgentApp.Agents
                 wayBack.Enqueue(el);
             }
         }
+        /// <summary>
+        /// Metoda care creeaza drumul de intorcere la sursa
+        /// </summary>
+        /// <param name="agencyContext">contextul agentiei</param>
+        /// <param name="t">coada care contine drumul de intrcere la sursa</param>
+        /// <returns>urmatorul punct destinatar</returns>
         private IPEndPoint RetractAgent(IAgencyContext agencyContext, Queue<string> t)
         {
             IPEndPoint destination = null;
@@ -193,6 +224,10 @@ namespace AgentApp.Agents
             }
             return destination;
         }
+        /// <summary>
+        /// Metoda care parcurge intreaga topologie de retea
+        /// </summary>
+        /// <param name="agencyContext">contextul agentiei</param>
         private void RunNetwork(IAgencyContext agencyContext)
         {
             MobilityEventArgs args = new MobilityEventArgs();
@@ -363,6 +398,11 @@ namespace AgentApp.Agents
                 }
             }
         }
+        /// <summary>
+        /// Metoda care colecteaza informatiile de la agentii stationari
+        /// </summary>
+        /// <param name="agencyContext">contextul agentiei</param>
+        /// <returns></returns>
         private string ColectInformation(IAgencyContext agencyContext)
         {
             string information = "";
@@ -384,6 +424,12 @@ namespace AgentApp.Agents
             SetAgentStateInfo(GetAgentStateInfo() + agencyContext.GetName() + ": " + _info[agencyContext.GetName()] + Environment.NewLine);
             return information;
         }
+        /// <summary>
+        /// Controlorul care seteaza parametrii agentului
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="ui"></param>
         private void buttonSend_Click(object sender, EventArgs e, Form ui)
         {
             try
@@ -418,12 +464,18 @@ namespace AgentApp.Agents
         #endregion Private Methods
 
         #region Public Override Methods
+        /// <summary>
+        /// Metoda Run() specifica agentului
+        /// </summary>
         public override void Run()
         {
             ResetLifetime();
             IAgencyContext agencyContext = GetAgentCurrentContext();
             RunNetwork(agencyContext);
         }
+        /// <summary>
+        /// Metoda de afisare a interfetei grafice proprii a agentului
+        /// </summary>
         public override void GetUI()
         {
             Form ui = new Form();

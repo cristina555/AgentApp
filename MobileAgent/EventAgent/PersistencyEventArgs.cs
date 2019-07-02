@@ -2,7 +2,7 @@
 
 namespace MobileAgent.EventAgent
 {
-    public class PersistencyEventArgs
+    public class PersistencyEventArgs : EventArgs
     {
         #region Constructor
         public PersistencyEventArgs()
