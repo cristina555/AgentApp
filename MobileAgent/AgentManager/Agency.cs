@@ -57,7 +57,7 @@ namespace MobileAgent.AgentManager
                 _agencyID = random.Next(1000, 9999);
                 _agentsMobileList = new List<IMobile>();
                 _agentsStatList = new List<IStationary>();
-                _agencySocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                _agencySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _ipEndPoint = new IPEndPoint(ipAddress, port);
                 Console.WriteLine("Agentia creata la portul " + port + "."); 
             }
@@ -173,15 +173,13 @@ namespace MobileAgent.AgentManager
         }
         private void StartAccept(object obj)
         {
-            Socket s = null;
-            NetworkStream networkStream = null;
-            IFormatter formatter = null;
+            IMobile agentProxy = null;
             try
             {
-                s = (Socket)obj;
-                networkStream = new NetworkStream(s);
-                formatter = new BinaryFormatter();
-                IMobile agentProxy = (IMobile)formatter.Deserialize(networkStream);
+                Socket s = (Socket)obj;
+                IFormatter formatter = new BinaryFormatter();
+                NetworkStream networkStream = new NetworkStream(s);
+                agentProxy = (IMobile)formatter.Deserialize(networkStream);
 
                 s.Dispose();
                 s.Close();
@@ -199,6 +197,10 @@ namespace MobileAgent.AgentManager
                 agentThread.Start();
 
                 //
+            }
+            catch(IOException ioex)
+            {
+                Console.WriteLine("Exception caught! Mesaj : " + ioex.Message + ioex.StackTrace + " --> Agency Accept Agents.");
             }
             catch (SocketException se)
             {

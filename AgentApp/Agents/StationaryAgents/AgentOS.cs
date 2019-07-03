@@ -37,7 +37,7 @@ namespace AgentApp.Agents.StationaryAgents
                 }
                 else
                 {
-                    _info += "Nu s-a gasit sistemul de operare!";
+                    _info += "Nu s-a gasit sistemul de operare!" + Environment.NewLine;
                 }
             }
         }

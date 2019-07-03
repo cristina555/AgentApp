@@ -57,9 +57,7 @@ namespace AgentApp.AditionalClasses
         #region Public Methods
         public IAgentProxy GetAgentProxy(String name)
         {
-            try
-            {
-                switch (name)
+            switch (name)
                 {
                     case "AgentClone":
                         {
@@ -83,15 +81,9 @@ namespace AgentApp.AditionalClasses
                         }
                     default:
                         {
-                            throw new AgentNotFoundException("Agentul nu există:", name);
+                            throw new AgentNotFoundException("Agentul nu există:", "nu are nume");
                         }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Exception caught! Mesaj: " + ex.Message);
-            }
-            return null;
         }
         #endregion Public Methods
     }

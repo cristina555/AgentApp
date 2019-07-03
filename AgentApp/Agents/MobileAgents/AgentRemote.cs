@@ -412,16 +412,16 @@ namespace AgentApp.Agents
                 String i = agentStatic.GetInfo();
                 if (!_info.ContainsKey(agencyContext.GetName()))
                 {
-                    _info.Add(agencyContext.GetName(), i);
+                    _info.Add(agencyContext.GetName(), i );
                 }
                 else
                 {
-                    _info[agencyContext.GetName()] += i;
+                    _info[agencyContext.GetName()] += i ;
                 }
                 information += i;
 
             }
-            SetAgentStateInfo(GetAgentStateInfo() + agencyContext.GetName() + ": " + _info[agencyContext.GetName()] + Environment.NewLine);
+            SetAgentStateInfo(GetAgentStateInfo() + agencyContext.GetName() + ": " + _info[agencyContext.GetName()] + Environment.NewLine + Environment.NewLine);
             return information;
         }
         /// <summary>

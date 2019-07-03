@@ -401,9 +401,13 @@ namespace AgentApp.Agents
             {
                 IStationary agentStatic = agencyContext.GetStationaryAgent(par.Item1);
                 String i = agentStatic.GetInfo();
-                if(!i.Contains(par.Item2))
+                string[] words = par.Item2.Split(' ');
+                foreach (string word in words)
                 {
-                    return false;
+                    if (!i.Contains(word))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -590,7 +594,8 @@ namespace AgentApp.Agents
             comboBox2.FormattingEnabled = true;
             comboBox2.Items.AddRange(new object[] {
             "AMD",
-            "Intel"});
+            "Intel i5",
+            "Intel i7"});
             comboBox2.Location = new System.Drawing.Point(28, 141);
             comboBox2.Name = "comboBoxP";
             comboBox2.Size = new System.Drawing.Size(219, 24);
@@ -601,7 +606,8 @@ namespace AgentApp.Agents
             comboBox3.FormattingEnabled = true;
             comboBox3.Items.AddRange(new object[] {
             "Intel",
-            "NVidia"});
+            "NVIDIA",
+            "AMD"});
             comboBox3.Location = new System.Drawing.Point(31, 212);
             comboBox3.Name = "comboBoxVC";
             comboBox3.Size = new System.Drawing.Size(216, 24);

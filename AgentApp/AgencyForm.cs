@@ -53,7 +53,7 @@ namespace AgentApp
         private void StartAgency()
         {
 
-            //Real
+            // Real
             //Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = configParser.NetworkHosts;
             //try
             //{
@@ -70,9 +70,14 @@ namespace AgentApp
             //    agency.Activate();
             //    agency.Start();
 
+            //    FillNeighboursList(neighbours);
+
             //    agency.MobilityEventArr += Agent_OnArrival;
             //    agency.MobilityEventDis += Agent_OnDispaching;
             //    agency.RefuseConnectionEvent += Agency_RefuseConnection;
+            //    agency.PersistencyEventA += Agent_OnActivating;
+            //    agency.PersistencyEventD += Agent_OnDeactivating;
+            //    agency.CloneEvent += Agent_OnCloning;
             //    agency.UpdateAgency += TimerIsUp;
             //    aTimer.Elapsed += new ElapsedEventHandler((source, e) => UpdateAgentsList());
             //    aTimer.Enabled = true;
@@ -96,7 +101,7 @@ namespace AgentApp
                 int port = t.Item2;
                 string name = t.Item1;
                 string[] neighbours = t.Item3;
-                
+
                 agency = new Agency(ipAddress, port);
                 this.Text += " " + name;
                 agency.SetName(name);
@@ -337,6 +342,7 @@ namespace AgentApp
             try
             {
                 string selected = listAgents.GetItemText(comboBoxAgents.SelectedItem);
+               
                 int agentID = _random.Next(1000, 9999);
 
                 IAgentProxy agentToCreate = gs.GetAgentProxy(selected);
@@ -347,7 +353,8 @@ namespace AgentApp
             }
             catch(AgentNotFoundException agnfe)
             {
-                MessageBox.Show("AgentNotFoundException ! Mesaj: " + agnfe.Message + " -> Trimite agent!");
+                MessageBox.Show("AgentNotFoundException ! Mesaj: " + agnfe.Message + " ->  Creare agent!");
+                MessageBox.Show("Alege agentul!");
             }
             catch(NullReferenceException nre)
             {
@@ -369,11 +376,12 @@ namespace AgentApp
             }
             catch(AgentNotFoundException agnfe)
             {
-                MessageBox.Show("AgentNotFoundException ! Mesaj: " + agnfe.Message + " -> Trimite agent!");
+                MessageBox.Show("AgentNotFoundException ! Mesaj: " + agnfe.Message + " -> Clonare agent!");
+                MessageBox.Show("Alege agentul!");
             }
             catch(CloneNotSupportedException cnse)
             {
-                MessageBox.Show("CloneNotSupportedException ! Mesaj: " + cnse.Message + " -> Trimite agent!");
+                MessageBox.Show("CloneNotSupportedException ! Mesaj: " + cnse.Message + " -> Clonare agent!");
             }
             catch (NullReferenceException nre)
             {
@@ -399,11 +407,6 @@ namespace AgentApp
                     IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
                     agency.Dispatch(agentDispatched,ipEndPoint);
                     
-                    //if(agentDispatched.GetAgentType() != Agent.ONEWAY)
-                    //{
-                    //    agency.RunAgent(agentDispatched);
-                    //}
-
                 }
                 else
                 {
@@ -413,6 +416,7 @@ namespace AgentApp
             catch (AgentNotFoundException agnfe)
             {
                 MessageBox.Show("AgentNotFoundException ! Mesaj: " + agnfe.Message + " -> Trimite agent!");
+                MessageBox.Show("Alege agentul!");
             }
             catch (NullReferenceException nfe)
             {
@@ -435,18 +439,19 @@ namespace AgentApp
                 string selected = listAgents.GetItemText(listAgents.SelectedItem);
                 IAgentProxy agentDispatched = agency.GetMobileAgentProxy(selected);
                 
-                if (!agentDispatched.IsBoomerang())
+                if (agentDispatched.GetAgentType() == Agent.WALKER)
                 {
                     agency.RunAgent((IMobile)agentDispatched);
                 }
                 else
                 {
-                    MessageBox.Show("Agentul nu poate fi trimis in retea: nu respecta tipul. Alegeti alt agent.");
+                    MessageBox.Show("Agentul nu poate fi trimis în rețea: nu respectă tipul. Alegeți alt agent.");
                 }
             }
             catch (AgentNotFoundException agnfe)
             {
                 MessageBox.Show("AgentNotFoundException ! Mesaj: " + agnfe.Message + " -> Trimite agent!");
+                MessageBox.Show("Alege agentul!");
             }
             catch (NullReferenceException  nre)
             {
@@ -470,6 +475,8 @@ namespace AgentApp
             catch (AgentNotFoundException agnfe)
             {
                 MessageBox.Show("AgentNotFoundException ! Mesaj: " + agnfe.Message + " -> Trimite agent!");
+                MessageBox.Show("Alege agentul!");
+
             }
             catch (NullReferenceException nre)
             {
@@ -501,6 +508,7 @@ namespace AgentApp
             catch (AgentNotFoundException agnfe)
             {
                 MessageBox.Show("AgentNotFoundException ! Mesaj: " + agnfe.Message + " -> Trimite agent!");
+                MessageBox.Show("Alege agentul!");
             }
             catch (NullReferenceException nre)
             {

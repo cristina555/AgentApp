@@ -38,7 +38,7 @@ namespace AgentApp.Agents
                 }
                 else
                 {
-                    _info += "Nu s-a gasit procesorul!";
+                    _info += "Nu s-a gasit procesorul!"+ Environment.NewLine;
                 }
             }
         }

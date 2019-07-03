@@ -38,7 +38,7 @@ namespace AgentApp.Agents
                 }
                 else
                 {
-                    _info += "Nu s-a gasit sistemul de operare - Service Pack!";
+                    _info += "Nu s-a gasit pachetul de servicii a sistemului de operare!"+ Environment.NewLine;
                 }
             }
         }

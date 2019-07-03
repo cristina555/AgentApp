@@ -23,7 +23,7 @@ namespace MobileAgent.Exceptions
         public AgentNotFoundException(string message, string agentProxy) : base()
         {
             _agentProxyName = agentProxy;
-            _message = string.Format("{0} : Agentia  {1:F2}", message, _agentProxyName);
+            _message = string.Format("{0} : Agentul  {1:F2}", message, _agentProxyName);
         }
         #endregion Constructors
     }

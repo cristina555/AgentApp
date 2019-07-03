@@ -38,7 +38,7 @@ namespace AgentApp.Agents
                 }
                 else
                 {
-                    _info += "Nu s-a gasit arhitectura sistemului de operare!";
+                    _info += "Nu s-a gasit arhitectura sistemului de operare!"+ Environment.NewLine;
                 }
             }
         }
