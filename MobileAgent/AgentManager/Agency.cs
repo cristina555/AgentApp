@@ -168,6 +168,7 @@ namespace MobileAgent.AgentManager
                     IsBackground = true
                 };
                 newThread.Start(mySocket);
+                
             }
         }
         private void StartAccept(object obj)
