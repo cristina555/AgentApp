@@ -138,7 +138,10 @@ namespace AgentApp.Agents
                         else
                         {
                             CreateWayBack(t.Item2); // ceva probleme, trebuie sa depistez in ce caz
-                            wayBack.Dequeue();
+                            if (!agencyContext.GetNeighbours().Contains(t.Item1))
+                            {
+                                wayBack.Dequeue();
+                            }
                             string back = wayBack.Peek();
                             IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
                             int portNumber = AgencyForm.configParser.GetPort(back);
@@ -192,10 +195,35 @@ namespace AgentApp.Agents
         /// <param name="b">coada care contine nodurile drumului de intoarcere</param>
         private void CreateWayBack(Queue<string> b)
         {
-            wayBack = b;
+            //wayBack = b;
             List<string> q = new List<string>(queue.Peek().Item2.ToArray());
             q.Reverse();
             q.RemoveAt(0);
+            List<string> alfa = new List<string>(b);
+            alfa.Reverse();
+            alfa.RemoveAt(0);
+            string a=null;
+            if (alfa.Count != 0 && q.Count != 0)
+            {
+                while (alfa[0].Equals(q[0]))
+                {
+                    //if(alfa[0].Equals(q[0]))
+                    //{
+                    a = alfa[0];
+                    alfa.RemoveAt(0);
+                    q.RemoveAt(0);
+                    //}
+                    if (alfa.Count == 0 || q.Count == 0)
+                    {
+                        break;
+                    }
+                }
+            }
+            wayBack = new Queue<string>(alfa);
+            if (a != null)
+                wayBack.Enqueue(a);
+            else
+                wayBack = b;
             foreach (string el in q)
             {
                 wayBack.Enqueue(el);
@@ -211,10 +239,14 @@ namespace AgentApp.Agents
         {
             IPEndPoint destination = null;
             SetWorkStatus(Agent.DONE);
-            wayBack = t;
+
+            List<string> wayHome = new List<string>(t);
+            wayHome.RemoveAt(wayHome.Count - 1);
+            wayBack = new Queue<string>(wayHome);
+
             if (wayBack.Count != 0)
             {
-                string back = wayBack.Dequeue();
+                string back = wayBack.Peek();
                 IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
                 int portNumber = AgencyForm.configParser.GetPort(back);
                 destination = new IPEndPoint(ipAddress, portNumber);
@@ -236,7 +268,7 @@ namespace AgentApp.Agents
         private void RunNetwork(IAgencyContext agencyContext)
         {
             MobilityEventArgs args = new MobilityEventArgs();
-            if (wayBack.Count != 0)
+            if (wayBack.Count != 0 )
             {
                
                 wayBack.Dequeue();
@@ -256,6 +288,8 @@ namespace AgentApp.Agents
                 }
                 if (wayBack.Count != 0)
                 {
+                    
+                    
                     string back = wayBack.Peek();
                     IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
                     int portNumber = AgencyForm.configParser.GetPort(back);
@@ -263,10 +297,11 @@ namespace AgentApp.Agents
 
                     args.Source = "Punct de plecare: ";
                     Index++;
-                    args.Information = Index +": Agentul " + GetName() + " se duce către " + back;
+                    args.Information = Index + ": Agentul " + GetName() + " se duce către " + back;
                     agencyContext.OnDispatching(args);
 
                     TryDispatch(agencyContext, ipEndPoint);
+                    
                 }
                 else
                 {
@@ -288,7 +323,7 @@ namespace AgentApp.Agents
                     {
                         args.Source = "Punct de plecare: ";
                         Index++;
-                        args.Information =Index+ ": Agentul " + GetName() + " se duce către sursă";
+                        args.Information = Index + ": Agentul " + GetName() + " se duce către sursă";
                         agencyContext.OnDispatching(args);
 
                         TryDispatch(agencyContext, GetAgencyCreationContext());
@@ -406,12 +441,21 @@ namespace AgentApp.Agents
                         {
                             SetWorkStatus(Agent.DONE);
 
+                            List<string> wayHome = new List<string>(t.Item2);
+                            wayHome.RemoveAt(wayHome.Count-1);
+                            wayBack = new Queue<string>(wayHome);
+
+                            string back = wayBack.Peek();
+                            IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
+                            int portNumber = AgencyForm.configParser.GetPort(back);
+                            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, portNumber);
+
                             args.Source = "Punct de plecare: ";
                             Index++;
                             args.Information = Index +": Agentul " + GetName() + " se întoarce la sursă.";
                             agencyContext.OnDispatching(args);
 
-                            TryDispatch(agencyContext, GetAgencyCreationContext());
+                            TryDispatch(agencyContext, ipEndPoint);
                         }
                     }
                 }

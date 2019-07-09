@@ -114,12 +114,7 @@ namespace AgentApp
                     agencyContext.SetAgencyFeedback();
                     break;
                 }
-                if (Result.Length - 1 == Dec)
-                {
-                    args.Source = "Agentul " + this.GetName() + " a terminat!";
-                    args.Information = "Rezultatul este: " + Result;
-                    agencyContext.OnArrival(args);
-                }
+                
             }
             if (Index < Dec)
             {

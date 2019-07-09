@@ -30,7 +30,7 @@ namespace MobileAgent.AgentManager
         public readonly static int ONEWAY = 2;
         public readonly static int MASTER = 3;
         public readonly static int SLAVE = 4;
-        public readonly static int LIFETIME = 1800; //seconds
+        public readonly static int LIFETIME = 3600; //seconds
         #endregion Public Fields
 
         #region Private Fields

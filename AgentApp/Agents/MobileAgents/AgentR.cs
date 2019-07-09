@@ -86,7 +86,10 @@ namespace AgentApp.Agents
                         else
                         {
                             CreateWayBack(t.Item2); // ceva probleme, trebuie sa depistez in ce caz
-                            wayBack.Dequeue();
+                            if (!agencyContext.GetNeighbours().Contains(t.Item1))
+                            {
+                                wayBack.Dequeue();
+                            }
                             string back = wayBack.Peek();
                             IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
                             int portNumber = AgencyForm.configParser.GetPort(back);
@@ -133,26 +136,53 @@ namespace AgentApp.Agents
         }
         private void CreateWayBack(Queue<string> b)
         {
-            wayBack = b;
-            if (queue.Count != 0)
+            //wayBack = b;
+            List<string> q = new List<string>(queue.Peek().Item2.ToArray());
+            q.Reverse();
+            q.RemoveAt(0);
+            List<string> alfa = new List<string>(b);
+            alfa.Reverse();
+            alfa.RemoveAt(0);
+            string a = null;
+
+            if (alfa.Count != 0 && q.Count != 0)
             {
-                List<string> q = new List<string>(queue.Peek().Item2.ToArray());
-                q.Reverse();
-                q.RemoveAt(0);
-                foreach (string el in q)
+                while (alfa[0].Equals(q[0]))
                 {
-                    wayBack.Enqueue(el);
+                    //if(alfa[0].Equals(q[0]))
+                    //{
+                    a = alfa[0];
+                    alfa.RemoveAt(0);
+                    q.RemoveAt(0);
+                    //}
+                    if (alfa.Count == 0 || q.Count == 0)
+                    {
+                        break;
+                    }
                 }
+            }
+            wayBack = new Queue<string>(alfa);
+            if (a != null)
+                wayBack.Enqueue(a);
+            else
+                wayBack = b;
+            foreach (string el in q)
+            {
+                wayBack.Enqueue(el);
             }
         }
         private IPEndPoint RetractAgent(IAgencyContext agencyContext, Queue<string> t)
         {
             IPEndPoint destination = null;
             SetWorkStatus(Agent.DONE);
-            wayBack = t;
+
+            List<string> wayHome = new List<string>(t);
+            wayHome.RemoveAt(wayHome.Count - 1);
+            wayBack = new Queue<string>(wayHome);
+
             if (wayBack.Count != 0)
             {
-                string back = wayBack.Dequeue();
+                string back = wayBack.Peek();
                 IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
                 int portNumber = AgencyForm.configParser.GetPort(back);
                 destination = new IPEndPoint(ipAddress, portNumber);
@@ -371,8 +401,9 @@ namespace AgentApp.Agents
                         {
                             SetWorkStatus(Agent.DONE);
 
-                            wayBack = new Queue<string>(new List<string>(t.Item2));
-
+                            List<string> wayHome = new List<string>(t.Item2);
+                            wayHome.RemoveAt(wayHome.Count - 1);
+                            wayBack = new Queue<string>(wayHome);
 
                             string back = wayBack.Peek();
                             IPAddress ipAddress = AgencyForm.configParser.GetIPAdress(back);
@@ -467,7 +498,7 @@ namespace AgentApp.Agents
                     }
                 }
                 Parameters = parameters;
-                if (parameters.Count != 3 && Threshold != 0)
+                if (parameters.Count == 3 && Threshold != 0)
                 {
                     ui.Close();
                 }
