@@ -156,22 +156,30 @@ namespace AgentApp
                     }
                 }
                 Dec = dec;
-                Thread agentThread = new Thread(new ThreadStart(Run))
+                
+                if (dec != 0)
                 {
-                    Name = GetName() + ": " + GetName(),
-                    IsBackground = true
-                };
-                agentThread.Start();
-                ui.Close();
+                    Thread agentThread = new Thread(new ThreadStart(Run))
+                    {
+                        Name = GetName() + ": " + GetName(),
+                        IsBackground = true
+                    };
+                    agentThread.Start();
+                    ui.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Introduceți numărul de zecimale diferit de 0!");
+                }
             }
             catch (NullReferenceException nre)
             {
-                MessageBox.Show("NullReferenceException !" + nre.Message + " --> Trimite parametrii agentului!");
+                MessageBox.Show(" Trimite parametrii agentului!");
 
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
+                MessageBox.Show(" Trimite parametrii agentului!");
             }
         }
         private void ResetState()

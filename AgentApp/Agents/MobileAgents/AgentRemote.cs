@@ -251,7 +251,7 @@ namespace AgentApp.Agents
                 {
                     args.Source = "Punct de sosire: ";
                     Index++;
-                    args.Information = Index +": Agentul " + GetName() + " se întoarce la sursa";
+                    args.Information = Index +": Agentul " + GetName() + " se întoarce la sursă";
                     agencyContext.OnArrival(args);
                 }
                 if (wayBack.Count != 0)
@@ -468,7 +468,14 @@ namespace AgentApp.Agents
 
                 }
                 Parameters = _parameters;
-                ui.Close();
+                if (_parameters.Count != 0)
+                {
+                    ui.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Nu ai ales niciun parametru!");
+                }
             }
             catch (NullReferenceException nre)
             {

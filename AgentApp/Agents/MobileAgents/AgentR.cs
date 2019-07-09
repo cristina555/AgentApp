@@ -467,17 +467,23 @@ namespace AgentApp.Agents
                     }
                 }
                 Parameters = parameters;
-
-                ui.Close();
+                if (parameters.Count != 3 && Threshold != 0)
+                {
+                    ui.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Parametrii nu au fost setați corect!");
+                }
             }
             catch (NullReferenceException nre)
             {
-                MessageBox.Show("NullReferenceException !" + nre.Message + " --> Trimite parametrii agentului!");
+                MessageBox.Show("Trimite parametrii agentului!");
 
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception !" + ex.Message + " --> Trimite parametrii agentului!");
+                MessageBox.Show("Trimite parametrii agentului!");
             }
         }
         #endregion Private Methods

@@ -212,7 +212,14 @@ namespace AgentApp.Agents.MobileAgents
 
                 }
                 Parameters = _parameters;
-                ui.Close();
+                if (_parameters.Count != 0)
+                {
+                    ui.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Nu ai ales niciun parametru!");
+                }
             }
             catch (NullReferenceException nre)
             {
