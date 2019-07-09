@@ -197,6 +197,10 @@ namespace MobileAgent.AgentManager
         {
             _state = state;
         }
+        public int GetLifetime()
+        {
+            return _lifetime;
+        }
         #endregion Property Methods
 
         #region Private Methods
@@ -228,101 +232,7 @@ namespace MobileAgent.AgentManager
             _timer.Elapsed += OnTimedEvent;
             _timer.Enabled = true;
         }
-        //public IMobile Clone()
-        //{
-        //    IMobile agentCloned = null;
-        //    try
-        //    {
-        //        agentCloned = this.Ge;
-        //        agentCloned.SetAgentId(GetAgentId() + _cloneList.Count + 1);
-        //        //agentCloned.SetName(GetName() + "_cloned_"+_cloneList.Count + 1);
-        //    }
-        //    catch (CloneNotSupportedException cnse)
-        //    {
-        //        Console.WriteLine("CloneNotSupportedException caught! Mesaj : " + cnse.Message + " --> Agency Clone Agent.");
-        //    }
-        //    catch (AgencyNotFoundException anfe)
-        //    {
-        //        Console.WriteLine("AgencyNotFoundException caught! Mesaj : " + anfe.Message + " --> Agency Clone Agent.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Clone Agent.");
-        //    }
-        //    return agentCloned;
-        //}
-        public bool GetConnection(IPEndPoint destination)
-        {
-            Socket _connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                _connectSocket.Connect(destination);
-                if (_connectSocket.Connected)
-                {
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception)
-            {
-
-            }
-            return false;
-        }
-        public bool Dispatch(IPEndPoint destination)
-        {
-            try
-            {
-                IAgencyContext agencyContext = GetAgentCurrentContext();
-
-                IFormatter formatter = new BinaryFormatter();
-                NetworkStream networkStream = null;
-
-                Socket connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-                try
-                {
-                    connectSocket.Connect(destination);
-                }
-                catch (Exception)
-                {
-
-                }
-
-                if (connectSocket.Connected)
-                {
-                    agencyContext.RemoveAgent(this);
-                    networkStream = new NetworkStream(connectSocket);
-                    SetAgentCurrentContext(null);
-                    formatter.Serialize(networkStream, this);
-                    //Thread.CurrentThread.Abort();
-                    return true;
-                }
-                else
-                {
-                    UnconnectedAgencyArgs args = new UnconnectedAgencyArgs();
-                    args.Date = DateTime.Now;
-                    args.Name = destination;
-                    agencyContext.OnRefuseConnection(args);
-                    Console.WriteLine("Refuse connection");
-
-                }
-                return false;
-            }
-            catch (NullReferenceException nfe)
-            {
-                Console.WriteLine("NullReferenceException caught! Mesaj : " + nfe.Message + " " + nfe.StackTrace + " --> Agency Dispach Agent.");
-            }
-            catch (SocketException io)
-            {
-                Console.WriteLine("SocketException caught! Mesaj : " + io.Message + io.StackTrace + " --> Agency Dispach Agent.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
-            }
-            return false;
-        }
+        
         public void RetractAgent()
         {
             try

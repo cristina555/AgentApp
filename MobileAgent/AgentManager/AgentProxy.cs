@@ -18,6 +18,7 @@ namespace MobileAgent.AgentManager
         string GetCreationTime();
         int GetAgentType();
         void SetAgentId(int id);
+        int GetLifetime();
         void SetAgentCurrentContext(IAgencyContext currentContext);
         void SetCreationTime();
         void SetAgentStateInfo(String codebase);

@@ -301,7 +301,7 @@ namespace AgentApp.Agents.MobileAgents
             ui.ResumeLayout(false);
             ui.PerformLayout();
 
-            button1.Click += new System.EventHandler((sender, e) => buttonSend_Click(sender, e, ui));
+            button1.Click += new EventHandler((sender, e) => buttonSend_Click(sender, e, ui));
             if (ui.Controls.Count != 0)
             {
                 var thread = new Thread(() =>

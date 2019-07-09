@@ -25,12 +25,13 @@ namespace MobileAgent.AgentManager
         private List<string> _neighbours = new List<string>();
         private IAgentProxy _agentDispatched = null;
         private int _feedback = NEGATIVE;
+        private Dictionary<IPEndPoint, NetworkStream> _connectionMap = new Dictionary<IPEndPoint, NetworkStream>();
         #endregion Private Fields
 
         #region Private Static Fields
         private int _rezervationTime;
         private static System.Timers.Timer _timer;
-        private NetworkStream _networkStream = null;
+        
         #endregion Private Static Fields
 
         #region Public Fields
@@ -53,6 +54,7 @@ namespace MobileAgent.AgentManager
         {
             try
             {
+
                 Random random = new Random();
                 _agencyID = random.Next(1000, 9999);
                 _agentsMobileList = new List<IMobile>();
@@ -181,9 +183,6 @@ namespace MobileAgent.AgentManager
                 NetworkStream networkStream = new NetworkStream(s);
                 agentProxy = (IMobile)formatter.Deserialize(networkStream);
 
-                s.Dispose();
-                s.Close();
-                networkStream.Close();
                 _agentsMobileList.Add(agentProxy);
                 agentProxy.SetAgentCurrentContext(this);
 
@@ -196,11 +195,11 @@ namespace MobileAgent.AgentManager
                 };
                 agentThread.Start();
 
-                //
+                networkStream.Close();
             }
             catch(IOException ioex)
             {
-                Console.WriteLine("Exception caught! Mesaj : " + ioex.Message + ioex.StackTrace + " --> Agency Accept Agents.");
+                //Console.WriteLine("Exception caught! Mesaj : " + ioex.Message + ioex.StackTrace + " --> Agency Accept Agents.");
             }
             catch (SocketException se)
             {
@@ -208,7 +207,11 @@ namespace MobileAgent.AgentManager
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception caught! Mesaj : " + ex.Message + ex.StackTrace + " --> Agency Accept Agents.");
+                //Console.WriteLine("Exception caught! Mesaj : " + ex.Message + ex.StackTrace + " --> Agency Accept Agents.");
+            }
+            finally
+            {
+                
             }
             
         }
@@ -222,7 +225,6 @@ namespace MobileAgent.AgentManager
             if (_rezervationTime == 0)
             {
                 Console.WriteLine("Time is over!!");
-                //UpdateAgency();
                 _timer.Stop();
                 _timer.Dispose();
             }
@@ -320,8 +322,10 @@ namespace MobileAgent.AgentManager
             try
             {
                 Socket connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
                 try
                 {
+
                     connectSocket.Connect(destination);
                 }
                 catch(Exception)
@@ -330,11 +334,16 @@ namespace MobileAgent.AgentManager
                 }
                 if(connectSocket.Connected)
                 {
-                    //if(!_connectionaMap.ContainsKey(destination))
-                    //{
-                    _networkStream = new NetworkStream(connectSocket);
-                    //    _connectionaMap.Add(destination, networkStream);
-                    //}
+                    if (!_connectionMap.ContainsKey(destination))
+                    {
+                        NetworkStream networkStream = new NetworkStream(connectSocket);
+                        _connectionMap.Add(destination, networkStream);
+                    }
+                    else
+                    {
+                        NetworkStream networkStream = new NetworkStream(connectSocket);
+                        _connectionMap[destination] = networkStream;
+                    }
                     return true;
                 }
                 else
@@ -381,8 +390,9 @@ namespace MobileAgent.AgentManager
                             ResetAgencyFeedback();
                         }
                     }
+                    NetworkStream network = _connectionMap[destination];
                     agentProxy.SetAgentCurrentContext(null);
-                    formatter.Serialize(_networkStream, agentProxy);
+                    formatter.Serialize(network, agentProxy);
                     _agentsMobileList.Remove(agentProxy);
 
                                
@@ -406,11 +416,7 @@ namespace MobileAgent.AgentManager
             {
                 Console.WriteLine("Exception caught! Mesaj : " + ex.Message + " --> Agency Dispach Agent.");
             }
-            finally
-            {
-                _networkStream.Close();
-            }
-            
+                        
             //return false;
         }
         public void Deactivate(IAgentProxy agentProxy) 

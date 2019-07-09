@@ -38,8 +38,6 @@
             this.disposeButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.comboBoxTop = new System.Windows.Forms.ComboBox();
-            this.buttonTopology = new System.Windows.Forms.Button();
             this.buttonDeactivateA = new System.Windows.Forms.Button();
             this.showButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -52,12 +50,11 @@
             this.cloneButton = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxAgents = new System.Windows.Forms.ComboBox();
-            this.deactivateButton = new System.Windows.Forms.Button();
             this.labelShowClock = new System.Windows.Forms.Label();
+            this.deactivateButton = new System.Windows.Forms.Button();
             this.stationaryAgents = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -66,7 +63,6 @@
             this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox
@@ -93,11 +89,11 @@
             // 
             // info
             // 
-            this.info.Location = new System.Drawing.Point(11, 20);
+            this.info.Location = new System.Drawing.Point(22, 40);
             this.info.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.info.Multiline = true;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(389, 38);
+            this.info.Size = new System.Drawing.Size(351, 38);
             this.info.TabIndex = 1;
             // 
             // createButton
@@ -143,7 +139,7 @@
             // 
             // disposeButton
             // 
-            this.disposeButton.Location = new System.Drawing.Point(197, 85);
+            this.disposeButton.Location = new System.Drawing.Point(196, 93);
             this.disposeButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.disposeButton.Name = "disposeButton";
             this.disposeButton.Size = new System.Drawing.Size(133, 34);
@@ -158,58 +154,34 @@
             this.groupBox2.Controls.Add(this.groupBox4);
             this.groupBox2.Controls.Add(this.labelShowClock);
             this.groupBox2.Controls.Add(this.deactivateButton);
-            this.groupBox2.Location = new System.Drawing.Point(423, 25);
+            this.groupBox2.Location = new System.Drawing.Point(423, 11);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(385, 608);
+            this.groupBox2.Size = new System.Drawing.Size(385, 622);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.comboBoxTop);
-            this.groupBox5.Controls.Add(this.buttonTopology);
             this.groupBox5.Controls.Add(this.buttonDeactivateA);
             this.groupBox5.Controls.Add(this.showButton);
             this.groupBox5.Controls.Add(this.tabControl1);
             this.groupBox5.Controls.Add(this.listAgents);
             this.groupBox5.Controls.Add(this.cloneButton);
             this.groupBox5.Controls.Add(this.disposeButton);
-            this.groupBox5.Location = new System.Drawing.Point(12, 170);
+            this.groupBox5.Location = new System.Drawing.Point(12, 223);
             this.groupBox5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox5.Size = new System.Drawing.Size(345, 394);
+            this.groupBox5.Size = new System.Drawing.Size(356, 358);
             this.groupBox5.TabIndex = 24;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Alege agent - clonare/trimitere";
             // 
-            // comboBoxTop
-            // 
-            this.comboBoxTop.FormattingEnabled = true;
-            this.comboBoxTop.Items.AddRange(new object[] {
-            "Graf neorientat 1",
-            "Topologie stea",
-            "Graf neorientat 2"});
-            this.comboBoxTop.Location = new System.Drawing.Point(197, 351);
-            this.comboBoxTop.Name = "comboBoxTop";
-            this.comboBoxTop.Size = new System.Drawing.Size(133, 24);
-            this.comboBoxTop.TabIndex = 21;
-            // 
-            // buttonTopology
-            // 
-            this.buttonTopology.Location = new System.Drawing.Point(15, 348);
-            this.buttonTopology.Name = "buttonTopology";
-            this.buttonTopology.Size = new System.Drawing.Size(148, 27);
-            this.buttonTopology.TabIndex = 20;
-            this.buttonTopology.Text = "Schimbă topologia";
-            this.buttonTopology.UseVisualStyleBackColor = true;
-            this.buttonTopology.Click += new System.EventHandler(this.buttonTopology_Click);
-            // 
             // buttonDeactivateA
             // 
-            this.buttonDeactivateA.Location = new System.Drawing.Point(197, 136);
+            this.buttonDeactivateA.Location = new System.Drawing.Point(196, 144);
             this.buttonDeactivateA.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonDeactivateA.Name = "buttonDeactivateA";
             this.buttonDeactivateA.Size = new System.Drawing.Size(133, 30);
@@ -220,7 +192,7 @@
             // 
             // showButton
             // 
-            this.showButton.Location = new System.Drawing.Point(11, 136);
+            this.showButton.Location = new System.Drawing.Point(10, 144);
             this.showButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.showButton.Name = "showButton";
             this.showButton.Size = new System.Drawing.Size(133, 30);
@@ -233,7 +205,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(11, 183);
+            this.tabControl1.Location = new System.Drawing.Point(5, 212);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -298,7 +270,7 @@
             // listAgents
             // 
             this.listAgents.FormattingEnabled = true;
-            this.listAgents.Location = new System.Drawing.Point(15, 38);
+            this.listAgents.Location = new System.Drawing.Point(10, 45);
             this.listAgents.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listAgents.Name = "listAgents";
             this.listAgents.Size = new System.Drawing.Size(319, 24);
@@ -306,7 +278,7 @@
             // 
             // cloneButton
             // 
-            this.cloneButton.Location = new System.Drawing.Point(11, 85);
+            this.cloneButton.Location = new System.Drawing.Point(10, 93);
             this.cloneButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cloneButton.Name = "cloneButton";
             this.cloneButton.Size = new System.Drawing.Size(115, 34);
@@ -319,11 +291,11 @@
             // 
             this.groupBox4.Controls.Add(this.createButton);
             this.groupBox4.Controls.Add(this.comboBoxAgents);
-            this.groupBox4.Location = new System.Drawing.Point(12, 57);
+            this.groupBox4.Location = new System.Drawing.Point(12, 97);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox4.Size = new System.Drawing.Size(345, 109);
+            this.groupBox4.Size = new System.Drawing.Size(356, 109);
             this.groupBox4.TabIndex = 23;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Alege agent -  creare";
@@ -337,10 +309,20 @@
             this.comboBoxAgents.Size = new System.Drawing.Size(319, 24);
             this.comboBoxAgents.TabIndex = 15;
             // 
+            // labelShowClock
+            // 
+            this.labelShowClock.AllowDrop = true;
+            this.labelShowClock.AutoSize = true;
+            this.labelShowClock.Location = new System.Drawing.Point(20, 32);
+            this.labelShowClock.Name = "labelShowClock";
+            this.labelShowClock.Size = new System.Drawing.Size(0, 17);
+            this.labelShowClock.TabIndex = 19;
+            this.labelShowClock.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // deactivateButton
             // 
             this.deactivateButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.deactivateButton.Location = new System.Drawing.Point(224, 572);
+            this.deactivateButton.Location = new System.Drawing.Point(240, 585);
             this.deactivateButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.deactivateButton.Name = "deactivateButton";
             this.deactivateButton.Size = new System.Drawing.Size(133, 28);
@@ -348,16 +330,6 @@
             this.deactivateButton.Text = "Ieșire";
             this.deactivateButton.UseVisualStyleBackColor = true;
             this.deactivateButton.Click += new System.EventHandler(this.deactivateButton_Click);
-            // 
-            // labelShowClock
-            // 
-            this.labelShowClock.AllowDrop = true;
-            this.labelShowClock.AutoSize = true;
-            this.labelShowClock.Location = new System.Drawing.Point(20, 23);
-            this.labelShowClock.Name = "labelShowClock";
-            this.labelShowClock.Size = new System.Drawing.Size(0, 17);
-            this.labelShowClock.TabIndex = 19;
-            this.labelShowClock.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // stationaryAgents
             // 
@@ -393,24 +365,12 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Listă agenți";
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.info);
-            this.groupBox3.Location = new System.Drawing.Point(12, 25);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox3.Size = new System.Drawing.Size(405, 71);
-            this.groupBox3.TabIndex = 13;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Informații agenție";
-            // 
             // AgencyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(823, 644);
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.info);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox);
@@ -429,9 +389,8 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -456,7 +415,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox comboBoxN;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TabControl tabControl1;
@@ -465,8 +423,6 @@
         private System.Windows.Forms.Button showButton;
         private System.Windows.Forms.Button buttonDeactivateA;
         private System.Windows.Forms.Label labelShowClock;
-        private System.Windows.Forms.Button buttonTopology;
-        private System.Windows.Forms.ComboBox comboBoxTop;
     }
 }
 

@@ -12,9 +12,6 @@ namespace MobileAgent.AgentManager
         int GetWorkType();
         void SetParent(IMobile ap);
         void SetWorkType(int status);
-       
-        IMobile Clone();
-        bool Dispatch(IPEndPoint destination);
         void Run();
         void GetUI();
     }

@@ -46,6 +46,7 @@ namespace AgentApp
             StartAgency();
             CreateStationaryAgent();
             FillAgentsList();
+
         }
         #endregion Constructors 
 
@@ -94,9 +95,10 @@ namespace AgentApp
             Dictionary<IPAddress, Tuple<string, int, string[]>> _hosts = configParser.NetworkHosts;
             try
             {
+                
                 int hostIndex = int.Parse(Console.ReadLine());
                 //int hostIndex = _random.Next(_hosts.Count);
-                IPAddress ipAddress = _hosts.ElementAt(hostIndex).Key;
+                IPAddress ipAddress = _hosts.ElementAt(hostIndex-1).Key;
                 Tuple<string, int, string[]> t = _hosts[ipAddress];
                 int port = t.Item2;
                 string name = t.Item1;
@@ -209,6 +211,7 @@ namespace AgentApp
                 comboBoxN.Items.Add(s);
             }
         }
+        
         private void FillAgentsList()
         {
             foreach (string aproxy in gs.ListofAgentsM)
@@ -220,28 +223,7 @@ namespace AgentApp
                 stationaryAgents.Text += aproxy.GetAgentId() +": " +aproxy.GetName() + "-> " + aproxy.GetAgentInfo() + Environment.NewLine;
             }
         }
-        private string GetLocalIPAddress()
-        {
-            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
-                {
-                    if ("Wi-Fi Wireless Network Connection".Contains(ni.Name))
-                    {
-                        foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
-                        {
-                            if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
-                            {
-                                return ip.Address.ToString();
-                            }
-                        }
-                    }
-                }
-            }
-            throw new Exception("No network adapters with an IPv4 address in the system!");
-
-        }
-
+        
         #endregion Private Methods
 
         #region Private Methods for Handling Events
@@ -503,6 +485,18 @@ namespace AgentApp
                 info += "Informatii: " + agentInfo.GetAgentInfo() + Environment.NewLine;
                 info += "Creat: " + agentInfo.GetCreationTime() + Environment.NewLine;
 
+                var parts = new List<string>();
+                Action<int, string> add = (val, unit) => { if (val > 0) parts.Add(val + unit); };
+                var t = TimeSpan.FromSeconds(agentInfo.GetLifetime());
+
+                add(t.Days, "d");
+                add(t.Hours, "h");
+                add(t.Minutes, "m");
+                add(t.Seconds, "s");
+                add(t.Milliseconds, "ms");
+
+
+                info += "Durată de viață: " + string.Join(" ", parts) + Environment.NewLine;
                 MessageBox.Show(info);
             }
             catch (AgentNotFoundException agnfe)
@@ -620,79 +614,9 @@ namespace AgentApp
                 MessageBox.Show("Exception ! Mesaj: " + ex.Message + " -> Agency Dispose Agent!");
             }
         }
-             
-
-        private void ButtonShowClock_Click(object sender, EventArgs e)
-        {
-            Label label1 = new Label();
-            Button button1 = new Button();
-            Form ui = new Form();
-            this.SuspendLayout();
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(37, 33);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(351, 17);
-            label1.TabIndex = 5;
-            label1.Text = "";
-            // 
-            // button1
-            // 
-            button1.Location = new System.Drawing.Point(151, 77);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(98, 30);
-            button1.TabIndex = 4;
-            button1.Text = "OK";
-            button1.UseVisualStyleBackColor = true;
-            // 
-            // Form1
-            // 
-            ui.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            ui.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ui.ClientSize = new System.Drawing.Size(404, 119);
-            ui.Controls.Add(label1);
-            ui.Controls.Add(button1);
-            ui.Name = "Rezervare Agenție - timp rămas";
-            ui.Text = "Activare agenți";
-            ui.ResumeLayout(false);
-            ui.PerformLayout();
-
-            button1.Click += new System.EventHandler((source, eee) => this.buttonShow_Click(source, eee, ui));
-
-            var thread = new Thread(() =>
-            {
-                Application.Run(ui);
-            });
-            thread.Start();
-        }
-
-        private void buttonTopology_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                int i = int.Parse(comboBoxTop.GetItemText(comboBoxTop.SelectedIndex));
-                configParser = new ConfigParser(i + 1);
-
-                Tuple<string, int, string[]> t = configParser.NetworkHosts[agency.GetAgencyIPEndPoint().Address];
-                string[] n = t.Item3;
-                agency.SetNeighbours(new List<String>(n));
-
-                comboBoxN.Items.Clear();
-                comboBoxN.ResetText();
-                FillNeighboursList(n);
-            }
-            catch(NullReferenceException)
-            {
-                MessageBox.Show("Alege topologia!");
-            }
-            catch(Exception)
-            {
-                MessageBox.Show("Alege topologia!");
-            }
-        }
+                  
         #endregion Controlers   
 
+  
     }
 }
